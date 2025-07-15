@@ -1,0 +1,40 @@
+﻿<!-- Catalog Sidebar Menu -->
+<ul class="nav flex-column bg-dark text-white p-2" style="height: 100vh; width: 250px;">
+    <li class="nav-item mb-3">
+        <input class="form-control form-control-sm" type="text" placeholder="Search">
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link text-white" href="#"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    </li>
+
+    <!-- Catalog -->
+    <li class="nav-item">
+        <a class="nav-link text-white" data-bs-toggle="collapse" href="#catalogMenu" role="button" aria-expanded="true">
+            <i class="bi bi-book"></i> Catalog
+        </a>
+        <div class="collapse show" id="catalogMenu">
+            <ul class="nav flex-column ms-3">
+                <li class="nav-item"><a class="nav-link text-white-50" href="#">Products</a></li>
+                <li class="nav-item"><a class="nav-link text-white-50" href="#">Categories</a></li>
+                <li class="nav-item"><a class="nav-link text-white-50" href="#">Manufacturers</a></li>
+                <li class="nav-item"><a class="nav-link text-white-50" href="#">Product reviews</a></li>
+                <li class="nav-item"><a class="nav-link text-white-50" href="#">Product tags</a></li>
+
+                <!-- Attributes Submenu -->
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" data-bs-toggle="collapse" href="#attributesMenu" role="button" aria-expanded="false">
+                        Attributes
+                    </a>
+                    <div class="collapse" id="attributesMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item"><a class="nav-link text-white-50" href="#">Product attributes</a></li>
+                            <li class="nav-item"><a class="nav-link text-white-50" href="#">Specification attributes</a></li>
+                            <li class="nav-item"><a class="nav-link text-white-50" href="#">Checkout attributes</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </li>
+</ul>

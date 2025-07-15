@@ -8,3 +8,4 @@
 /BookingManagementCMS/BookingManagementCMS.csproj.user
 /BookingManagementCMS/bin/Debug/net9.0
 /.vs
+/BookingManagement.Data/obj
