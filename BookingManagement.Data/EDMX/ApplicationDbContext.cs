@@ -1,9 +1,11 @@
 ﻿using Data.EDMX;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +17,7 @@ namespace Data
             : base(options)
         {
         }
-
+        
         // Tables
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<VehicleType> VehicleTypes { get; set; }
