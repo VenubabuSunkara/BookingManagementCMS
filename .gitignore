@@ -9,3 +9,5 @@
 /BookingManagementCMS/bin/Debug/net9.0
 /.vs
 /BookingManagement.Data/obj
+/BookingManagement.Data/bin/Debug/net9.0
+/Migrations/obj
