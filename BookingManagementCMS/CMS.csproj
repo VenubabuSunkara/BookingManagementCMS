@@ -16,4 +16,8 @@
     <Folder Include="Views\Driver\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookingManagement.Data\Data.csproj" />
+  </ItemGroup>
+
 </Project>

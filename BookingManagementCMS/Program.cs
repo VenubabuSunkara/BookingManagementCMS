@@ -1,3 +1,7 @@
+using CMS.ErrorHandler;
+using CMS.Extensions;
+using CMS.ServiceConfigurations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 //DB Context
@@ -6,11 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseExceptionHandler();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Data.EDMX;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Data
         // Tables
         public DbSet<Driver> Drivers { get; set; }
         public DbSet<VehicleType> VehicleTypes { get; set; }
+        public DbSet<BookingManagemnetEventLog> EventLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
