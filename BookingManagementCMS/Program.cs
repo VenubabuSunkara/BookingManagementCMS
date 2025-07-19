@@ -1,13 +1,8 @@
-using Data;
-using CMS.ErrorHandler;
-using CMS.Extensions;
-using CMS.ServiceConfigurations;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services
-       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
+//builder.Services
+//       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
 
 var app = builder.Build();
 
