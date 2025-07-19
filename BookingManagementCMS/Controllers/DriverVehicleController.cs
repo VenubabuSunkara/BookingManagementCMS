@@ -2,7 +2,7 @@
 
 namespace BookingManagementCMS.Controllers
 {
-    public class DriverController : Controller
+    public class DriverVehicleController : Controller
     {
         public IActionResult Index()
         {
