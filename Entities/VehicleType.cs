@@ -19,5 +19,5 @@ public partial class VehicleType
 
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
+    public virtual ICollection<DriverAndVehicle> DriverAndVehicles { get; set; } = new List<DriverAndVehicle>();
 }

@@ -17,31 +17,43 @@ public partial class BookingManagementCmsContext : DbContext
 
     public virtual DbSet<AddressType> AddressTypes { get; set; }
 
-    public virtual DbSet<AdminPermissionMapping> AdminPermissionMappings { get; set; }
+    public virtual DbSet<AdminRoleMapping> AdminRoleMappings { get; set; }
 
     public virtual DbSet<AdminUser> AdminUsers { get; set; }
 
+    public virtual DbSet<Configuration> Configurations { get; set; }
+
     public virtual DbSet<Country> Countries { get; set; }
 
-    public virtual DbSet<DriverDetail> DriverDetails { get; set; }
+    public virtual DbSet<CouponCode> CouponCodes { get; set; }
+
+    public virtual DbSet<DriverAndVehicle> DriverAndVehicles { get; set; }
+
+    public virtual DbSet<DriverVehicleMedium> DriverVehicleMedia { get; set; }
+
+    public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
+
+    public virtual DbSet<PageContent> PageContents { get; set; }
 
     public virtual DbSet<PermissionGroup> PermissionGroups { get; set; }
 
+    public virtual DbSet<ReviewComment> ReviewComments { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<RolePermissionMapping> RolePermissionMappings { get; set; }
+
+    public virtual DbSet<Taxis> Taxes { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserAddress> UserAddresses { get; set; }
 
-    public virtual DbSet<Vehicle> Vehicles { get; set; }
-
-    public virtual DbSet<VehicleMedium> VehicleMedia { get; set; }
-
     public virtual DbSet<VehicleType> VehicleTypes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-    => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingManagementCMS;Trusted_Connection=True;TrustServerCertificate=True;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingManagementCMS;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -63,28 +75,17 @@ public partial class BookingManagementCmsContext : DbContext
                 .HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<AdminPermissionMapping>(entity =>
+        modelBuilder.Entity<AdminRoleMapping>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__AdminPer__3214EC0726C1B9E2");
+            entity.ToTable("AdminRoleMapping");
 
-            entity.ToTable("AdminPermissionMapping");
-
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.Admin).WithMany(p => p.AdminPermissionMappings)
-                .HasForeignKey(d => d.AdminId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__AdminPerm__Admin__6754599E");
-
-            entity.HasOne(d => d.Permission).WithMany(p => p.AdminPermissionMappings)
-                .HasForeignKey(d => d.PermissionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__AdminPerm__Updat__66603565");
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Comments)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<AdminUser>(entity =>
@@ -117,6 +118,19 @@ public partial class BookingManagementCmsContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<Configuration>(entity =>
+        {
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.KeyName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.KeyValue)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Country>(entity =>
         {
             entity.ToTable("Country");
@@ -126,42 +140,103 @@ public partial class BookingManagementCmsContext : DbContext
             entity.Property(e => e.TwoLetterIsoCode).HasMaxLength(2);
         });
 
-        modelBuilder.Entity<DriverDetail>(entity =>
+        modelBuilder.Entity<CouponCode>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__DriverDe__3214EC0757FE3524");
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Code)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.Name)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.RangeMax).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.RangeMin).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+        });
 
-            entity.Property(e => e.CreatedAt)
+        modelBuilder.Entity<DriverAndVehicle>(entity =>
+        {
+            entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Description).IsUnicode(false);
-            entity.Property(e => e.DriverImageUrl)
-                .HasMaxLength(200)
-                .IsUnicode(false);
-            entity.Property(e => e.Email)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.FirstName)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.LastName).IsUnicode(false);
-            entity.Property(e => e.LicenceDocument)
-                .HasMaxLength(400)
-                .IsUnicode(false);
-            entity.Property(e => e.LicenceNumber)
-                .HasMaxLength(200)
-                .IsUnicode(false);
-            entity.Property(e => e.Mobile)
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.DriverContact)
                 .HasMaxLength(20)
                 .IsUnicode(false);
-            entity.Property(e => e.UpdatedAt)
+            entity.Property(e => e.DriverEmail)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DriverFirstName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.DriverLastName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.DriverLicenceNumber).HasMaxLength(50);
+            entity.Property(e => e.IsAvailable).HasDefaultValue(true);
+            entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.VehicleName)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.VehicleNumber)
+                .HasMaxLength(200)
+                .IsUnicode(false);
 
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.DriverDetails)
-                .HasForeignKey(d => d.Vehicleid)
+            entity.HasOne(d => d.VehicleType).WithMany(p => p.DriverAndVehicles)
+                .HasForeignKey(d => d.VehicleTypeId)
+                .HasConstraintName("FK_DriverAndVehicles_VehicleTypes");
+        });
+
+        modelBuilder.Entity<DriverVehicleMedium>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.MediaName)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.Title)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+
+            entity.HasOne(d => d.DriverVehicle).WithMany(p => p.DriverVehicleMedia)
+                .HasForeignKey(d => d.DriverVehicleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DriverDet__Vehic__7E37BEF6");
+                .HasConstraintName("FK_DriverVehicleMedia_DriverVehicle");
+        });
+
+        modelBuilder.Entity<EmailTemplate>(entity =>
+        {
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.EmailSubject).HasMaxLength(200);
+            entity.Property(e => e.IsEnabled).HasDefaultValue(true);
+            entity.Property(e => e.Name)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.SenderEmail)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<PageContent>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_PageContent\\");
+
+            entity.ToTable("PageContent");
+
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.PageContent1).HasColumnName("PageContent");
+            entity.Property(e => e.PageName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<PermissionGroup>(entity =>
@@ -185,6 +260,14 @@ public partial class BookingManagementCmsContext : DbContext
                 .HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<ReviewComment>(entity =>
+        {
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.Rating).HasColumnType("decimal(18, 0)");
+            entity.Property(e => e.ReviewComment1).HasColumnName("ReviewComment");
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC07EB7387AC");
@@ -199,6 +282,42 @@ public partial class BookingManagementCmsContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<RolePermissionMapping>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__AdminPer__3214EC0726C1B9E2");
+
+            entity.ToTable("RolePermissionMapping");
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Permission).WithMany(p => p.RolePermissionMappings)
+                .HasForeignKey(d => d.PermissionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__AdminPerm__Updat__66603565");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissionMappings)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AdminPermissionMapping_Role");
+        });
+
+        modelBuilder.Entity<Taxis>(entity =>
+        {
+            entity.Property(e => e.City)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Country)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -284,56 +403,6 @@ public partial class BookingManagementCmsContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__UserAddre__IsDef__5070F446");
-        });
-
-        modelBuilder.Entity<Vehicle>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Vehicles__3214EC07E0FDA52E");
-
-            entity.HasIndex(e => e.VehicleNumber, "UQ__Vehicles__ABAD8859561ACC5A").IsUnique();
-
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.IsAvailable).HasDefaultValue(false);
-            entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.VehicleNumber)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-
-            entity.HasOne(d => d.VehicleType).WithMany(p => p.Vehicles)
-                .HasForeignKey(d => d.VehicleTypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Vehicles__Featur__72C60C4A");
-        });
-
-        modelBuilder.Entity<VehicleMedium>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__VehicleM__3214EC0771067751");
-
-            entity.Property(e => e.CreatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.IsAvailable).HasDefaultValue(false);
-            entity.Property(e => e.MediaDescription).HasMaxLength(4000);
-            entity.Property(e => e.MediaFileName).HasMaxLength(200);
-            entity.Property(e => e.MediaType)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.MediaUrl).IsUnicode(false);
-            entity.Property(e => e.MediaWhom)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleMedia)
-                .HasForeignKey(d => d.VehicleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__VehicleMe__Media__787EE5A0");
         });
 
         modelBuilder.Entity<VehicleType>(entity =>

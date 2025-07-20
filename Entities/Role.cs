@@ -20,4 +20,6 @@ public partial class Role
     public DateTime? UpdatedAt { get; set; }
 
     public bool? IsActive { get; set; }
+
+    public virtual ICollection<RolePermissionMapping> RolePermissionMappings { get; set; } = new List<RolePermissionMapping>();
 }

@@ -26,6 +26,4 @@ public partial class AdminUser
     public DateTime? UpdatedAt { get; set; }
 
     public bool? IsActive { get; set; }
-
-    public virtual ICollection<AdminPermissionMapping> AdminPermissionMappings { get; set; } = new List<AdminPermissionMapping>();
 }

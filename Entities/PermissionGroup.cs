@@ -21,5 +21,5 @@ public partial class PermissionGroup
 
     public bool? IsActive { get; set; }
 
-    public virtual ICollection<AdminPermissionMapping> AdminPermissionMappings { get; set; } = new List<AdminPermissionMapping>();
+    public virtual ICollection<RolePermissionMapping> RolePermissionMappings { get; set; } = new List<RolePermissionMapping>();
 }
