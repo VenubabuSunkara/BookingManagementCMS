@@ -1,7 +1,8 @@
-﻿
-using CMS.ErrorHandler;
-using Data;
+﻿using CMS.ErrorHandler;
+using Entities;
 using Microsoft.EntityFrameworkCore;
+using Utilities;
+using Utilities.Interfaces;
 
 namespace CMS.ServiceConfigurations
 {
@@ -12,12 +13,17 @@ namespace CMS.ServiceConfigurations
             services.AddControllersWithViews();
 
             //DB Context
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<BookingManagementCmsContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails(options => options.CustomizeProblemDetails = ctx => ctx.ProblemDetails.Extensions.Add("nodeId", Environment.MachineName));
             services.AddHttpContextAccessor();
+
+            #region RegisterUtilities
+            services.AddScoped<IRemoteHostIpAddress, RemoteHostIpAddress>();
+            services.AddScoped<ILogError, LogError>();
+            #endregion
         }
     }
 }

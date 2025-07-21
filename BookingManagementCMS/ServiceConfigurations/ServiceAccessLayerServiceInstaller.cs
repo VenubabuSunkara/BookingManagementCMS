@@ -1,8 +1,7 @@
 ﻿
-
 namespace CMS.ServiceConfigurations;
 
-public class DataAccessLayerServiceInstaller : IServiceInstaller
+public class ServiceAccessLayerServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
