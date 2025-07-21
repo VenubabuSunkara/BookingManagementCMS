@@ -1,13 +1,17 @@
+using CMS.Extensions;
+using CMS.ServiceConfigurations;
+using Entities;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-using CMS.Extensions;
-using CMS.ServiceConfigurations;
-
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<BookingManagementCmsContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ====== Configure log4net ======
 builder.Logging.ClearProviders();

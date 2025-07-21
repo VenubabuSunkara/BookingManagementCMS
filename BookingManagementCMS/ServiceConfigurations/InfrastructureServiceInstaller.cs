@@ -1,6 +1,10 @@
 ﻿using CMS.ErrorHandler;
+using Data;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repository;
+using Repository.Interfaces;
+using Service.Interfaces;
 using Utilities;
 using Utilities.Interfaces;
 
@@ -13,7 +17,7 @@ namespace CMS.ServiceConfigurations
             var mvcBuilder = services.AddControllersWithViews();
 
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? string.Empty;
-            if (!string.IsNullOrEmpty(env) && env.Equals(Environments.Development,StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(env) && env.Equals(Environments.Development, StringComparison.OrdinalIgnoreCase))
             {
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
@@ -30,6 +34,12 @@ namespace CMS.ServiceConfigurations
             services.AddScoped<IRemoteHostIpAddress, RemoteHostIpAddress>();
             services.AddScoped<ILogError, LogError>();
             #endregion
+
+            #region Register Services and Repos
+            services.AddScoped<IDriverAndVehicleService, DriverAndVehicleService>();
+            services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
+            #endregion
         }
+
     }
 }
