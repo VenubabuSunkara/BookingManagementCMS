@@ -1,9 +1,9 @@
 ﻿using CMS.Extensions;
-using Data;
-using Data.Interfaces.Logger;
+using Entities;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.ExceptionServices;
+using Utilities.Interfaces;
 
 namespace CMS.ErrorHandler;
 
@@ -23,8 +23,8 @@ public class GlobalExceptionHandler(IServiceScopeFactory _scopeFactory,
         (string? ClassName, string? MethodName) classAndMethodnames = exception.GetActualMethodAndClassName();
 
         using var scope = _scopeFactory.CreateScope();
-        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var loggerService = scope.ServiceProvider.GetRequiredService<ILoggerRepository>();
+        scope.ServiceProvider.GetRequiredService<BookingManagementCmsContext>();
+        var loggerService = scope.ServiceProvider.GetRequiredService<ILogError>();
 
         string exceptionMessage = exception switch
         {
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler(IServiceScopeFactory _scopeFactory,
         };
 
         ////It will log exception
-        loggerService.LogException(classAndMethodnames.ClassName ?? string.Empty, classAndMethodnames.MethodName ?? string.Empty, exceptionMessage);
+        await loggerService.LogExceptionAsync(classAndMethodnames.ClassName ?? string.Empty, classAndMethodnames.MethodName ?? string.Empty, exceptionMessage);
 
         // In Development, let Developer Exception Page show stack trace
         if (_env.IsDevelopment())

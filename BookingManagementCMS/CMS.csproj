@@ -9,21 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ErrorHandler\**" />
-    <Compile Remove="Extensions\**" />
-    <Compile Remove="ServiceConfigurations\**" />
-    <Content Remove="ErrorHandler\**" />
-    <Content Remove="Extensions\**" />
-    <Content Remove="ServiceConfigurations\**" />
-    <EmbeddedResource Remove="ErrorHandler\**" />
-    <EmbeddedResource Remove="Extensions\**" />
-    <EmbeddedResource Remove="ServiceConfigurations\**" />
-    <None Remove="ErrorHandler\**" />
-    <None Remove="Extensions\**" />
-    <None Remove="ServiceConfigurations\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -33,10 +19,16 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Views\Driver\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+    <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>
 
 </Project>

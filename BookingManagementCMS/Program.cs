@@ -4,6 +4,9 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
+using CMS.Extensions;
+using CMS.ServiceConfigurations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ====== Configure log4net ======
@@ -23,6 +26,9 @@ builder.Services.AddDistributedMemoryCache(); // Or AddStackExchangeRedisCache()
 //{
 //    options.Configuration = "localhost:6379"; // Adjust to your Redis server
 //});
+//Add services to the container.
+builder.Services
+       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
 
 var app = builder.Build();
 
