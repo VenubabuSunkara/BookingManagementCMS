@@ -10,7 +10,13 @@ namespace CMS.ServiceConfigurations
     {
         public void Install(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllersWithViews();
+            var mvcBuilder = services.AddControllersWithViews();
+
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? string.Empty;
+            if (!string.IsNullOrEmpty(env) && env.Equals(Environments.Development,StringComparison.OrdinalIgnoreCase))
+            {
+                mvcBuilder.AddRazorRuntimeCompilation();
+            }
 
             //DB Context
             services.AddDbContext<BookingManagementCmsContext>(options =>
