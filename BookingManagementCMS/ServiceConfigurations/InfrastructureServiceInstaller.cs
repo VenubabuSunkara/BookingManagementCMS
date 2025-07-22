@@ -36,8 +36,8 @@ namespace CMS.ServiceConfigurations
             #endregion
 
             #region Register Services and Repos
-            services.AddScoped<IDriverAndVehicleService, DriverAndVehicleService>();
-            services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
+            //services.AddScoped<IDriverAndVehicleService, DriverAndVehicleService>();
+            //services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
             #endregion
         }
 
