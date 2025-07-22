@@ -14,6 +14,11 @@ namespace CMS.ServiceConfigurations
     {
         public void Install(IServiceCollection services, IConfiguration configuration)
         {
+            //DB Context
+            services.AddDbContext<BookingManagementCmsContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            // ====== Add services ======
             var mvcBuilder = services.AddControllersWithViews();
 
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? string.Empty;
@@ -22,22 +27,24 @@ namespace CMS.ServiceConfigurations
                 mvcBuilder.AddRazorRuntimeCompilation();
             }
 
-            //DB Context
-            services.AddDbContext<BookingManagementCmsContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            // In-memory cache (fast but local to server)
+            services.AddMemoryCache();
 
-            services.AddExceptionHandler<GlobalExceptionHandler>();
-            services.AddProblemDetails(options => options.CustomizeProblemDetails = ctx => ctx.ProblemDetails.Extensions.Add("nodeId", Environment.MachineName));
+            // Distributed cache (example using in-memory, swap with Redis/SQL Server if needed)
+            services.AddDistributedMemoryCache(); // Or AddStackExchangeRedisCache()
+
+            //services.AddStackExchangeRedisCache(options =>
+            //{
+            //    options.Configuration = "localhost:6379"; // Adjust to your Redis server
+            //});
+
+            //services.AddExceptionHandler<GlobalExceptionHandler>();
+            //services.AddProblemDetails(options => options.CustomizeProblemDetails = ctx => ctx.ProblemDetails.Extensions.Add("nodeId", Environment.MachineName));
             services.AddHttpContextAccessor();
 
             #region RegisterUtilities
             services.AddScoped<IRemoteHostIpAddress, RemoteHostIpAddress>();
             services.AddScoped<ILogError, LogError>();
-            #endregion
-
-            #region Register Services and Repos
-            //services.AddScoped<IDriverAndVehicleService, DriverAndVehicleService>();
-            //services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
             #endregion
         }
 
