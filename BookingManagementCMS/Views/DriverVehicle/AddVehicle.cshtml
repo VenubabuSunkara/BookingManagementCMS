@@ -1,0 +1,151 @@
+﻿@model Entities.DriverAndVehicle
+
+@{
+    ViewData["Title"] = "AddVehicle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Add New Driver Vehicle</h5>
+                        </div>
+                        <div class="card-body">
+                            <form class="theme-form mega-form">
+                                <div class="mb-3">
+                                    <label asp-for="DriverFirstName" class="control-label"> Driver First Name</label>
+                                    <input asp-for="DriverFirstName" class="form-control" />
+                                    <span asp-validation-for="DriverFirstName" class="text-danger" placeholder="first name"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="DriverLastName" class="control-label"></label>
+                                    <input asp-for="DriverLastName" class="form-control" />
+                                    <span asp-validation-for="DriverLastName" class="text-danger"></span>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="DriverContact" class="control-label"></label>
+                                    <input asp-for="DriverContact" class="form-control" />
+                                    <span asp-validation-for="DriverContact" class="text-danger"></span>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="DriverEmail" class="control-label"></label>
+                                    <input asp-for="DriverEmail" class="form-control" />
+                                    <span asp-validation-for="DriverEmail" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="DriverLicenceNumber" class="control-label"></label>
+                                    <input asp-for="DriverLicenceNumber" class="form-control" />
+                                    <span asp-validation-for="DriverLicenceNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Description" class="control-label"></label>
+                                    <input asp-for="Description" class="form-control" />
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Insurance Valid Until</label>
+                                    <input class="form-control" type="text" placeholder="Insurance Valid Until" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Pollution Certificate Number</label>
+                                    <input class="form-control" type="text" placeholder="Pollution Certificate Number" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Color</label>
+                                    <input class="form-control" type="text" placeholder="Color" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="car-type" class="form-label-title">Fuel Typ</label>
+                                    <select id="car-type" class="js-example-basic-single col-sm-12">
+                                        <option value="MI">Petrol</option>
+                                        <option value="ME">Diesel</option>
+                                        <option value="DU">Electric</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Owner Name</label>
+                                    <input class="form-control" type="text" placeholder="Owner Name" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Ownership</label>
+                                    <input class="form-control" type="number" placeholder="Ownership e.g(1,2)" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">
+                                        Upload Car Image here
+                                    </label>
+                                    <div class="dropzone" id="singleFileUpload">
+                                        <div class="dz-message needsclick">
+                                            <i class="icon-cloud-up"></i>
+                                            <h6>Drop files here or click to upload.</h6>
+                                            <span class="note needsclick">
+                                                (This is just a demo dropzone. Selected files
+                                                are <strong>not</strong> actually
+                                                uploaded.)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Facility</label>
+                                    <input class="form-control" type="text" name="tags" value="pfTag1,pfTag2,pfTag3"
+                                           data-role="tagsinput" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Fare/km</label>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">$ </span>
+                                        <input class="form-control" placeholder="20" type="text"
+                                               aria-label="Amount (to the nearest dollar)" />
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="car-type" class="form-label-title">Car Type</label>
+                                    <select id="car-type" class="js-example-basic-single col-sm-12">
+                                        <option value="MI">Mini</option>
+                                        <option value="ME">Medium</option>
+                                        <option value="DU">Standard</option>
+                                        <option value="CY">Sadan</option>
+                                        <option value="TA">Luxury</option>
+                                        <option value="TA">Tempo Travel</option>
+                                        <option value="DE">Mini Bus</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer text-end">
+                            <button class="btn btn-primary me-3">Submit</button>
+                            <button class="btn btn-outline-primary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
