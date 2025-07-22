@@ -1,11 +1,15 @@
 using CMS.Extensions;
 using CMS.ServiceConfigurations;
+using Data;
 using Entities;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Repository;
+using Repository.Interfaces;
+using Service.Interfaces;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,8 +35,15 @@ builder.Services.AddDistributedMemoryCache(); // Or AddStackExchangeRedisCache()
 //    options.Configuration = "localhost:6379"; // Adjust to your Redis server
 //});
 //Add services to the container.
-builder.Services
-       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
+//builder.Services
+//       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
+
+#region Register Services and Repos
+//builder.Services.AddScoped<IDriverAndVehicleService, DriverAndVehicleService>();
+// or if there’s an interface:
+builder.Services.AddScoped<DriverAndVehicleService>();
+builder.Services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
+#endregion
 
 var app = builder.Build();
 
@@ -68,7 +79,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthorization();
-
+app.MapControllers();
 // ====== MVC Route ======
 app.MapControllerRoute(
     name: "default",

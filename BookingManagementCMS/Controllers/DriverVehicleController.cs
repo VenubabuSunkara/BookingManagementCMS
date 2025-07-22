@@ -15,5 +15,17 @@ namespace BookingManagementCMS.Controllers
         {
             return View(await _driverVehicleRepository.GetAllAsync());
         }
+        public async Task<IActionResult> Create(CancellationToken token)
+        {
+            if (token.IsCancellationRequested)
+                return await Task.Run(() =>
+                {
+                    return View("Index");
+                }, token);
+            return await Task.Run(() =>
+              {
+                  return View("AddVehicle");
+              }, token);
+        }
     }
 }
