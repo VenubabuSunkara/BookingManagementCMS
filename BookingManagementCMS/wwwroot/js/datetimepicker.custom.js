@@ -27,7 +27,7 @@
     //Date only
     $(function () {
         $('#dt-date').datetimepicker({
-            format: 'L'
+            format: 'YYYY-MM-DD'
         });
     });
 

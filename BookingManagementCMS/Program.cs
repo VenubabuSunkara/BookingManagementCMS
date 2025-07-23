@@ -15,29 +15,13 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<BookingManagementCmsContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//Add services to the container.
+builder.Services
+       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
 
 // ====== Configure log4net ======
 builder.Logging.ClearProviders();
 builder.Logging.AddLog4Net("log4net.config"); // Ensure log4net.config exists
-
-// ====== Add services ======
-builder.Services.AddControllersWithViews();
-
-// In-memory cache (fast but local to server)
-builder.Services.AddMemoryCache();
-
-// Distributed cache (example using in-memory, swap with Redis/SQL Server if needed)
-builder.Services.AddDistributedMemoryCache(); // Or AddStackExchangeRedisCache()
-
-//builder.Services.AddStackExchangeRedisCache(options =>
-//{
-//    options.Configuration = "localhost:6379"; // Adjust to your Redis server
-//});
-//Add services to the container.
-//builder.Services
-//       .InstallServices(builder.Configuration, typeof(IServiceInstaller).Assembly);
 
 #region Register Services and Repos
 //builder.Services.AddScoped<IDriverAndVehicleService, DriverAndVehicleService>();

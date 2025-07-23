@@ -1,14 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CMS.Models;
+using Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Interfaces;
+using System.Security.Cryptography;
 
 namespace CMS.Controllers
 {
-    public class PramotionController : Controller
+    public class PramotionController(IPramotionRepository _pramotionRepository) : Controller
     {
-        // GET: PramotionController
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            return View();
+            var pramotions = await _pramotionRepository.GetAllPramotinsAsync(cancellationToken);
+            return View(pramotions);
         }
 
         // GET: PramotionController/Details/5
@@ -27,16 +32,40 @@ namespace CMS.Controllers
         // POST: PramotionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(PramotionViewModel pramotionViewModel, CancellationToken token)
         {
-            try
+            if (token.IsCancellationRequested)
+                return await Task.Run(() =>
+                {
+                    return RedirectToAction(nameof(Index));
+                }, token);
+
+            if (!ModelState.IsValid)
+                return await Task.Run(() =>
+                {
+                    return View();
+                }, token);
+
+            //Bing promotion info
+            CouponCode pramotionDetails = new()
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+                Name = pramotionViewModel.Name ?? string.Empty,
+                Code = pramotionViewModel.Code ?? string.Empty,
+                ValidityFrom = pramotionViewModel.ValidityFrom != null ? DateOnly.FromDateTime(pramotionViewModel.ValidityFrom.Value) : null,
+                ValidityTo = pramotionViewModel.ValidityTo != null ? DateOnly.FromDateTime(pramotionViewModel.ValidityTo.Value) : null,
+                RangeMin = pramotionViewModel.RangeMin,
+                RangeMax = pramotionViewModel.RangeMax,
+                MediaUrl = pramotionViewModel.MediaUrl ?? string.Empty,
+                IsActive = pramotionViewModel.IsActive,
+                CreatedOn = DateTime.UtcNow,
+                UpdatedOn = DateTime.UtcNow
+            };
+
+            var pramotionCreationStatus = await _pramotionRepository.CreatePramotionAsync(pramotionDetails, token);
+            return await Task.Run(() =>
             {
-                return View();
-            }
+                return RedirectToAction(nameof(Create));
+            }, token);
         }
 
         // GET: PramotionController/Edit/5
