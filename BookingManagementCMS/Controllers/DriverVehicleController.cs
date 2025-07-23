@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities;
+using Microsoft.AspNetCore.Mvc;
 using Repository.Interfaces;
 
 namespace BookingManagementCMS.Controllers
 {
-    public class DriverVehicleController : Controller
+    public class DriverVehicleController_1 : Controller
     {
         private readonly IDriverVehicleRepository _driverVehicleRepository;
-        public DriverVehicleController(IDriverVehicleRepository driverVehicleRepository)
+        public DriverVehicleController_1(IDriverVehicleRepository driverVehicleRepository)
         {
             _driverVehicleRepository = driverVehicleRepository;
         }
@@ -20,11 +21,11 @@ namespace BookingManagementCMS.Controllers
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
                 {
-                    return View("Index");
+                    return View("Index", new DriverAndVehicle());
                 }, token);
             return await Task.Run(() =>
               {
-                  return View("AddVehicle");
+                  return View("AddVehicle", new DriverAndVehicle());
               }, token);
         }
     }
