@@ -1,109 +1,118 @@
-﻿@{
+﻿@using CMS.Models;
+
+@model PramotionViewModel;
+
+@{
     ViewData["Title"] = "Create Pramotion";
 }
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="row">
-                <div class="col-sm-12">
-                    <!--Pramotion detail start-->
-                    <div class="card">
-                        <div class="card-header">
-                            <h5>Add New Driver</h5>
-                        </div>
-                        <div class="card-body">
-                            <form class="theme-form mega-form">
-                                <div class="mb-3">
-                                    <label class="form-label-title">Driver Name</label>
-                                    <input class="form-control"
-                                           type="text"
-                                           placeholder="Driver Name" />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label-title">
-                                        Upload Driver Image here
-                                    </label>
-
-                                    <div class="dropzone" id="singleFileUpload">
-                                        <div class="dz-message needsclick">
-                                            <i class="icon-cloud-up"></i>
-                                            <h6>Drop files here or click to upload.</h6>
-                                            <span class="note needsclick">
-                                                (This is just a demo dropzone. Selected files
-                                                are <strong>not</strong> actually
-                                                uploaded.)
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="gender" class="form-label-title">Gender</label>
-                                    <select id="gender"
-                                            class="form-control js-example-basic-single col-sm-12">
-                                        <option value="MA">Male</option>
-                                        <option value="FE">Female</option>
-                                        <option value="HO">Other</option>
-                                    </select>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label-title">
-                                        Date of Birthdate
-                                    </label>
-                                    <div class="input-group date"
-                                         id="dt-date"
-                                         data-target-input="nearest">
-                                        <div class="input-group">
-                                            <input class="datepicker-here form-control digits"
-                                                   type="text"
-                                                   data-language="en"
-                                                   data-target="#dt-date" />
-
-                                            <div class="input-group-text"
-                                                 data-target="#dt-date"
-                                                 data-toggle="datetimepicker">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mb-3 choose">
-                                    <label class="form-label-title">ID Document </label>
-                                    <input class="form-control"
-                                           type="file"
-                                           data-bs-original-title=""
-                                           title="" />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label-title">Contact Number</label>
-                                    <input class="form-control"
-                                           type="Number"
-                                           placeholder="Contact Number" />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label-title">
-                                        Email Address
-                                    </label>
-                                    <input class="form-control"
-                                           type="email"
-                                           placeholder=" Email address" />
-                                </div>
-                            </form>
-                        </div>
-                        <div class="card-footer text-end">
-                            <button class="btn btn-primary me-3">Submit</button>
-                            <button class="btn btn-outline-primary">Cancel</button>
-                        </div>
+    <div class="card">
+        <div class="card-header">
+            <h5>Pramotion Information</h5>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Pramotion" asp-action="Create" asp-antiforgery="true" method="post" class="theme-form mega-form">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Name</label>
+                        <input asp-for="Name"
+                               class="form-control"
+                               type="text"
+                               placeholder="Name" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
-                    <!--Pramotion detail end-->
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Code</label>
+                        <input asp-for="Code"
+                               class="form-control"
+                               type="text"
+                               placeholder="Code" />
+                        <span asp-validation-for="Code" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">
+                            Start Date
+                        </label>
+                        <div class="input-group date"
+                             id="dt-date"
+                             data-target-input="nearest">
+                            <div class="input-group">
+                                <input asp-for="ValidityFrom"
+                                       class="datepicker-here form-control digits"
+                                       type="text"
+                                       data-language="en"
+                                       data-target="#dt-date" />
+
+                                <div class="input-group-text"
+                                     data-target="#dt-date"
+                                     data-toggle="datetimepicker">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ValidityFrom" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">
+                            End Date
+                        </label>
+                        <div class="input-group date"
+                             id="dt-date"
+                             data-target-input="nearest">
+                            <div class="input-group">
+                                <input asp-for="ValidityTo"
+                                       class="datepicker-here form-control digits"
+                                       type="text"
+                                       data-language="en"
+                                       data-target="#dt-date" />
+
+                                <div class="input-group-text"
+                                     data-target="#dt-date"
+                                     data-toggle="datetimepicker">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ValidityTo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Minimum Range</label>
+                        <input asp-for="RangeMin"
+                               class="form-control"
+                               type="text"
+                               placeholder="Minimum Range" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Maximum Range</label>
+                        <input asp-for="RangeMax"
+                               class="form-control"
+                               type="text"
+                               placeholder="Maximum Range" />
+                    </div>
+
+                    <div class="col-sm-12">
+                        <label class="form-label-title mt-3">Media Url</label>
+                        <input asp-for="MediaUrl"
+                               class="form-control"
+                               type="text"
+                               placeholder="Media Url" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">IsActive</label>
+                        <input asp-for="IsActive"
+                               type="checkbox" />
+                    </div>
                 </div>
-            </div>
+                <button class="btn btn-primary mt-3">Save Change</button>
+            </form>
         </div>
     </div>
 </div>
