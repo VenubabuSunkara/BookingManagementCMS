@@ -11,10 +11,11 @@ public partial class Role
     [Key]
     public int Id { get; set; }
 
-    [StringLength(100)]
     [Unicode(false)]
+    [Required(ErrorMessage = "Role name is required.")]
+    [StringLength(100, ErrorMessage = "Role name cannot exceed 100 characters.")]
     public string Name { get; set; } = null!;
-
+    [StringLength(250, ErrorMessage = "Notes cannot exceed 250 characters.")]
     public string? Notes { get; set; }
 
     public int? CreatedBy { get; set; }

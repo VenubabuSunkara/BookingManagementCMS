@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Repository;
 using Repository.Interfaces;
+using Service;
 using Service.Interfaces;
 using System.Text.Json;
 
@@ -43,6 +44,8 @@ builder.Services.AddDistributedMemoryCache(); // Or AddStackExchangeRedisCache()
 // or if there’s an interface:
 builder.Services.AddScoped<DriverAndVehicleService>();
 builder.Services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
+builder.Services.AddScoped<RolesService>();
+builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 #endregion
 
 var app = builder.Build();

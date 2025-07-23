@@ -1,0 +1,158 @@
+﻿@using Entities
+@model IEnumerable<Role>
+@{
+    ViewData["Title"] = "Roles List";
+    int currentPage = (int)ViewData["CurrentPage"];
+    int totalPages = (int)ViewData["TotalPages"];
+    int pageSize = (int)ViewData["PageSize"];
+}
+
+<div class="container-fluid">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+
+                <div class="card-header card-header--2 d-flex justify-content-between align-items-center">
+                    <h5>All Roles</h5>
+
+                    <div class="d-flex align-items-center">
+                        <!-- PageSize Dropdown -->
+                        @{
+                            var pageSizeOptions = new[] { 5, 10, 20, 50 };
+                            var currentPageSize = (int)ViewData["PageSize"];
+                        }
+                        <form method="get" class="d-flex align-items-center me-3">
+                            <label for="pageSize" class="me-2">Show</label>
+                            <select name="pageSize" id="pageSize" class="form-select form-select-sm me-2" style="width: auto;" onchange="this.form.submit()">
+                                @foreach (var size in pageSizeOptions)
+                                {
+                                    <option value="@size" selected="@(size == currentPageSize ? "selected" : null)">
+                                        @size
+                                    </option>
+                                }
+                            </select>
+                            <input type="hidden" name="page" value="1" />
+                        </form>
+                        <a href="@Url.ActionLink("Create", "Roles")" class="btn btn-theme">
+                            <i data-feather="plus-square"></i> Add New
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="table-responsive table-desi">
+                        <table class="all-cars-table table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Notes</th>
+                                    <th>Modified Date</th>
+                                    <th>View</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var info in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="#">
+                                                <span class="d-block fw-bold">@info.Name</span>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-primary"> @info.Notes</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-primary"> @info.UpdatedAt</span>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.ActionLink("Details", "Roles", new { id = info.Id })">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Edit", "Roles", new { id = info.Id })">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                            </a>
+
+                                        </td>
+                                        <td>
+                                            <form asp-action="DeleteConfirmed" asp-controller="Roles" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@info.Id" />
+                                                <button type="submit"
+                                                        class="btn btn-sm"
+                                                        style="background-color: #5b6bc0; border: none; padding: 6px 12px; border-radius: 8px; width: 75px;"
+                                                        onclick="return confirm('Are you sure you want to permanently delete this role?');"
+                                                        title="Delete">
+                                                    <i class="fa fa-trash-o" style="color: red; font-size: 1.25rem;"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-box">
+                    <nav class="ms-auto me-auto" aria-label="...">
+                        <ul class="pagination pagination-primary">
+
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="?page=@(currentPage - 1)&pageSize=@pageSize">Previous</a>
+                            </li>
+
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <li class="page-item @(i == currentPage ? "active" : "")">
+                                    <a class="page-link" href="?page=@i&pageSize=@pageSize">@i</a>
+                                </li>
+                            }
+
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <a class="page-link" href="?page=@(currentPage + 1)&pageSize=@pageSize">Next</a>
+                            </li>
+
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@* 
+<!-- Auto dismiss success alert -->
+<script>
+    setTimeout(function () {
+        var alert = document.getElementById('successAlert');
+        if (alert) {
+            var bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+            bsAlert.close();
+        }
+    }, 3000);
+</script>
+ *@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            var alert = document.getElementById('successAlert');
+            if (alert) {
+                alert.classList.remove('show'); 
+            }
+        }, 3000);
+    });
+</script>
+
