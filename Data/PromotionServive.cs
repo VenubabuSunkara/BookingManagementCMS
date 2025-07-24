@@ -10,8 +10,12 @@ using System.Threading.Tasks;
 
 namespace Service;
 
-public class PramotionServive(BookingManagementCmsContext _context) : IPramotionServive
+public class PromotionServive(BookingManagementCmsContext _context) : IPromotionServive
 {
+    public IQueryable<CouponCode> GetQuarablePramotionData()
+    {
+        return _context.CouponCodes.AsQueryable();
+    }
     /// <summary>
     /// Get all pramotions info
     /// </summary>

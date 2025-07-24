@@ -1,4 +1,6 @@
 ﻿
+using Repository;
+using Repository.Interfaces;
 using Service;
 using Service.Interfaces;
 
@@ -8,6 +10,7 @@ public class ServiceAccessLayerServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<IPramotionServive, PramotionServive>();
+        services.AddTransient<IPromotionServive, PromotionServive>();
+        services.AddTransient<IDataTableRepository, DataTableRepository>();
     }
 }

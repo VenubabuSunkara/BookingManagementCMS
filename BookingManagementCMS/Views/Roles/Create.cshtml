@@ -1,0 +1,78 @@
+﻿@model Entities.Role
+
+@{
+    var isEdit = Model?.Id > 0;
+    var buttonText = isEdit ? "Update" : "Create";
+    ViewData["Title"] = isEdit ? "Edit Role" : "Create Role";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>@ViewData["Title"]</h5>
+                        </div>
+                        <div class="card-body">
+                            <form asp-action="Save" asp-controller="Roles" method="post" class="theme-form mega-form" id="roleForm">
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(m => m.Id)
+
+                                <div class="mb-3">
+                                    <label asp-for="Name" class="control-label">Role Name</label>
+                                    <input asp-for="Name" class="form-control" id="RoleName" />
+                                    <span asp-validation-for="Name" class="text-danger" id="NameValidation"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label asp-for="Notes" class="control-label">Role Description</label>
+                                    <input asp-for="Notes" class="form-control" />
+                                    <span asp-validation-for="Notes" class="text-danger"></span>
+                                </div>
+
+                                <div class="card-footer text-end">
+                                    <button type="submit" class="btn btn-primary me-3" id="submitBtn">@buttonText</button>
+                                    <a asp-action="Index" class="btn btn-outline-primary">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#submitBtn').click(function (e) {
+                e.preventDefault(); 
+                let name = $('#RoleName').val().trim();
+                let id = $('input[name="Id"]').val() || 0;
+
+                if (!name) {
+                    $('#NameValidation').text('Role name is required.');
+                    return;
+                }
+
+                $.get('/Roles/IsRoleNameAvailable', { name, id }, function (isAvailable) {
+                    if (!isAvailable) {
+                        $('#NameValidation').text('This role name already exists.');
+                    } else {
+                        $('#NameValidation').text('');
+                        $('#roleForm').submit();
+                    }
+                }).fail(function () {
+                    $('#NameValidation').text('Error checking role name. Try again.');
+                });
+            });
+        });
+    </script>
+}

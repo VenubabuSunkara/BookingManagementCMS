@@ -9,6 +9,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Repository;
 using Repository.Interfaces;
+using Service;
 using Service.Interfaces;
 using System.Text.Json;
 
@@ -27,6 +28,8 @@ builder.Logging.AddLog4Net("log4net.config"); // Ensure log4net.config exists
 // or if there’s an interface:
 builder.Services.AddScoped<DriverAndVehicleService>();
 builder.Services.AddScoped<IDriverVehicleRepository, DriverVehicleRepository>();
+builder.Services.AddScoped<RolesService>();
+builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 #endregion
 
 var app = builder.Build();

@@ -11,8 +11,12 @@ using System.Threading.Tasks;
 
 namespace Repository;
 
-public class PramotionRepository(IPramotionServive _pramotionServive) : IPramotionRepository
+public class PromotionRepository(IPromotionServive _pramotionServive) : IPromotionRepository
 {
+    public IQueryable<CouponCode> GetQuarablePramotionData()
+    {
+        return _pramotionServive.GetQuarablePramotionData();
+    }
     /// <summary>
     /// Get all pramotions info
     /// </summary>
