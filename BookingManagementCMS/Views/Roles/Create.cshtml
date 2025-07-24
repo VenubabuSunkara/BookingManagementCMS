@@ -53,7 +53,7 @@
     <script>
         $(document).ready(function () {
             $('#submitBtn').click(function (e) {
-                e.preventDefault(); // stop form initially
+                e.preventDefault(); 
                 let name = $('#RoleName').val().trim();
                 let id = $('input[name="Id"]').val() || 0;
 
@@ -67,7 +67,7 @@
                         $('#NameValidation').text('This role name already exists.');
                     } else {
                         $('#NameValidation').text('');
-                        $('#roleForm').submit(); // submit only if valid
+                        $('#roleForm').submit();
                     }
                 }).fail(function () {
                     $('#NameValidation').text('Error checking role name. Try again.');
