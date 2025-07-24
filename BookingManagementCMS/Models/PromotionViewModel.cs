@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CMS.Models;
 
-public class PramotionViewModel
+public class PromotionViewModel
 {
     [StringLength(200, ErrorMessage = "You have exceeded the maximum allowed characters.")]
     public string? Name { get; set; }

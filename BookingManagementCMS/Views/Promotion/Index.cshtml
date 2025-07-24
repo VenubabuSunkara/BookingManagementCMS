@@ -1,0 +1,175 @@
+﻿@{
+    ViewData["Title"] = "Promotions List";
+}
+
+<style>
+    table.dataTable {
+        table-layout: fixed;
+        word-wrap: break-word;
+        width: 100% !important;
+    }
+
+    .all-cars-table th, .all-cars-table td {
+        white-space: normal !important;
+        vertical-align: middle;
+    }
+
+    /* .pagination-box {
+        margin-top: 20px;
+    } */
+
+    /* Align DataTable controls */
+    div.dataTables_wrapper div.dataTables_length {
+        float: left;
+        padding-left: 15px;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        float: right;
+        padding-right: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate{
+        margin-left: 0px;
+        border:none !important;
+    }
+</style>
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Promotions</h5>
+                    </div>
+                    <form class="d-inline-flex">
+                        <a asp-controller="Promotion" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <!-- Removed table-responsive to prevent scroll -->
+                    <div class="table-desi">
+                        <table id="dtPromotion" class="all-cars-table table table-striped w-100">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Code</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>MinRange</th>
+                                    <th>MaxRange</th>
+                                    <th>View</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#dtPromotion').DataTable({
+                processing: true,
+                serverSide: true,
+                info: false, // Hide "Showing X to Y of Z entries"
+                ajax: {
+                    url: '/Promotion/LoadData',
+                    type: 'POST'
+                },
+                language: {
+                    processing: `
+                        <div style="text-align:center;padding:20px;">
+                            <i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i>
+                            <span class="sr-only">Loading...</span>
+                        </div>`
+                },
+                drawCallback: function (settings) {
+                    customizePagination(table);
+                },
+                columns: [
+                    { data: 'name', autoWidth: true },
+                    { data: 'code', autoWidth: true },
+                    { data: 'validityFrom', autoWidth: true },
+                    { data: 'validityTo', autoWidth: true },
+                    { data: 'rangeMin', autoWidth: true },
+                    { data: 'rangeMax', autoWidth: true },
+                    {
+                        data: 'id',
+                        render: function (data, type, row) {
+                            return `<a href="/YourController/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
+                        }
+                    },
+                    {
+                        data: 'id',
+                        render: function (data, type, row) {
+                            return `<a href="/YourController/Edit/${data}"><i class="fa fa-pencil-square-o"aria-hidden="true"></i></a>`
+                        }
+                    },
+                    {
+                        data: 'id',
+                        render: function (data, type, row) {
+                            return `<a href="/YourController/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                        }
+                    }
+                ]
+            });
+        });
+
+        function customizePagination(table) {
+            const pagination = $('#dtPromotion_paginate');
+            const currentPage = table.page.info().page + 1;
+            const totalPages = table.page.info().pages;
+
+            let customPagination = `
+                <div class="pagination-box">
+                  <div class="dtpagination-height my-4">
+                    <nav class="ms-auto me-auto" aria-label="...">
+                        <ul class="pagination pagination-primary justify-content-center">
+                            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                                <a class="page-link" href="javascript:void(0)" data-page="prev">Previous</a>
+                            </li>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                customPagination += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a>
+                    </li>`;
+            }
+
+            customPagination += `
+                            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                                <a class="page-link" href="javascript:void(0)" data-page="next">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div></div>`;
+
+            pagination.html(customPagination);
+
+            $('.pagination-box .page-link').off('click').on('click', function () {
+                const page = $(this).data('page');
+                if (page === 'next') {
+                    table.page('next').draw('page');
+                } else if (page === 'prev') {
+                    table.page('previous').draw('page');
+                } else {
+                    table.page(parseInt(page) - 1).draw('page');
+                }
+            });
+        }
+    </script>
+}

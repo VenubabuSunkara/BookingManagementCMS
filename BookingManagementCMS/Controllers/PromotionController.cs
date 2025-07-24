@@ -2,18 +2,27 @@
 using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repository;
 using Repository.Interfaces;
 using System.Security.Cryptography;
 
 namespace CMS.Controllers
 {
-    public class PramotionController(IPramotionRepository _pramotionRepository) : Controller
+    public class PromotionController(IPromotionRepository _pramotionRepository,
+                                     IDataTableRepository _dataTableRepository) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var pramotions = await _pramotionRepository.GetAllPramotinsAsync(cancellationToken);
-            return View(pramotions);
+            return await Task.Run(() => View(), cancellationToken);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LoadData(DatatableRequest request, CancellationToken cancellationToken)
+        {
+            var promotions = _pramotionRepository.GetQuarablePramotionData();
+            var result = await _dataTableRepository.GetDataAsync<CouponCode>(promotions, request);
+            return Json(result);
         }
 
         // GET: PramotionController/Details/5
@@ -32,7 +41,7 @@ namespace CMS.Controllers
         // POST: PramotionController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(PramotionViewModel pramotionViewModel, CancellationToken token)
+        public async Task<IActionResult> Create(PromotionViewModel pramotionViewModel, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
@@ -47,7 +56,7 @@ namespace CMS.Controllers
                 }, token);
 
             //Bing promotion info
-            CouponCode pramotionDetails = new()
+            CouponCode promotionDetails = new()
             {
                 Name = pramotionViewModel.Name ?? string.Empty,
                 Code = pramotionViewModel.Code ?? string.Empty,
@@ -61,10 +70,10 @@ namespace CMS.Controllers
                 UpdatedOn = DateTime.UtcNow
             };
 
-            var pramotionCreationStatus = await _pramotionRepository.CreatePramotionAsync(pramotionDetails, token);
+            var promotionCreationStatus = await _pramotionRepository.CreatePramotionAsync(promotionDetails, token);
             return await Task.Run(() =>
             {
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Index));
             }, token);
         }
 

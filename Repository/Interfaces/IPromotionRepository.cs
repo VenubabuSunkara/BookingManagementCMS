@@ -6,10 +6,11 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Interfaces;
+namespace Repository.Interfaces;
 
-public interface IPramotionServive
+public interface IPromotionRepository
 {
+    IQueryable<CouponCode> GetQuarablePramotionData();
     Task<IEnumerable<CouponCode>> GetAllPramotinsAsync(CancellationToken cancellationToken);
     Task<CouponCode?> GetPramotionByIdAsync(Expression<Func<CouponCode, bool>> expression, CancellationToken cancellationToken);
     Task<bool> CreatePramotionAsync(CouponCode couponCode, CancellationToken cancellationToken);
