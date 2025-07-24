@@ -63,6 +63,11 @@ public partial class DriverAndVehicle
     [Column(TypeName = "datetime")]
     public DateTime? UpdatedOn { get; set; }
 
+    public bool isApprove { get; set; }
+
+    public string Password { get; set; }
+    public string UsernName { get; set; }
+
     [InverseProperty("DriverVehicle")]
     public virtual ICollection<DriverVehicleMedium> DriverVehicleMedia { get; set; } = new List<DriverVehicleMedium>();
 

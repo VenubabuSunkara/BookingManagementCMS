@@ -18,6 +18,11 @@ namespace Repository
             _service = service;
         }
 
+        public async Task<bool> ApproveAsync(int id, bool isApproved)
+        {
+           return await _service.ApproveAsync(id, isApproved);
+        }
+
         public async Task<int> CountAsync()
         {
             return await _service.CountAsync();

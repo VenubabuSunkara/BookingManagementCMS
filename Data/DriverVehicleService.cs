@@ -50,6 +50,14 @@ namespace Data
             _context.DriverAndVehicles.Add(req);
             await _context.SaveChangesAsync();
         }
+        public async Task<bool> ApproveAsync(int id, bool isApproved)
+        {
+            var entity = await _context.DriverAndVehicles.FindAsync(id) ?? throw new KeyNotFoundException("Not found");
+            entity.isApprove = isApproved;
+            entity.UpdatedOn = DateTime.UtcNow;
+            _context.DriverAndVehicles.Update(entity);
+            return await _context.SaveChangesAsync() > 0;
+        }
 
         public async Task UpdateAsync(int id, DriverAndVehicle req)
         {

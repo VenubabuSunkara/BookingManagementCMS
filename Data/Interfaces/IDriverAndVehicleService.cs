@@ -15,6 +15,7 @@ namespace Service.Interfaces
         Task<IEnumerable<DriverAndVehicle>> SearchAsync(string keyword);
         Task CreateAsync(DriverAndVehicle req);
         Task UpdateAsync(int id, DriverAndVehicle req);
+        Task<bool> ApproveAsync(int id, bool isApproved);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<IEnumerable<DriverAndVehicle>> GetAvailableDriversAsync();
