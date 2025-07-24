@@ -66,4 +66,14 @@ public class PromotionRepository(IPromotionServive _pramotionServive) : IPromoti
     {
         return await _pramotionServive.DeletePramotionAsync(expression, cancellationToken);
     }
+    /// <summary>
+    /// Get the promotion status
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<bool> FindPramotionAsync(Expression<Func<CouponCode, bool>> expression, CancellationToken cancellationToken)
+    {
+        return await _pramotionServive.FindPramotionAsync(expression, cancellationToken);
+    }
 }

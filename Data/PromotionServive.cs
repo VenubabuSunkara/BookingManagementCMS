@@ -77,4 +77,14 @@ public class PromotionServive(BookingManagementCmsContext _context) : IPromotion
     {
         return await _context.CouponCodes.Where(expression).ExecuteDeleteAsync(cancellationToken) > 0;
     }
+    /// <summary>
+    /// Get the promotion status
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<bool> FindPramotionAsync(Expression<Func<CouponCode, bool>> expression, CancellationToken cancellationToken)
+    {
+        return await _context.CouponCodes.AnyAsync(expression, cancellationToken);
+    }
 }

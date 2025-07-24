@@ -3,8 +3,9 @@
 @model PromotionViewModel;
 
 @{
-    ViewData["Title"] = "Create Promotion";
+    ViewData["Title"] = "Edit Promotion";
 }
+
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
@@ -13,7 +14,7 @@
             <h5>Pramotion Information</h5>
         </div>
         <div class="card-body">
-            <form asp-controller="Promotion" asp-action="Create" asp-antiforgery="true" method="post" class="theme-form mega-form">
+            <form asp-controller="Promotion" asp-action="Update" asp-antiforgery="true" method="post" class="theme-form mega-form">
                 <div class="row">
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">Name</label>
@@ -110,13 +111,6 @@
                                type="text"
                                placeholder="Media Url" />
                     </div>
-                    <div class="mb-3 choose">
-                        <label class="form-label-title">Fileupload</label>
-                        <input class="form-control"
-                               type="file"
-                               data-bs-original-title=""
-                               title="" />
-                    </div>
 
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">IsActive</label>
@@ -124,13 +118,11 @@
                                type="checkbox" />
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3">Save Change</button>
+                <input asp-for="promotionId" type="hidden">
+                <button class="btn btn-primary mt-3">Update Change</button>
                 <a asp-controller="Promotion" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
             </form>
         </div>
     </div>
 </div>
 <!-- Container-fluid Ends-->
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
