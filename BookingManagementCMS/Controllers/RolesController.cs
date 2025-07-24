@@ -10,28 +10,29 @@ namespace CMS.Controllers
     public class RolesController : Controller
     {
         private readonly IRolesRepository _rolesRepository;
-        public RolesController(IRolesRepository rolesRepository)
+        private readonly IDataTableRepository _dataTableRepository;
+        public RolesController(IRolesRepository rolesRepository,
+                                     IDataTableRepository dataTableRepository)
         {
             _rolesRepository = rolesRepository;
+            _dataTableRepository = dataTableRepository;
         }
         /// <summary>
         /// Fetching All Roles Data
         /// </summary>
         /// <returns></returns>
-         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
+        [HttpGet]
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var totalRecords = await _rolesRepository.GetAllRolesByPaginationAsync();
-            var rolesQuery = await _rolesRepository.GetAllAsync();
-            var roles = await rolesQuery
-                .OrderByDescending(r => r.Id)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            ViewData["CurrentPage"] = page;
-            ViewData["PageSize"] = pageSize;
-            ViewData["TotalPages"] = (int)Math.Ceiling((double)totalRecords / pageSize);
-            return View(roles);
+            return await Task.Run(() => View(), cancellationToken);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LoadData(DatatableRequest request, CancellationToken cancellationToken)
+        {
+            var roles = _rolesRepository.GetAllAsync();
+            var result = await _dataTableRepository.GetDataAsync<Role>(roles, request);
+            return Json(result);
         }
         /// <summary>
         /// Redirect to create page
@@ -56,7 +57,7 @@ namespace CMS.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         public async Task<IActionResult> Edit(int id, CancellationToken token)
         {
             if (token.IsCancellationRequested)
@@ -110,12 +111,11 @@ namespace CMS.Controllers
                     return NotFound();
                 existingRole.Name = role.Name;
                 existingRole.Notes = role.Notes;
-                existingRole.UpdatedAt = DateTime.UtcNow;
 
                 await _rolesRepository.UpdateAsync(existingRole);
                 TempData["SuccessMessage"] = "Role updated successfully!";
             }
-            else // Create scenario
+            else
             {
                 role.CreatedAt = DateTime.UtcNow;
                 await _rolesRepository.CreateAsync(role);
@@ -123,32 +123,13 @@ namespace CMS.Controllers
             }
             return RedirectToAction("Index");
         }
-        /// <summary>
-        /// Fetching details by id for view
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> Details(int id, CancellationToken token)
-        {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return View("Index");
-                }, token);
-            var role = await _rolesRepository.GetByIdAsync(id);
-            if (role == null)
-                return NotFound();
-
-            return View(role);
-        }
        /// <summary>
        /// Deleting Role by RoleId
        /// </summary>
        /// <param name="id"></param>
        /// <returns></returns>
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken token)
         {
             if (token.IsCancellationRequested)

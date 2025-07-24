@@ -13,6 +13,7 @@ public partial class User
     [Key]
     [Column("UserID")]
     public int UserId { get; set; }
+    //UserName
 
     [StringLength(50)]
     [Unicode(false)]
