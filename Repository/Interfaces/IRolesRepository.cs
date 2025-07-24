@@ -10,7 +10,7 @@ namespace Repository.Interfaces
 {
     public interface IRolesRepository
     {
-        Task<IQueryable<Role>> GetAllAsync();
+        IQueryable<Role> GetAllAsync();
         Task<Role?> GetByIdAsync(int id);
         Task<int> GetAllRolesByPaginationAsync();
         Task<bool> ExistsByNameAsync(string name, int excludeId = 0);
