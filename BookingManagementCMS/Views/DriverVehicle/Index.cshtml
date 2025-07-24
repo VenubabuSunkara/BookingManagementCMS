@@ -41,7 +41,7 @@
                                         <tr>
                                             <td>
                                                 <span>
-                                                    <img src="@info.DriverVehicleMedia.First().MediaValue" alt="@info.VehicleName" />
+                                                    <img src="@info.DriverVehicleMedia?.FirstOrDefault()?.MediaValue" alt="@info.VehicleName" />
                                                 </span>
                                             </td>
                                             <td>

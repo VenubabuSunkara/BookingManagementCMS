@@ -4,12 +4,19 @@ using Repository.Interfaces;
 
 namespace BookingManagementCMS.Controllers
 {
-    public class DriverVehicleController_1 : Controller
+    public class DriverVehicleController : Controller
     {
         private readonly IDriverVehicleRepository _driverVehicleRepository;
-        public DriverVehicleController_1(IDriverVehicleRepository driverVehicleRepository)
+        public DriverVehicleController(IDriverVehicleRepository driverVehicleRepository)
         {
             _driverVehicleRepository = driverVehicleRepository;
+        }
+
+        public async Task<bool> Approve(int DriverVehileId)
+        {
+            if (DriverVehileId == 0)
+                throw new ArgumentException();
+            return await _driverVehicleRepository.ApproveAsync(DriverVehileId, true);
         }
         //
         public async Task<IActionResult> Index()
