@@ -27,6 +27,7 @@ public class PromotionViewModel
 
     public bool IsActive { get; set; }
 
+    public IFormFile? FileUpload { get; set; }
     public string? MediaUrl { get; set; }
     public int promotionId { get; set; }
 }

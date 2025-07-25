@@ -1,4 +1,5 @@
-﻿using CMS.Models;
+﻿using CMS.Helper;
+using CMS.Models;
 using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -95,7 +96,7 @@ namespace CMS.Controllers
                 ValidityTo = pramotionViewModel.ValidityTo,
                 RangeMin = pramotionViewModel.RangeMin,
                 RangeMax = pramotionViewModel.RangeMax,
-                MediaUrl = pramotionViewModel.MediaUrl ?? string.Empty,
+                MediaUrl = pramotionViewModel.FileUpload != null && pramotionViewModel.FileUpload.Length > 0 ? await FileUpload.UploadFileAsync(pramotionViewModel.FileUpload, "Promotions",token) : string.Empty,
                 IsActive = pramotionViewModel.IsActive,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow
@@ -181,7 +182,7 @@ namespace CMS.Controllers
                 ValidityTo = pramotionViewModel.ValidityTo,
                 RangeMin = pramotionViewModel.RangeMin,
                 RangeMax = pramotionViewModel.RangeMax,
-                MediaUrl = pramotionViewModel.MediaUrl ?? string.Empty,
+                MediaUrl = pramotionViewModel.FileUpload != null && pramotionViewModel.FileUpload.Length > 0 ? await FileUpload.UploadFileAsync(pramotionViewModel.FileUpload, "Promotions", token) : pramotionViewModel.MediaUrl ?? string.Empty,
                 IsActive = pramotionViewModel.IsActive,
                 UpdatedOn = DateTime.UtcNow,
                 Id = pramotionViewModel.promotionId

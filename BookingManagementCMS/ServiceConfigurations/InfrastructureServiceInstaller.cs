@@ -1,6 +1,7 @@
 ﻿using CMS.ErrorHandler;
 using Data;
 using Entities;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Repository.Interfaces;
@@ -41,6 +42,12 @@ namespace CMS.ServiceConfigurations
             //services.AddExceptionHandler<GlobalExceptionHandler>();
             //services.AddProblemDetails(options => options.CustomizeProblemDetails = ctx => ctx.ProblemDetails.Extensions.Add("nodeId", Environment.MachineName));
             services.AddHttpContextAccessor();
+
+            //File uploader size limit
+            services.Configure<FormOptions>(opts =>
+            {
+                opts.MultipartBodyLengthLimit = long.MaxValue;
+            });
 
             #region RegisterUtilities
             services.AddScoped<IRemoteHostIpAddress, RemoteHostIpAddress>();

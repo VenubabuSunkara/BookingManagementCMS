@@ -14,7 +14,7 @@
             <h5>Pramotion Information</h5>
         </div>
         <div class="card-body">
-            <form asp-controller="Promotion" asp-action="Update" asp-antiforgery="true" method="post" class="theme-form mega-form">
+            <form asp-controller="Promotion" asp-action="Update" asp-antiforgery="true" enctype="multipart/form-data" method="post" class="theme-form mega-form">
                 <div class="row">
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">Name</label>
@@ -104,13 +104,19 @@
                                placeholder="Maximum Range" />
                     </div>
 
-                    <div class="col-sm-12">
-                        <label class="form-label-title mt-3">Media Url</label>
-                        <input asp-for="MediaUrl"
+                    <div class="mb-3 choose">
+                        <label class="form-label-title">Fileupload</label>
+                        <input asp-for="FileUpload"
                                class="form-control"
-                               type="text"
-                               placeholder="Media Url" />
+                               type="file"
+                               data-bs-original-title=""
+                               title="" />
                     </div>
+                    @if (!string.IsNullOrEmpty(@Model.MediaUrl))
+                    {
+                        <input asp-for="MediaUrl" type="hidden" />
+                        <img src="@Model.MediaUrl" alt="Internal server error" asp-append-version="true" />
+                    }
 
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">IsActive</label>

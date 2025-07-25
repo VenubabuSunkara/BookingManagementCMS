@@ -13,7 +13,7 @@
             <h5>Pramotion Information</h5>
         </div>
         <div class="card-body">
-            <form asp-controller="Promotion" asp-action="Create" asp-antiforgery="true" method="post" class="theme-form mega-form">
+            <form asp-controller="Promotion" asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data" method="post" class="theme-form mega-form">
                 <div class="row">
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">Name</label>
@@ -103,16 +103,10 @@
                                placeholder="Maximum Range" />
                     </div>
 
-                    <div class="col-sm-12">
-                        <label class="form-label-title mt-3">Media Url</label>
-                        <input asp-for="MediaUrl"
-                               class="form-control"
-                               type="text"
-                               placeholder="Media Url" />
-                    </div>
                     <div class="mb-3 choose">
                         <label class="form-label-title">Fileupload</label>
-                        <input class="form-control"
+                        <input asp-for="FileUpload"
+                               class="form-control"
                                type="file"
                                data-bs-original-title=""
                                title="" />
@@ -131,6 +125,6 @@
     </div>
 </div>
 <!-- Container-fluid Ends-->
-@section Scripts {
+@* @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+} *@
