@@ -9,6 +9,7 @@ namespace Repository.Interfaces
 {
     public interface IDriverVehicleRepository
     {
+        IQueryable<DriverAndVehicle> GetAllQuery();
         Task<IEnumerable<DriverAndVehicle>> GetAllAsync();
         Task<DriverAndVehicle?> GetByIdAsync(int id);
         Task<IEnumerable<DriverAndVehicle>> GetPagingAsync(int pageNumber, int pageSize);
