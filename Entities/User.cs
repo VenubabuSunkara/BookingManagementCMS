@@ -6,6 +6,7 @@ namespace Entities;
 public partial class User
 {
     public int UserId { get; set; }
+    //UserName
 
     public string FirstName { get; set; } = null!;
 

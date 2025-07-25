@@ -16,4 +16,5 @@ public interface IPromotionServive
     Task<bool> CreatePramotionAsync(CouponCode couponCode, CancellationToken cancellationToken);
     Task<bool> UpdatePramotionAsync(CouponCode couponCode, CancellationToken cancellationToken);
     Task<bool?> DeletePramotionAsync(Expression<Func<CouponCode, bool>> expression, CancellationToken cancellationToken);
+    Task<bool> FindPramotionAsync(Expression<Func<CouponCode, bool>> expression, CancellationToken cancellationToken);
 }

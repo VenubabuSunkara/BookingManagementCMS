@@ -7,6 +7,9 @@ public partial class Role
 {
     public int Id { get; set; }
 
+    [Unicode(false)]
+    [Required(ErrorMessage = "Role name is required.")]
+    [StringLength(50, ErrorMessage = "Role name cannot exceed 50 characters.")]
     public string Name { get; set; } = null!;
 
     public string? Notes { get; set; }

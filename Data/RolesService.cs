@@ -18,9 +18,9 @@ namespace Service
         {
             _context = context;
         }
-        public async Task<IQueryable<Role>> GetAllAsync()
+        public IQueryable<Role> GetAllAsync()
         {
-            return await Task.FromResult(_context.Roles.AsQueryable());
+            return _context.Roles.AsQueryable().OrderByDescending(r=>r.UpdatedAt);
         }
         public async Task<Role?> GetByIdAsync(int id)
         {
@@ -37,22 +37,29 @@ namespace Service
         }
         public async Task CreateAsync(Role req)
         {
+            if (req != null)
+            {
+                req.CreatedAt= DateTime.UtcNow;
+                req.UpdatedAt = DateTime.UtcNow;
+                //req.CreatedBy = req.CreatedBy;
+                //req.UpdatedBy = req.UpdatedBy;
+            }
             _context.Roles.Add(req);
             await _context.SaveChangesAsync();
         }
         public async Task UpdateAsync(Role updatedRole)
         {
-            var existing = await _context.Roles.FindAsync(updatedRole.Id);
-            if (existing != null)
-            {
-                existing.Name = updatedRole.Name;
-                existing.Notes = updatedRole.Notes;
-                existing.UpdatedAt = DateTime.UtcNow;
+             var existing = await _context.Roles.FindAsync(updatedRole.Id);
+    if (existing != null)
+    {
+        existing.Name = updatedRole.Name;
+        existing.Notes = updatedRole.Notes;
+        existing.UpdatedAt = DateTime.UtcNow;
+        //existing.UpdatedBy = updatedRole.UpdatedBy;
 
-                await _context.SaveChangesAsync();
-            }
+        await _context.SaveChangesAsync();
+    }
         }
-        
         public async Task DeleteAsync(int id)
         {
             var role = await _context.Roles.FindAsync(id);
@@ -62,7 +69,5 @@ namespace Service
                 await _context.SaveChangesAsync();
             }
         }
-
-
     }
 }

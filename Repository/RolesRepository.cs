@@ -22,9 +22,9 @@ namespace Repository
             _service = rolesServices;
         }
 
-        public async Task<IQueryable<Role>> GetAllAsync()
+        public IQueryable<Role> GetAllAsync()
         {
-            return await _service.GetAllAsync();
+            return _service.GetAllAsync();
         }
         public async Task<Role?> GetByIdAsync(int id)
         {

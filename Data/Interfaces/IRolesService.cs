@@ -9,7 +9,7 @@ namespace Service.Interfaces
 {
     public interface IRolesService
     {
-        Task<IQueryable<Role>> GetAllAsync();
+        IQueryable<Role> GetAllAsync();
         Task<Role?> GetByIdAsync(int id);
         Task<int> GetAllRolesByPaginationAsync();
         Task<bool> ExistsByNameAsync(string name, int excludeId = 0);

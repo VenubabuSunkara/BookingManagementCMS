@@ -15,8 +15,8 @@
     }
 
     /* .pagination-box {
-        margin-top: 20px;
-    } */
+                                    margin-top: 20px;
+                                } */
 
     /* Align DataTable controls */
     div.dataTables_wrapper div.dataTables_length {
@@ -29,14 +29,21 @@
         padding-right: 15px;
     }
 
-    .dataTables_wrapper .dataTables_paginate{
+    .dataTables_wrapper .dataTables_paginate {
         margin-left: 0px;
-        border:none !important;
+        border: none !important;
     }
 </style>
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
+    @if (!string.IsNullOrEmpty(Convert.ToString(TempData["PromotionSuccessMessage"])))
+    {
+        <div id="promotionAlertMessage" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            @Convert.ToString(TempData["PromotionSuccessMessage"])
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
@@ -58,7 +65,7 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Code</th>
+                                    <th>Couponcode</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>MinRange</th>
@@ -82,6 +89,14 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            //Hide the success message
+            setTimeout(() =>
+            {
+                $('#promotionAlertMessage').hide();
+            },3000);
+
+            //data table results
             var table = $('#dtPromotion').DataTable({
                 processing: true,
                 serverSide: true,
@@ -110,13 +125,25 @@
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            return `<a href="/YourController/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
+                            return `
+                                    <form method="post" action="/Promotion/Details" onsubmit="event.stopPropagation();" style="display:inline;">
+                                    <input type="hidden" name="id" value="${data}" />
+                                    <button type="submit" class="btn btn-link p-0" title="View" style="border: none; background: none;">
+                                            <i class="fa fa-eye" aria-hidden="true" style="color: #747dc6;"></i>
+                                        </button>
+                                    </form>`;
                         }
                     },
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            return `<a href="/YourController/Edit/${data}"><i class="fa fa-pencil-square-o"aria-hidden="true"></i></a>`
+                            return `
+                                    <form method="post" action="/Promotion/Edit" onsubmit="event.stopPropagation();" style="display:inline;">
+                                    <input type="hidden" name="id" value="${data}" />
+                                    <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+                                            <i class="fa fa-pencil-square-o"aria-hidden="true" style="color: #4aa4d9"></i>
+                                        </button>
+                                    </form>`;
                         }
                     },
                     {
@@ -129,6 +156,7 @@
             });
         });
 
+        //data table pagination
         function customizePagination(table) {
             const pagination = $('#dtPromotion_paginate');
             const currentPage = table.page.info().page + 1;

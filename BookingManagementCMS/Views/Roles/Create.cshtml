@@ -19,20 +19,24 @@
                             <form asp-action="Save" asp-controller="Roles" method="post" class="theme-form mega-form" id="roleForm">
                                 @Html.AntiForgeryToken()
                                 @Html.HiddenFor(m => m.Id)
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label asp-for="Name" class="form-label-title mt-3">Role Name <span class="text-danger">*</span></label>
+                                        <input asp-for="Name"
+                                               class="form-control"
+                                               type="text"
+                                               placeholder="Name" id="RoleName" autocomplete="off" />
+                                        <span asp-validation-for="Name" class="text-danger" id="NameValidation"></span>
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label asp-for="Name" class="control-label">Role Name</label>
-                                    <input asp-for="Name" class="form-control" id="RoleName" />
-                                    <span asp-validation-for="Name" class="text-danger" id="NameValidation"></span>
+                                    <div class="col-sm-6">
+                                        <label asp-for="Notes" class="form-label-title mt-3">Role Description</label>
+                                        <input asp-for="Notes" class="form-control" autocomplete="off" />
+                                        <span asp-validation-for="Notes" class="text-danger"></span>
+                                    </div>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label asp-for="Notes" class="control-label">Role Description</label>
-                                    <input asp-for="Notes" class="form-control" />
-                                    <span asp-validation-for="Notes" class="text-danger"></span>
-                                </div>
-
-                                <div class="card-footer text-end">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-primary me-3" id="submitBtn">@buttonText</button>
                                     <a asp-action="Index" class="btn btn-outline-primary">Cancel</a>
                                 </div>
@@ -49,30 +53,52 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+    $(document).ready(function () {
+        const $nameInput = $('#RoleName');
+        const $validationMessage = $('#NameValidation');
+        const $form = $('#roleForm');
 
-    <script>
-        $(document).ready(function () {
-            $('#submitBtn').click(function (e) {
-                e.preventDefault(); 
-                let name = $('#RoleName').val().trim();
-                let id = $('input[name="Id"]').val() || 0;
+        // Reusable validation function
+        function validateRoleName(name) {
+            if (!name) return 'Role name is required.';
+            if (name.length < 3) return 'Role name must be at least 3 characters.';
+            if (name.length > 50) return 'Role name must not exceed 50 characters.';
+            return '';
+        }
+        // Real-time validation (input, delete, backspace)
+        $nameInput.on('input blur', function () {
+            const name = $nameInput.val().trim();
+            const errorMessage = validateRoleName(name);
+            $validationMessage.text(errorMessage);
+        });
+        // Submit validation
+        $('#submitBtn').click(function (e) {
+            e.preventDefault();
 
-                if (!name) {
-                    $('#NameValidation').text('Role name is required.');
-                    return;
+            const name = $nameInput.val().trim();
+            const id = $('input[name="Id"]').val() || 0;
+            const errorMessage = validateRoleName(name);
+
+            if (errorMessage) {
+                $validationMessage.text(errorMessage);
+                return;
+            }
+
+            // AJAX check
+            $.get('/Roles/IsRoleNameAvailable', { name, id }, function (isAvailable) {
+                if (!isAvailable) {
+                    $validationMessage.text('This role name already exists.');
+                } else {
+                    $validationMessage.text('');
+                    $form.submit();
                 }
-
-                $.get('/Roles/IsRoleNameAvailable', { name, id }, function (isAvailable) {
-                    if (!isAvailable) {
-                        $('#NameValidation').text('This role name already exists.');
-                    } else {
-                        $('#NameValidation').text('');
-                        $('#roleForm').submit();
-                    }
-                }).fail(function () {
-                    $('#NameValidation').text('Error checking role name. Try again.');
-                });
+            }).fail(function () {
+                $validationMessage.text('Error checking role name. Try again.');
             });
         });
-    </script>
+    });
+</script>
+
+
 }
