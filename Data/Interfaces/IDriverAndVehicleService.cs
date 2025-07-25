@@ -10,6 +10,7 @@ namespace Service.Interfaces
     public interface IDriverAndVehicleService
     {
         Task<IEnumerable<DriverAndVehicle>> GetAllAsync();
+        IQueryable<DriverAndVehicle> GetAllQuery();
         Task<DriverAndVehicle?> GetByIdAsync(int id);
         Task<IEnumerable<DriverAndVehicle>> GetPagingAsync(int pageNumber, int pageSize);
         Task<IEnumerable<DriverAndVehicle>> SearchAsync(string keyword);

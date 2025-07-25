@@ -20,7 +20,7 @@ namespace Repository
 
         public async Task<bool> ApproveAsync(int id, bool isApproved)
         {
-           return await _service.ApproveAsync(id, isApproved);
+            return await _service.ApproveAsync(id, isApproved);
         }
 
         public async Task<int> CountAsync()
@@ -51,6 +51,11 @@ namespace Repository
         public async Task<IEnumerable<DriverAndVehicle>> GetAllAsync()
         {
             return await _service.GetAllAsync();
+        }
+
+        public IQueryable<DriverAndVehicle> GetAllQuery()
+        {
+            return _service.GetAllQuery();
         }
 
         public async Task<IEnumerable<DriverAndVehicle>> GetAvailableDriversAsync()

@@ -53,7 +53,7 @@ namespace Data
         public async Task<bool> ApproveAsync(int id, bool isApproved)
         {
             var entity = await _context.DriverAndVehicles.FindAsync(id) ?? throw new KeyNotFoundException("Not found");
-            entity.isApprove = isApproved;
+            entity.IsApprove = isApproved;
             entity.UpdatedOn = DateTime.UtcNow;
             _context.DriverAndVehicles.Update(entity);
             return await _context.SaveChangesAsync() > 0;
@@ -121,6 +121,11 @@ namespace Data
         public async Task<int> CountAsync()
         {
             return await _context.DriverAndVehicles.CountAsync();
+        }
+
+        public IQueryable<DriverAndVehicle> GetAllQuery()
+        {
+            return _context.DriverAndVehicles.AsQueryable();
         }
     }
 

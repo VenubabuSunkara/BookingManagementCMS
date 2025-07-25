@@ -37,7 +37,7 @@ public class LogError(BookingManagementCmsContext _context,
     /// <returns></returns>
     public async Task LogExceptionAsync(string source, string eventCode, string? additionalMessage = null, CancellationToken ct = default)
     {
-        await SaveEventAsync("E", source, eventCode, additionalMessage,ct);
+        await SaveEventAsync("E", source, eventCode, additionalMessage, ct);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class LogError(BookingManagementCmsContext _context,
     /// <returns></returns>
     public async Task LogWarningAsync(string source, string eventCode, string additionalMessage, CancellationToken ct)
     {
-        await SaveEventAsync("W", source, eventCode, additionalMessage,ct);
+        await SaveEventAsync("W", source, eventCode, additionalMessage, ct);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class LogError(BookingManagementCmsContext _context,
             EventMachineName = Environment.MachineName
         };
 
-       await _context.Loggers.AddAsync(errorDetails);
-       await _context.SaveChangesAsync(ct);
+        await _context.Loggers.AddAsync(errorDetails);
+        await _context.SaveChangesAsync(ct);
     }
 }

@@ -36,7 +36,7 @@ namespace CMS.Controllers
         public async Task<IActionResult> LoadData(DatatableRequest request, CancellationToken cancellationToken)
         {
             var promotions = _pramotionRepository.GetQuarablePramotionData();
-            var result = await _dataTableRepository.GetDataAsync<CouponCode>(promotions, request);
+            var result = await _dataTableRepository.GetDataAsync<CouponCode>(promotions, request, []);
             return Json(result);
         }
 

@@ -11,7 +11,7 @@ namespace Repository;
 
 public class DataTableRepository : IDataTableRepository
 {
-    public async Task<DatatableResponse<T>> GetDataAsync<T>(IQueryable<T> query, DatatableRequest request) where T : class
+    public async Task<DatatableResponse<T>> GetDataAsync<T>(IQueryable<T> query, DatatableRequest request,string[] searchColumns) where T : class
     {
         int totalRecords = await query.CountAsync();
 
@@ -19,13 +19,19 @@ public class DataTableRepository : IDataTableRepository
         if (!string.IsNullOrEmpty(request.search?.value))
         {
             string searchValue = request.search.value.ToLower();
-            var props = typeof(T).GetProperties().Where(p => p.PropertyType == typeof(string));
+            var props = typeof(T).GetProperties()
+     .Where(p => p.PropertyType == typeof(string) && searchColumns.Contains(p.Name))
+     .ToArray();
             Expression<Func<T, bool>> predicate = null;
 
             foreach (var prop in props)
             {
+
                 var param = Expression.Parameter(typeof(T), "x");
+
+
                 var propExpr = Expression.Property(param, prop);
+                var notNull = Expression.NotEqual(propExpr, Expression.Constant(null, typeof(string)));
                 var toLowerCall = Expression.Call(propExpr, "ToLower", null);
                 var containsCall = Expression.Call(toLowerCall, "Contains", null, Expression.Constant(searchValue));
                 var lambda = Expression.Lambda<Func<T, bool>>(containsCall, param);
