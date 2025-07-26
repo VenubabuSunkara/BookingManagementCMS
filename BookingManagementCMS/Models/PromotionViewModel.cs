@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CMS.CustomValidationAttributes;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,16 +12,15 @@ public class PromotionViewModel
 
     [Required(ErrorMessage = "This field is required.")]
     [StringLength(200, ErrorMessage = "You have exceeded the maximum allowed characters.")]
-    [Remote(action: "VerifyCouponCode", controller: "Promotion")]
+    [Remote(action: "VerifyCouponCode", controller: "Promotion",AdditionalFields = nameof(promotionId))]
     public string? Code { get; set; }
 
     [Required(ErrorMessage = "This field is required.")]
-    //[DataType(DataType.Date)]
-    public DateOnly? ValidityFrom { get; set; }
+    public DateTime? ValidityFrom { get; set; }
 
     [Required(ErrorMessage = "This field is required.")]
-    //[DataType(DataType.Date)]
-    public DateOnly? ValidityTo { get; set; }
+    [DateComparisonAttribute("ValidityFrom", ErrorMessage = "End date must be greater than the start date.")]
+    public DateTime? ValidityTo { get; set; }
 
     public decimal? RangeMin { get; set; }
     public decimal? RangeMax { get; set; }
