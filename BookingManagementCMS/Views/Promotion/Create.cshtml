@@ -13,26 +13,28 @@
             <h5>Pramotion Information</h5>
         </div>
         <div class="card-body">
-            <form asp-controller="Promotion" asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data" method="post" class="theme-form mega-form">
+            <form asp-controller="Promotion" asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data" method="post" id="promotionCreateForm" class="theme-form mega-form">
                 <div class="row">
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">Name</label>
                         <input asp-for="Name"
                                autocomplete="off"
+                               id="name"
                                class="form-control"
                                type="text"
                                placeholder="Name" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <span asp-validation-for="Name" class="text-danger" id="name-Error"></span>
                     </div>
 
                     <div class="col-sm-6">
                         <label class="form-label-title mt-3">Couponcode</label>
                         <input asp-for="Code"
                                autocomplete="off"
+                               id="couponcode"
                                class="form-control"
                                type="text"
                                placeholder="Code" />
-                        <span asp-validation-for="Code" class="text-danger"></span>
+                        <span asp-validation-for="Code" id="couponcode-Error" class="text-danger"></span>
                     </div>
 
                     <div class="col-sm-6">
@@ -45,6 +47,7 @@
                             <div class="input-group">
                                 <input asp-for="ValidityFrom"
                                        autocomplete="off"
+                                       id="startDate"
                                        class="datepicker-here form-control"
                                        type="text"
                                        data-language="en"
@@ -57,7 +60,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span asp-validation-for="ValidityFrom" class="text-danger"></span>
+                        <span asp-validation-for="ValidityFrom" id="startDate-Error" class="text-danger"></span>
                     </div>
 
                     <div class="col-sm-6">
@@ -70,6 +73,7 @@
                             <div class="input-group">
                                 <input asp-for="ValidityTo"
                                        autocomplete="off"
+                                       id="endDate"
                                        class="datepicker-here form-control"
                                        type="text"
                                        data-language="en"
@@ -82,7 +86,7 @@
                                 </div>
                             </div>
                         </div>
-                        <span asp-validation-for="ValidityTo" class="text-danger"></span>
+                        <span asp-validation-for="ValidityTo" id="endDate-Error" class="text-danger"></span>
                     </div>
 
                     <div class="col-sm-6">
@@ -118,7 +122,8 @@
                                type="checkbox" />
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3">Save Change</button>
+                <button id="promotionFieldsClear" class="btn btn-primary mt-3">Clear Fields</button>
+                <button id="promotionSubmit" class="btn btn-primary mt-3">Save Change</button>
                 <a asp-controller="Promotion" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
             </form>
         </div>
@@ -127,4 +132,34 @@
 <!-- Container-fluid Ends-->
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/promotion-validation.js"></script>
+
+    <!--Validate Form Fields And Clear From Fields-->
+    <script type="text/javascript">
+        $(() => {
+            //Validate Form fields
+            $('#promotionSubmit').on("click",() => {
+                return ValidatePromotions();
+            });
+            //Clear form fileds
+            $('#promotionFieldsClear').on("click",() => {
+                ClearPromotionForm('#promotionCreateForm');
+                return false;
+            });
+            //Change Events
+            $('#name').on("change focusout blur",() => {
+                return validateName();
+            });
+            $('#startDate').on("change focusout blur",() => {
+                return validateStartDate();
+            });
+            $('#endDate').on("change focusout blur",() => {
+                let endDate = validateEndDate();
+                if(endDate)
+                {
+                    return CompareDate();
+                }
+            });
+        })
+    </script>
 }

@@ -7,6 +7,7 @@ namespace CMS.Models;
 
 public class PromotionViewModel
 {
+    [Required(ErrorMessage = "This field is required.")]
     [StringLength(200, ErrorMessage = "You have exceeded the maximum allowed characters.")]
     public string? Name { get; set; }
 

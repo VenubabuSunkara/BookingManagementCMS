@@ -50,11 +50,11 @@ namespace CMS.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [AcceptVerbs("GET", "POST")]
-        public async Task<IActionResult> VerifyCouponCode(string code,int promotionId,CancellationToken token)
+        public async Task<IActionResult> VerifyCouponCode(string code,int promotionId)
         {
             Expression<Func<CouponCode,bool>> expression = promotionId > 0 ? x => x.Id != promotionId && x.Code == code
                                                                            : x => x.Code == code;
-            if (await _pramotionRepository.FindPramotionAsync(expression, token))
+            if (await _pramotionRepository.FindPramotionAsync(expression, CancellationToken.None))
             {
                 return Json($"Coupon code {code} is already in use.");
             }
