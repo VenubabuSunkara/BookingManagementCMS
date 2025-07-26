@@ -232,25 +232,17 @@ namespace CMS.Controllers
             }, token);
         }
 
-        // GET: PramotionController/Delete/5
-        public IActionResult Delete(int id)
+        
+        /// <summary>
+        /// Delete promotion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            return View();
-        }
-
-        // POST: PramotionController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            bool delValue = await _pramotionRepository.DeletePramotionAsync(x => x.Id == id, cancellationToken);
+            return Json(new { delValue });
         }
     }
 }
