@@ -1,11 +1,14 @@
-﻿using CMS.Models;
+﻿using CMS.Helper;
+using CMS.Models;
 using Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Common;
 using Repository;
 using Repository.Interfaces;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -40,13 +43,18 @@ namespace CMS.Controllers
         }
 
         /// <summary>
-        /// Check promotion specific filed existance
+        ///  Check the couponcode existance
         /// </summary>
+        /// <param name="code"></param>
+        /// <param name="promotionId"></param>
+        /// <param name="token"></param>
         /// <returns></returns>
         [AcceptVerbs("GET", "POST")]
-        public async Task<IActionResult> VerifyCouponCode(string code)
+        public async Task<IActionResult> VerifyCouponCode(string code,int promotionId)
         {
-            if (await _pramotionRepository.FindPramotionAsync(c => c.Code == code, CancellationToken.None))
+            Expression<Func<CouponCode,bool>> expression = promotionId > 0 ? x => x.Id != promotionId && x.Code == code
+                                                                           : x => x.Code == code;
+            if (await _pramotionRepository.FindPramotionAsync(expression, CancellationToken.None))
             {
                 return Json($"Coupon code {code} is already in use.");
             }
@@ -91,11 +99,11 @@ namespace CMS.Controllers
             {
                 Name = pramotionViewModel.Name ?? string.Empty,
                 Code = pramotionViewModel.Code ?? string.Empty,
-                ValidityFrom = pramotionViewModel.ValidityFrom,
-                ValidityTo = pramotionViewModel.ValidityTo,
+                ValidityFrom = pramotionViewModel.ValidityFrom.HasValue ? DateOnly.FromDateTime(pramotionViewModel.ValidityFrom.Value) : null,
+                ValidityTo = pramotionViewModel.ValidityTo.HasValue ? DateOnly.FromDateTime(pramotionViewModel.ValidityTo.Value) : null,
                 RangeMin = pramotionViewModel.RangeMin,
                 RangeMax = pramotionViewModel.RangeMax,
-                MediaUrl = pramotionViewModel.MediaUrl ?? string.Empty,
+                MediaUrl = pramotionViewModel.FileUpload != null && pramotionViewModel.FileUpload.Length > 0 ? await FileUpload.UploadFileAsync(pramotionViewModel.FileUpload, "Promotions",token) : string.Empty,
                 IsActive = pramotionViewModel.IsActive,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow
@@ -139,8 +147,8 @@ namespace CMS.Controllers
             {
                 Name = promotion.Name,
                 Code = promotion.Code,
-                ValidityFrom = promotion.ValidityFrom,
-                ValidityTo = promotion.ValidityTo,
+                ValidityFrom = promotion.ValidityFrom.HasValue ? Convert.ToDateTime(Convert.ToString(promotion.ValidityFrom)) : null,
+                ValidityTo = promotion.ValidityTo.HasValue ? Convert.ToDateTime(Convert.ToString(promotion.ValidityTo)) : null,
                 RangeMin = promotion.RangeMin,
                 RangeMax = promotion.RangeMax,
                 MediaUrl = promotion.MediaUrl,
@@ -177,11 +185,11 @@ namespace CMS.Controllers
             {
                 Name = pramotionViewModel.Name ?? string.Empty,
                 Code = pramotionViewModel.Code ?? string.Empty,
-                ValidityFrom = pramotionViewModel.ValidityFrom,
-                ValidityTo = pramotionViewModel.ValidityTo,
+                ValidityFrom = pramotionViewModel.ValidityFrom.HasValue ? DateOnly.FromDateTime(pramotionViewModel.ValidityFrom.Value) : null,
+                ValidityTo = pramotionViewModel.ValidityTo.HasValue ? DateOnly.FromDateTime(pramotionViewModel.ValidityTo.Value) : null,
                 RangeMin = pramotionViewModel.RangeMin,
                 RangeMax = pramotionViewModel.RangeMax,
-                MediaUrl = pramotionViewModel.MediaUrl ?? string.Empty,
+                MediaUrl = pramotionViewModel.FileUpload != null && pramotionViewModel.FileUpload.Length > 0 ? await FileUpload.UploadFileAsync(pramotionViewModel.FileUpload, "Promotions", token) : pramotionViewModel.MediaUrl ?? string.Empty,
                 IsActive = pramotionViewModel.IsActive,
                 UpdatedOn = DateTime.UtcNow,
                 Id = pramotionViewModel.promotionId
@@ -231,25 +239,17 @@ namespace CMS.Controllers
             }, token);
         }
 
-        // GET: PramotionController/Delete/5
-        public IActionResult Delete(int id)
+        
+        /// <summary>
+        /// Delete promotion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            return View();
-        }
-
-        // POST: PramotionController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            bool delValue = await _pramotionRepository.DeletePramotionAsync(x => x.Id == id, cancellationToken);
+            return Json(new { delValue });
         }
     }
 }

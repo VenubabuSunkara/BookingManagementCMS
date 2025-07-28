@@ -91,10 +91,7 @@
         $(document).ready(function () {
 
             //Hide the success message
-            setTimeout(() =>
-            {
-                $('#promotionAlertMessage').hide();
-            },3000);
+            HidePromotionMessageLabel();
 
             //data table results
             var table = $('#dtPromotion').DataTable({
@@ -149,7 +146,8 @@
                     {
                         data: 'id',
                         render: function (data, type, row) {
-                            return `<a href="/YourController/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                            return `<a class="delete-promotion" href="javascript:void(0);" data-id="${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                            //return `<a onclick=DeleteData(${data})><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                         }
                     }
                 ]
@@ -198,6 +196,44 @@
                     table.page(parseInt(page) - 1).draw('page');
                 }
             });
+            //Delete the promotion
+            $(document).on('click', '.delete-promotion', function () {
+                var id = $(this).data('id');
+                if (confirm("Are you sure you want to delete?")) {
+                    Delete(id);
+                }
+            });
+            //Delere promotion post event handeler
+            function Delete(promotionId) {
+                var url = '@Url.Content("~/")' + "Promotion/Delete";
+                $.post(url, { id: promotionId }, function (data) {
+                    if (data) {
+                        $('.container-fluid').first().prepend(`<div id="promotionAlertMessage"
+                                                                  class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                                                                  Promotion deleted successfully.
+                                                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                             </div>`);
+                        table.ajax.reload();
+                        HidePromotionMessageLabel();
+                    } else {
+                         $('.container-fluid').first().prepend(`<div id="promotionAlertMessage"
+                                                                  class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                                                                  Unable to delete promotion.Please try again after some time.
+                                                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                             </div>`);
+                         HidePromotionMessageLabel();
+                    }
+                });
+            }
+        }
+        //Hide promotion successs message
+        function HidePromotionMessageLabel()
+        {
+            //Hide the success message
+            setTimeout(() =>
+            {
+                $('#promotionAlertMessage').hide();
+            },3000);
         }
     </script>
 }
