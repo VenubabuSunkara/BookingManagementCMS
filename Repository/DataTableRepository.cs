@@ -11,30 +11,42 @@ namespace Repository;
 
 public class DataTableRepository : IDataTableRepository
 {
-    public async Task<DatatableResponse<T>> GetDataAsync<T>(IQueryable<T> query, DatatableRequest request,string[] searchColumns) where T : class
+    public async Task<DatatableResponse<T>> GetDataAsync<T>(
+     IQueryable<T> query,
+     DatatableRequest request,
+     string[] searchColumns)
+     where T : class
     {
+        if (request == null) return new DatatableResponse<T>();
+
+        // Total count (before filtering)
         int totalRecords = await query.CountAsync();
 
-        // Search
-        if (!string.IsNullOrEmpty(request.search?.value))
+        // 🔍 SEARCH: on string props only matching searchColumns
+        if (!string.IsNullOrWhiteSpace(request.search?.value))
         {
-            string searchValue = request.search.value.ToLower();
-            var props = typeof(T).GetProperties()
-     .Where(p => p.PropertyType == typeof(string) && searchColumns.Contains(p.Name))
-     .ToArray();
+            string term = request.search.value.Trim().ToLower();
             Expression<Func<T, bool>> predicate = null;
+
+            var props = typeof(T).GetProperties()
+                .Where(p => p.PropertyType == typeof(string) && searchColumns.Contains(p.Name))
+                .ToArray();
 
             foreach (var prop in props)
             {
-
                 var param = Expression.Parameter(typeof(T), "x");
-
-
                 var propExpr = Expression.Property(param, prop);
+
+                // x.Prop != null
                 var notNull = Expression.NotEqual(propExpr, Expression.Constant(null, typeof(string)));
-                var toLowerCall = Expression.Call(propExpr, "ToLower", null);
-                var containsCall = Expression.Call(toLowerCall, "Contains", null, Expression.Constant(searchValue));
-                var lambda = Expression.Lambda<Func<T, bool>>(containsCall, param);
+
+                // x.Prop.ToLower().Contains(term)
+                var toLower = Expression.Call(propExpr, nameof(string.ToLower), null);
+                var contains = Expression.Call(toLower, nameof(string.Contains), null,
+                    Expression.Constant(term));
+
+                var body = Expression.AndAlso(notNull, contains);
+                var lambda = Expression.Lambda<Func<T, bool>>(body, param);
 
                 predicate = predicate == null ? lambda : CombineOr(predicate, lambda);
             }
@@ -43,18 +55,25 @@ public class DataTableRepository : IDataTableRepository
                 query = query.Where(predicate);
         }
 
-        int filteredRecords = query.Count();
+        // Filtered count
+        int filteredRecords = await query.CountAsync();
 
-        // Order
-        if (request.order?.Any() == true)
+        // 📌 ORDERING: dynamic, only if valid col/dir
+        if (request.order?.Any() == true && request.columns != null)
         {
-            var sortColumn = request.columns[request.order[0].column].data;
+            var sortCol = request.columns[request.order[0].column]?.data;
             var sortDir = request.order[0].dir;
-            query = query.OrderByDynamic(sortColumn, sortDir);
+            if (!string.IsNullOrEmpty(sortCol) && !string.IsNullOrEmpty(sortDir))
+            {
+                query = query.OrderByDynamic(sortCol, sortDir);
+            }
         }
 
-        // Paging
-        var data = await Task.FromResult(query.Skip(request.start).Take(request.length).ToList());
+        // ⚡ PAGING: Skip & Take only once
+        var data = await query
+            .Skip(request.start)
+            .Take(request.length)
+            .ToListAsync();
 
         return new DatatableResponse<T>
         {
@@ -64,6 +83,7 @@ public class DataTableRepository : IDataTableRepository
             data = data
         };
     }
+
 
     private static Expression<Func<T, bool>> CombineOr<T>(Expression<Func<T, bool>> expr1, Expression<Func<T, bool>> expr2)
     {

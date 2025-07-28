@@ -26,7 +26,9 @@ namespace BookingManagementCMS.Controllers
         //
         public async Task<IActionResult> Index()
         {
-            return View(await _driverVehicleRepository.GetAllAsync());
+            //await _driverVehicleRepository.GetAllAsync()
+
+            return View();
         }
         [HttpPost]
         public async Task<IActionResult> LoadDriverData(DatatableRequest request, CancellationToken cancellationToken)
@@ -38,7 +40,7 @@ namespace BookingManagementCMS.Controllers
                 draw = result.draw,
                 recordsFiltered = result.recordsFiltered,
                 recordsTotal = result.recordsTotal,
-                data = result.data.Select(x => new
+                data = result?.data?.Select(x => new
                 {
                     x.VehicleName,
                     x.Capacity,

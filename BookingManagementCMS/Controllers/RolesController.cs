@@ -31,7 +31,7 @@ namespace CMS.Controllers
         public async Task<IActionResult> LoadData(DatatableRequest request, CancellationToken cancellationToken)
         {
             var roles = _rolesRepository.GetAllAsync();
-            var result = await _dataTableRepository.GetDataAsync<Role>(roles, request);
+            var result = await _dataTableRepository.GetDataAsync<Role>(roles, request, []);
             return Json(result);
         }
         /// <summary>
@@ -123,11 +123,11 @@ namespace CMS.Controllers
             }
             return RedirectToAction("Index");
         }
-       /// <summary>
-       /// Deleting Role by RoleId
-       /// </summary>
-       /// <param name="id"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Deleting Role by RoleId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken token)
