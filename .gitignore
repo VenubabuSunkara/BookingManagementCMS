@@ -22,3 +22,11 @@
 /Data/obj
 /Htmlfiles/obj
 /Htmlfiles/bin/Debug/net9.0
+/Booking.Application/bin/Debug/net9.0
+/Booking.Application/obj
+/Booking.Domain/bin/Debug/net9.0
+/Booking.Domain/obj
+/Booking.Infrastructure/bin/Debug/net9.0
+/Booking.Infrastructure/obj
+/Booking.Web/bin/Debug/net9.0
+/Booking.Web/obj

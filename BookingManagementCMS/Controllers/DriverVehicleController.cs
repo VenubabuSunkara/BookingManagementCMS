@@ -1,6 +1,7 @@
 ﻿using Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Common;
 using Repository;
 using Repository.Interfaces;
 
@@ -8,6 +9,22 @@ namespace BookingManagementCMS.Controllers
 {
     public class DriverVehicleController : Controller
     {
+        /*
+         * Required Actions 
+         * 1. Get All Drivers With Pagination and search  -- Super admin
+         * 2. Approve Driver  --- Super admin
+         * 3. Update Driver Availability Schedule  -- Super admin and Driver
+         * 4. Update Driver Details -- Driver
+         * 5. Update Vehicle Details  --driver
+         * 6. View Bookings  -- Driver and super admin
+         * 7. View Orders -- Driver and super admin
+         * 8. View Reviews -- driver and super admin
+         * 9. InActive/DeActivate
+         * 10. Export  -- Super admin
+         * 11. Import Vehicle and Driver -- super admin
+         * 12. Bulk delete -- super admin
+         * 13. Transfer Schedule to other driver -- super admin
+         */
         private readonly IDriverVehicleRepository _driverVehicleRepository;
         private readonly IDataTableRepository _dataTableRepository;
         public DriverVehicleController(IDriverVehicleRepository driverVehicleRepository,
@@ -24,11 +41,12 @@ namespace BookingManagementCMS.Controllers
             return await _driverVehicleRepository.ApproveAsync(DriverVehileId, true);
         }
         //
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(CancellationToken token)
         {
-            //await _driverVehicleRepository.GetAllAsync()
-
-            return View();
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
         }
         [HttpPost]
         public async Task<IActionResult> LoadDriverData(DatatableRequest request, CancellationToken cancellationToken)
@@ -50,7 +68,8 @@ namespace BookingManagementCMS.Controllers
                     VehicleType = x.VehicleType,
                     DriverName = x.DriverFirstName + " " + x.DriverLastName,
                     Contact = x.DriverContact,
-                    CreatedDate = x.CreatedOn
+                    CreatedDate = x.CreatedOn,
+                    x.Id
                 }).ToArray()
             });
         }

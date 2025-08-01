@@ -3,7 +3,34 @@
 @{
     ViewData["Title"] = "Driver Vehicle List";
 }
+<style>
+    table.dataTable {
+        table-layout: fixed;
+        word-wrap: break-word;
+        width: 100% !important;
+    }
 
+    .all-cars-table th, .all-cars-table td {
+        white-space: normal !important;
+        vertical-align: middle;
+    }
+
+    /* Align DataTable controls */
+    div.dataTables_wrapper div.dataTables_length {
+        float: left;
+        padding-left: 15px;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        float: right;
+        padding-right: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        margin-left: 0px;
+        border: none !important;
+    }
+</style>
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
@@ -14,7 +41,7 @@
                         <h5>All Driver Vehicles</h5>
                     </div>
                     <form class="d-inline-flex">
-                        <a href="@Url.ActionLink("Create", "DriverVehicle")" class="btn btn-theme">
+                        <a asp-controller="DriverVehicle" asp-action="Create" class="btn btn-theme">
                             <i data-feather="plus-square"></i>Add New
                         </a>
                         @* <a href="@Url.ActionLink("Create", "DriverVehicle")" class="btn btn-theme">
@@ -25,7 +52,7 @@
 
                 <div class="card-body">
                     <div>
-                        <div class="table-responsive table-desi">
+                        <div class="table-desi">
                             <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
                                 <thead>
                                     <tr>
@@ -43,8 +70,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="pagination-box">
+                @*  <div class="pagination-box">
                     <nav class="ms-auto me-auto" aria-label="...">
                         <ul class="pagination pagination-primary">
                             <li class="page-item disabled">
@@ -64,7 +90,7 @@
                             </li>
                         </ul>
                     </nav>
-                </div>
+                </div> *@
             </div>
         </div>
     </div>
@@ -72,54 +98,64 @@
 <!-- Container-fluid ends-->
 <!-- Container-fluid Ends-->
 @section Scripts {
-  
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            var table = $('#tblvehicledriver').DataTable({
-                processing: true,
-                serverSide: true,
-                info: false, // Hide "Showing X to Y of Z entries"
-                ajax: {
-                    url: '/DriverVehicle/LoadDriverData',
-                    type: 'POST'
+        var driverListVM;
+            driverListVM = {
+                Driverdt: null,
+                init: function (event) {
+                     Driverdt = $('#tblvehicledriver').DataTable({
+                     processing: true,
+                     serverSide: true,
+                     info: false, // Hide "Showing X to Y of Z entries"
+                     ajax: {
+                            url: '/DriverVehicle/LoadDriverData',
+                            type: 'POST',
+                        },
+                     language: {
+                            // processing: `
+                            //     <div style="text-align:center;padding:20px;">
+                            //         <i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i>
+                            //         <span class="sr-only">Loading...</span>
+                            //     </div>`
+                        },
+                     drawCallback: function (settings) {
+                         customizePagination(Driverdt);
+                     },
+                     columns: [
+                         {   data: 'VehicleName', autoWidth: true,
+                             render: function (data, type, full, meta) {
+                                    return `<img src="${data}" alt="${full.VehicleName}" />`
+                                }
+                         },
+                            { data: 'VehicleName', autoWidth: true },
+                            { data: 'Capacity', autoWidth: true },
+                            { data: 'VehicleType', autoWidth: true },
+                            { data: 'DriverName', autoWidth: true },
+                            { data: 'Contact', autoWidth: true },
+                            { data: 'CreatedDate', autoWidth: true },
+                            {
+                                data: 'Id',
+                                render: function (data, type, row) {
+                                    return `<a href="/DriverVehicle/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
+                                }
+                            },
+                            {
+                                data: 'id',
+                                render: function (data, type, row) {
+                                    return `<a href="/DriverVehicle/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                }
+                            }
+                        ]
+                    })
                 },
-                language: {
-                    processing: `
-                        <div style="text-align:center;padding:20px;">
-                            <i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i>
-                            <span class="sr-only">Loading...</span>
-                        </div>`
-                },
-                drawCallback: function (settings) {
-                    customizePagination(table);
-                },
-                columns: [
-                    { data: 'name', autoWidth: true },
-                    { data: 'code', autoWidth: true },
-                    { data: 'validityFrom', autoWidth: true },
-                    { data: 'validityTo', autoWidth: true },
-                    { data: 'rangeMin', autoWidth: true },
-                    { data: 'rangeMax', autoWidth: true },
-                    {
-                        data: 'id',
-                        render: function (data, type, row) {
-                            return `<a href="/YourController/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
-                        }
-                    },
-                    {
-                        data: 'id',
-                        render: function (data, type, row) {
-                            return `<a href="/YourController/Edit/${data}"><i class="fa fa-pencil-square-o"aria-hidden="true"></i></a>`
-                        }
-                    },
-                    {
-                        data: 'id',
-                        render: function (data, type, row) {
-                            return `<a href="/YourController/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
-                        }
-                    }
-                ]
-            });
+                refresh: function () {
+                        Driverdt.ajax.reload();
+                }
+            };
+            $(document).ready(function () {
+                driverListVM.init();
         });
 
         function customizePagination(table) {

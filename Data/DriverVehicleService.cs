@@ -9,6 +9,22 @@ using System.Threading.Tasks;
 
 namespace Data
 {
+    /*
+       * Required Actions 
+       * 1. Get All Drivers With Pagination and search  -- Super admin
+       * 2. Approve Driver  --- Super admin
+       * 3. Update Driver Availability Schedule  -- Super admin and Driver
+       * 4. Update Driver Details -- Driver
+       * 5. Update Vehicle Details  --driver
+       * 6. View Bookings  -- Driver and super admin
+       * 7. View Orders -- Driver and super admin
+       * 8. View Reviews -- driver and super admin
+       * 9. InActive/DeActivate
+       * 10. Export  -- Super admin
+       * 11. Import Vehicle and Driver -- super admin
+       * 12. Bulk delete -- super admin
+       * 13. Transfer Schedule to other driver -- super admin
+       */
     public class DriverAndVehicleService : IDriverAndVehicleService
     {
         private readonly BookingManagementCmsContext _context;
