@@ -1,5 +1,6 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
+using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,39 @@ namespace Booking.Application.Services
                 Id = d.Id,
                 FullName = d.GetFullName(),
                 PhoneNumber = d.PhoneNumber ?? string.Empty
-            });
+            }).AsParallel();
+        }
+
+        public async Task<IEnumerable<DriverVehicleDto>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        {
+            var DriverVehicleList = await _driverRepository.GetDriverVehicleList(pageIndex, pageSize, searchKey);
+
+            return DriverVehicleList.Select(d => new DriverVehicleDto
+            {
+                DriverId = d.Driver.Id,
+                VehicleId = d.Vehicle.Id,
+                DriverName = d.Driver.GetFullName(),
+                VehicleName = d.Vehicle.VehicleName ?? "Unknown",
+                SeatingCapacity = d.Vehicle.SeatingCapacity ?? 2,
+                VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
+                VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown"
+            }).AsParallel();
+
+        }
+
+        public async Task<IEnumerable<VehicleMediaDto>> GetVehicleMediaList(int vehicleId)
+        {
+            var VehicleMedia = await _driverRepository.GetVehicleMediaList(vehicleId);
+            return VehicleMedia.Select(v => new VehicleMediaDto()
+            {
+                IsDefault = v.IsDefault,
+                Id = v.Id,
+                MediaName = v.MediaName ?? "Unknown",
+                MediaType = v.MediaType ?? "Unknown",
+                MediaUrl = v.MediaUrl ?? "Unknown",
+                VehicleId = v.VehicleId,
+                ThumbnailUrl = v.ThumbnailUrl ?? "Unknown",
+            }).AsParallel();
         }
     }
 }

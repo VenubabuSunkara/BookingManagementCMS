@@ -26,18 +26,6 @@ namespace Booking.Domain.Entities
 
         public bool? AvailabilityStatus { get; set; }
 
-        public string? UserName { get; set; }
-
-        public byte[]? PasswordHash { get; set; }
-
-        public int? CreatedBy { get; set; }
-
-        public DateTime? CreatedAt { get; set; }
-
-        public int? UpdatedBy { get; set; }
-
-        public DateTime? UpdatedAt { get; set; }
-
         public Guid? TenantId { get; set; }
 
         public string? AboutOn { get; set; }

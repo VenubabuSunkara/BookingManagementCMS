@@ -9,8 +9,8 @@ namespace Booking.Domain.Interfaces
 {
     /*
    * Required Actions 
-   * 1. Get All Drivers With Pagination and search  -- Super admin
-   * 2. Approve Driver  --- Super admin
+   * 1. Get All Drivers With Pagination and search  -- Super admin   -- Done
+   * 2. Approve Driver  --- Super admin   -- TODO
    * 3. Update Driver Availability Schedule  -- Super admin and Driver
    * 4. Update Driver Details -- Driver
    * 5. Update Vehicle Details  --driver
@@ -26,6 +26,8 @@ namespace Booking.Domain.Interfaces
     public interface IDriverRepository
     {
         Task<IEnumerable<Driver>> GetAllAsync();
-        Task<IEnumerable<DriverVehicle>> GetDriverVehicleList(int pageIndex, int pageSize, string searhKey = "");
+        Task<IEnumerable<DriverVehicle>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
+        Task<IEnumerable<VehicleMedia>> GetVehicleMediaList(int vehicleId);
+        Task<int> ApproveDriverAsync(int DriverId);
     }
 }

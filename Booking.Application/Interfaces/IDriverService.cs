@@ -1,4 +1,5 @@
 ﻿using Booking.Application.DTOs;
+using Booking.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,20 +27,7 @@ namespace Booking.Application.Interfaces
     public interface IDriverService
     {
         Task<IEnumerable<DriverDto>> GetAllAsync();
-        Task<IEnumerable<DriverDto>> GetPagingAsync(int pageNumber, int pageSize);
-        //IQueryable<DriverDto> GetAllQuery();
-        //Task<DriverDto?> GetByIdAsync(int id);
-        //Task<IEnumerable<DriverDto>> GetPagingAsync(int pageNumber, int pageSize);
-        //Task<IEnumerable<DriverDto>> SearchAsync(string keyword);
-        //Task CreateAsync(DriverDto req);
-        //Task UpdateAsync(int id, DriverDto req);
-        //Task<bool> ApproveAsync(int id, bool isApproved);
-        //Task DeleteAsync(int id);
-        //Task<bool> ExistsAsync(int id);
-        //Task<IEnumerable<DriverDto>> GetAvailableDriversAsync();
-        //Task ToggleAvailabilityAsync(int id, bool status);
-        //Task<IEnumerable<DriverDto>> FilterAsync(string vehicleType, bool? isAvailable);
-        //Task<int> CountAsync();
-
+        Task<IEnumerable<DriverVehicleDto>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
+        Task<IEnumerable<VehicleMediaDto>> GetVehicleMediaList(int vehicleId);
     }
 }

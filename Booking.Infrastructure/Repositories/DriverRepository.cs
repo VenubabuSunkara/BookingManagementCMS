@@ -10,13 +10,17 @@ using System.Threading.Tasks;
 
 namespace Booking.Infrastructure.Repositories
 {
-    public class DriverRepository : IDriverRepository
+    public class DriverRepository(BookingCmsContext context) : IDriverRepository
     {
-        private readonly BookingCmsContext _context;
-        public DriverRepository(BookingCmsContext context)
+        private readonly BookingCmsContext _context = context;
+
+        public async Task<int> ApproveDriverAsync(int DriverId)
         {
-            _context = context;
+            var driverInfo = await _context.Drivers.FindAsync(DriverId);
+            if (driverInfo == null) return 0;
+            return 1;
         }
+
         /// <summary>
         /// Get All driver details
         /// </summary>
@@ -33,36 +37,83 @@ namespace Booking.Infrastructure.Repositories
                 LastName = e.LastName,
                 AboutOn = e.AboutOn,
                 AvailabilityStatus = e.AvailabilityStatus,
-                CreatedAt = e.CreatedAt,
-                CreatedBy = e.CreatedBy,
                 Email = e.Email,
                 LicenseNumber = e.LicenseNumber,
                 PhoneNumber = e.PhoneNumber,
                 Photo = e.Photo,
                 TenantId = e.TenantId,
-                UpdatedAt = e.UpdatedAt,
-                UpdatedBy = e.UpdatedBy,
             }).AsParallel();
         }
 
-        public async Task<IEnumerable<DriverVehicle>> GetDriverVehicleList(int pageIndex, int pageSize, string searhKey = "")
+        public async Task<IEnumerable<DriverVehicle>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
         {
-            return await _context.DriverVehicleMappings.AsNoTracking().Include(x => x.Vehicle).ThenInclude(x => x.VehicleMedia)
-
+            var DriverVehicleList = await _context.DriverVehicleMappings.AsNoTracking()
+                .Include(x => x.Vehicle)
+                .ThenInclude(x => x.VehicleMedia)
                 .Include(x => x.Driver)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                  .Select(x => new DriverVehicle()
-                  {
-                      DriverId = x.DriverId,
-                      VehicleId = x.VehicleId,
-                      DriverName = $"{x.Driver.FirstName} {x.Driver.LastName}",
-                      SeatingCapacity = x.Vehicle.SeatingCapacity ?? 2,
-                      VehicleName = x.Vehicle.VehicleName,
-                      VehicleThumbnail = x.Vehicle.VehicleMedia.FirstOrDefault(y => y.IsDefault).ThumbnailUrl ?? string.Empty,
-                      VehicleType = x.Vehicle.VehicleTypeId.ToString()
-                  }).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+                .Select(x => new
+                {
+                    x.Vehicle,
+                    x.Driver,
+                    VehicleMedia = x.Vehicle.VehicleMedia.FirstOrDefault(x => x.IsDefault)
+                }).ToListAsync();
 
+            return DriverVehicleList
+                .Select(x => new DriverVehicle()
+                {
+                    Driver = new Driver()
+                    {
+                        Id = x.Driver.Id,
+                        FirstName = x.Driver.FirstName,
+                        LastName = x.Driver.LastName,
+                        Email = x.Driver.Email,
+                        PhoneNumber = x.Driver.PhoneNumber,
+                        Photo = x.Driver.Photo,
+                        Address = x.Driver.Address,
+                        LicenseNumber = x.Driver.LicenseNumber,
+                        AboutOn = x.Driver.AboutOn,
+                        AvailabilityStatus = x.Driver.AvailabilityStatus,
+                    },
+                    Vehicle = new Vehicle()
+                    {
+                        VehicleName = x.Vehicle.VehicleName,
+                        Color = x.Vehicle.Color,
+                        Description = x.Vehicle.Description,
+                        AboutOnVehicle = x.Vehicle.AboutOnVehicle,
+                        Id = x.Vehicle.Id,
+                        Features = x.Vehicle.Features,
+                        Make = x.Vehicle.Make,
+                        VehicleNumber = x.Vehicle.VehicleNumber,
+                        SeatingCapacity = x.Vehicle.SeatingCapacity,
+                        Model = x.Vehicle.Model,
+                        VehicleTypeId = x.Vehicle.VehicleTypeId,
+                    },
+                    VehicleMedia = new VehicleMedia()
+                    {
+                        MediaName = x.VehicleMedia?.MediaName ?? string.Empty,
+                        MediaType = x.VehicleMedia?.MediaType ?? string.Empty,
+                        MediaUrl = x.VehicleMedia?.MediaUrl ?? string.Empty,
+                        ThumbnailUrl = x.VehicleMedia?.ThumbnailUrl ?? string.Empty,
+                    }
+
+                }).AsParallel().ToList();
+        }
+
+        public async Task<IEnumerable<VehicleMedia>> GetVehicleMediaList(int vehicleId)
+        {
+            var vehicleList = await _context.VehicleMedia.Where(x => x.Equals(vehicleId)).ToListAsync();
+            return vehicleList.Select(x => new VehicleMedia()
+            {
+                MediaName = x.MediaName,
+                MediaType = x.MediaType,
+                IsDefault = x.IsDefault,
+                MediaUrl = x.MediaUrl,
+                ThumbnailUrl = x.ThumbnailUrl,
+                VehicleId = x.VehicleId,
+                Id = x.Id
+            }).AsParallel().ToList();
         }
     }
 }
