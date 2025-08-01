@@ -15,8 +15,8 @@ namespace Booking.Application.Interfaces
      * 3. Update Driver Availability Schedule  -- Super admin and Driver
      * 4. Update Driver Details -- Driver
      * 5. Update Vehicle Details  --driver
-     * 6. View Bookings  -- Driver and super admin
-     * 7. View Orders -- Driver and super admin
+     * 6. View Bookings  -- Driver and super admin  -- Done
+     * 7. View Orders -- Driver and super admin  -- Done
      * 8. View Reviews -- driver and super admin
      * 9. InActive/DeActivate
      * 10. Export  -- Super admin
@@ -29,5 +29,6 @@ namespace Booking.Application.Interfaces
         Task<IEnumerable<DriverDto>> GetAllAsync();
         Task<IEnumerable<DriverVehicleDto>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
         Task<IEnumerable<VehicleMediaDto>> GetVehicleMediaList(int vehicleId);
+        Task<int> ApproveDriverAsync(int DriverId);
     }
 }

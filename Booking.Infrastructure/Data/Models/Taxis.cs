@@ -6,26 +6,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Data.Models;
 
-[Table("AddressType")]
-public partial class AddressType
+public partial class Taxis
 {
     [Key]
     public int Id { get; set; }
 
-    [StringLength(10)]
+    [StringLength(50)]
     [Unicode(false)]
-    public string TypeName { get; set; } = null!;
+    public string? Country { get; set; }
 
-    public int? CreatedBy { get; set; }
+    [StringLength(50)]
+    [Unicode(false)]
+    public string? City { get; set; }
+
+    public int? TaxPercentage { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime? CreatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
-
     [Column(TypeName = "datetime")]
     public DateTime? UpdatedOn { get; set; }
 
-    [InverseProperty("AddressType")]
-    public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; } = new List<CustomerAddress>();
+    public int? CreatedBy { get; set; }
+
+    public int? UpdatedBy { get; set; }
 }
