@@ -2,50 +2,137 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="~/wecare_logo.svg" type="image/x-icon" />
+    <link rel="shortcut icon" href="~/images/favicon.png" type="image/x-icon" />
     <title>@ViewData["Title"] - Booking.Web</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Booking.Web.styles.css" asp-append-version="true" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <meta name="keywords" content="" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200&amp;family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet" />
+
+    <!-- FontAsowme css start  -->
+    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" asp-append-version="true" />
+
+    <!-- Themify icon-->
+    <link rel="stylesheet" type="text/css" href="~/css/themify.css" asp-append-version="true" />
+    <!-- ratio start -->
+    <link rel="stylesheet" type="text/css" href="~/css/ratio.css" asp-append-version="true" />
+
+    <!-- Feather icon-->
+    <link rel="stylesheet" type="text/css" href="~/css/feather-icon.css" asp-append-version="true" />
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="~/css/scrollbar.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/animate.css" asp-append-version="true" />
+    <!-- Plugins css Ends-->
+    <!-- datepicker -->
+    <link rel="stylesheet" type="text/css" href="~/css/date-picker.css" asp-append-version="true" />
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.css" />
+    <!-- vector map css start -->
+    <link rel="stylesheet" type="text/css" href="~/css/vector-map.css" asp-append-version="true" />
+    <!-- vector map css start -->
+    <!-- slick slider-->
+    <link rel="stylesheet" type="text/css" href="~/css/slick.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/slick-theme.css" asp-append-version="true" />
+    <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true" />
+    <!-- Responsive css-->
+    <link rel="stylesheet" type="text/css" href="~/css/responsive.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Booking.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+    <!--Loader-->
+    <!-- pre-loader start -->
+    <div class="loader-wrapper">
+        <img src="~/wecare_logo.svg" width="100px" alt="loader gif" />
+        <img src="load.gif" width="100px" alt="loader gif" />
+        <!-- <img src="load.gif" alt="loader gif" width="100px" /> -->
+    </div>
+    <!-- pre-loader End -->
+    <!-- tap on top starts-->
+    <div class="tap-top"><i data-feather="chevrons-up"></i></div>
+    <!-- tap on tap ends-->
+    <div class="page-wrapper compact-wrapper modern-type" id="pageWrapper">
+        <!-- Page Header Start-->
+        @await Html.PartialAsync("_TopMenu")
+        <!-- Page Header Ends -->
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper">
+            <!-- Page Sidebar Start-->
+            <div class="sidebar-wrapper">
+                <div>
+                    <div class="logo-wrapper">
+                        <span class="back">Back</span>
+                        <div class="back-btn"><i class="fa fa-angle-left"></i></div>
+                        <div class="toggle-sidebar">
+                            <i class="status_toggle middle sidebar-toggle"
+                               data-feather="grid">
+                            </i>
+                        </div>
+                    </div>
+                    <div class="logo-icon-wrapper">
+                        <a href="/">
+                            <img class="img-fluid" src="~/images/logo-icon.png" alt="" />
+                        </a>
+                    </div>
+                    <nav class="sidebar-main">
+                        <div class="left-arrow" id="left-arrow">
+                            <i data-feather="arrow-left"></i>
+                        </div>
+                        <div id="sidebar-menu">
+
+                            @await Html.PartialAsync("_SideMenu.cshtml");
+                        </div>
+                        <div class="right-arrow" id="right-arrow">
+                            <i data-feather="arrow-right"></i>
+                        </div>
+                    </nav>
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            <!-- Page Sidebar Ends-->
+            <div class="page-body">
+                @RenderBody()
+                <div class="container-fluid">
+                    <!-- footer start-->
+                    @await Html.PartialAsync("_Footer.cshtml");
+                    <!-- footer End-->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Booking.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <!-- Modal -->
+    <div class="modal fade"
+         id="staticBackdrop"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false"
+         tabindex="-1"
+         aria-labelledby="staticBackdropLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="staticBackdropLabel">Logging Out</h5>
+                    <p>Are you sure you want to log out?</p>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    <div class="button-box">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">
+                            No
+                        </button>
+                        <button type="button" class="btn btn--yes btn-primary">
+                            Yes
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    </div>
+    <!-- <div class="customizer-links"></div> -->    <!-- latest jquery-->
+    <partial name="_LayoutScriptsPartial" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
