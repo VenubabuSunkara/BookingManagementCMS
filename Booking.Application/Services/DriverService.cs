@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
-    public class DriverService : IDriverService
+    public class DriverService(IDriverRepository driverRepository) : IDriverService
     {
-        private readonly IDriverRepository _driverRepository;
-        public DriverService(IDriverRepository driverRepository)
+        private readonly IDriverRepository _driverRepository = driverRepository;
+
+        public async Task<int> ApproveDriverAsync(int DriverId)
         {
-            _driverRepository = driverRepository;
+            return await _driverRepository.ApproveDriverAsync(DriverId);
         }
+
         public async Task<IEnumerable<DriverDto>> GetAllAsync()
         {
             var drivers = await _driverRepository.GetAllAsync();

@@ -16,9 +16,12 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<int> ApproveDriverAsync(int DriverId)
         {
-            var driverInfo = await _context.Drivers.FindAsync(DriverId);
-            if (driverInfo == null) return 0;
-            return 1;
+            var affected = await _context.Drivers
+                              .Where(d => d.Id == DriverId)
+                              .ExecuteUpdateAsync(setters => setters
+                                  .SetProperty(d => d.ApproveDriver, true)
+                              );
+            return affected;
         }
 
         /// <summary>

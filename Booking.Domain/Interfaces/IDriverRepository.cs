@@ -10,11 +10,11 @@ namespace Booking.Domain.Interfaces
     /*
    * Required Actions 
    * 1. Get All Drivers With Pagination and search  -- Super admin   -- Done
-   * 2. Approve Driver  --- Super admin   -- TODO
+   * 2. Approve Driver  --- Super admin   -- Done
    * 3. Update Driver Availability Schedule  -- Super admin and Driver
    * 4. Update Driver Details -- Driver
    * 5. Update Vehicle Details  --driver
-   * 6. View Bookings  -- Driver and super admin
+   * 6. View Bookings  -- Driver and super admin  -- 
    * 7. View Orders -- Driver and super admin
    * 8. View Reviews -- driver and super admin
    * 9. InActive/DeActivate
