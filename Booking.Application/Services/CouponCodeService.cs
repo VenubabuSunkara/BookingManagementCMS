@@ -1,17 +1,17 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
+using Booking.Domain.DomainServices.DataTableLoader;
+using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace Booking.Application.Services;
 
-public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository) : ICouponCodeService
+public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository,
+                                       IDataTableService dataTableService) : ICouponCodeService
 {
     private readonly ICouponCodeRepository _couponCodeRepository = couponCodeRepository;
+    private readonly IDataTableService _dataTableService = dataTableService;
     /// <summary>
     /// Create new CouponCode
     /// </summary>
@@ -47,7 +47,7 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     {
         return await _couponCodeRepository.UpdateCouponCodeAsync(new()
         {
-            Id = couponCodeDto.Id,
+            Id = couponCodeDto.CouponCodeId,
             Code = couponCodeDto.Code,
             ValidityFrom = couponCodeDto.ValidityFrom,
             ValidityTo = couponCodeDto.ValidityTo,
@@ -81,9 +81,9 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     /// <param name="couponCodeId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<bool> FindCouponCodeAsync(int couponCodeId, CancellationToken cancellationToken)
+    public async Task<bool> FindCouponCodeAsync([Optional] int couponCodeId, [Optional] string couponCode, CancellationToken cancellationToken = default)
     {
-        return await _couponCodeRepository.FindCouponCodeAsync(couponCodeId, cancellationToken);
+        return await _couponCodeRepository.FindCouponCodeAsync(couponCodeId, couponCode, cancellationToken);
     }
 
     /// <summary>
@@ -91,26 +91,57 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<CouponCodeDto>> GetAllCouponCodesAsync(CancellationToken cancellationToken)
+    public async Task<DataTableResponseDto<CouponCodeDto>> GetAllCouponCodesAsync(DataTableRequestDto dataTableRequest, string[] searchColumns, CancellationToken cancellationToken)
     {
-        var couponCodeList = await _couponCodeRepository.GetAllCouponCodesAsync(cancellationToken);
-
-        return couponCodeList.Select(s => new CouponCodeDto()
+        var couponCodeQuarable = _couponCodeRepository.GetQuarableCouponCodeData();
+        DataTableRequestEntity dataTableRequestEntity = new()
         {
-            Id = s.Id,
-            Code = s.Code,
-            ValidityFrom = s.ValidityFrom,
-            ValidityTo = s.ValidityTo,
-            PriceRangeMin = s.PriceRangeMin,
-            PriceRangeMax = s.PriceRangeMax,
-            DiscountType = s.DiscountType,
-            DiscountValue = s.DiscountValue,
-            CreatedOn = s.CreatedOn,
-            UpdatedOn = s.UpdatedOn,
-            CreatedBy = s.CreatedBy,
-            UpdatedBy = s.UpdatedBy,
-            MediaUrl = s.MediaUrl
-        }).AsParallel().ToList();
+            draw = dataTableRequest.draw,
+            start = dataTableRequest.start,
+            length = dataTableRequest.length,
+            search = new()
+            {
+                regex = dataTableRequest.search?.regex ?? string.Empty,
+                value = dataTableRequest.search?.value ?? string.Empty
+            },
+            order = [.. dataTableRequest.order.Select(s => new DataTableRequestEntity.Order
+            {
+                column = s.column,
+                dir = s.dir
+            }).AsParallel()],
+            columns = [.. dataTableRequest.columns.Select(s => new  DataTableRequestEntity.Column()
+            {
+                data = s.data,
+                name = s.name,
+                orderable = s.orderable,
+                searchable = s.searchable,
+                search = new()
+                {
+                    regex = s.search?.regex ?? string.Empty,
+                    value = s.search?.value ?? string.Empty
+                }
+            }).AsParallel()]
+        };
+        var couponCodeList = await _dataTableService.GetDataAsync<CouponCodeEntity>(couponCodeQuarable, dataTableRequestEntity, []);
+
+        return new()
+        {
+            draw = couponCodeList.draw,
+            recordsFiltered = couponCodeList.recordsFiltered,
+            recordsTotal = couponCodeList.recordsTotal,
+            data = [.. couponCodeList.data.Select(s => new CouponCodeDto
+            {
+                CouponCodeId = s.Id,
+                Code = s.Code,
+                ValidityFrom = s.ValidityFrom,
+                ValidityTo = s.ValidityTo,
+                PriceRangeMin = s.PriceRangeMin,
+                PriceRangeMax = s.PriceRangeMax,
+                DiscountType = s.DiscountType ?? string.Empty,
+                DiscountValue = s.DiscountValue ?? string.Empty,
+                MediaUrl = s.MediaUrl ?? string.Empty,
+            }).AsParallel()]
+        };
     }
 
     /// <summary>
@@ -127,7 +158,7 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
 
         return new()
         {
-            Id = couponCode.Id,
+            CouponCodeId = couponCode.Id,
             Code = couponCode.Code,
             ValidityFrom = couponCode.ValidityFrom,
             ValidityTo = couponCode.ValidityTo,
@@ -153,7 +184,7 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
         return couponCodeQuarable
             .Select(s => new CouponCodeDto()
             {
-                Id = s.Id,
+                CouponCodeId = s.Id,
                 Code = s.Code,
                 ValidityFrom = s.ValidityFrom,
                 ValidityTo = s.ValidityTo,

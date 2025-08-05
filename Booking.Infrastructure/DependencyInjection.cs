@@ -18,7 +18,7 @@ namespace Booking.Infrastructure
         {
             services.AddDbContext<BookingCmsContext>(opt => opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
             services.AddScoped<IDriverRepository, DriverRepository>();
-            services.AddScoped< ICouponCodeRepository , CouponCodeRepository>();
+            services.AddTransient< ICouponCodeRepository , CouponCodeRepository>();
             return services;
         }
 

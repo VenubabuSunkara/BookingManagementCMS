@@ -1,7 +1,10 @@
 ﻿using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
+using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace Booking.Infrastructure.Repositories;
 
@@ -15,7 +18,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// <param name="couponCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<bool> CreateCouponCodeAsync(CouponCode couponCode, CancellationToken cancellationToken)
+    public async Task<bool> CreateCouponCodeAsync(CouponCodeEntity couponCode, CancellationToken cancellationToken)
     {
         await _context.CouponCodes.AddAsync(new()
         {
@@ -41,7 +44,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// <param name="couponCode"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<bool> UpdateCouponCodeAsync(CouponCode couponCode, CancellationToken cancellationToken)
+    public async Task<bool> UpdateCouponCodeAsync(CouponCodeEntity couponCode, CancellationToken cancellationToken)
     {
         return await _context.CouponCodes
                              .Where(x => x.Id.Equals(couponCode.Id))
@@ -77,9 +80,14 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// <param name="couponCodeId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<bool> FindCouponCodeAsync(int couponCodeId, CancellationToken cancellationToken)
+    public async Task<bool> FindCouponCodeAsync([Optional] int couponCodeId, [Optional] string couponCode, CancellationToken cancellationToken = default)
     {
-        return await _context.CouponCodes.AnyAsync(x => x.Id.Equals(couponCodeId), cancellationToken);
+        if(string.IsNullOrEmpty(couponCode)) return false;
+
+        Expression<Func<CouponCode, bool>> expression = x => couponCodeId > 0 ? x.Id.Equals(couponCodeId) && x.Code.Equals(couponCode)
+                                                                              : x.Code.Equals(couponCode);
+
+        return await _context.CouponCodes.AnyAsync(expression, cancellationToken);
     }
 
     /// <summary>
@@ -87,11 +95,11 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<CouponCode>> GetAllCouponCodesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CouponCodeEntity>> GetAllCouponCodesAsync(CancellationToken cancellationToken)
     {
         var couponCodeList = await _context.CouponCodes.AsNoTracking().ToListAsync(cancellationToken);
 
-        return couponCodeList.Select(s => new CouponCode()
+        return couponCodeList.Select(s => new CouponCodeEntity()
         {
             Id = s.Id,
             Code = s.Code,
@@ -115,11 +123,11 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// <param name="couponCodeId"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<CouponCode?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken)
+    public async Task<CouponCodeEntity?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken)
     {
         return await _context.CouponCodes
             .Where(x => x.Id.Equals(couponCodeId))
-            .Select(s => new CouponCode()
+            .Select(s => new CouponCodeEntity()
             {
                 Id = s.Id,
                 Code = s.Code,
@@ -142,10 +150,10 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// Get the quarable couponcodes
     /// </summary>
     /// <returns></returns>
-    public IQueryable<CouponCode> GetQuarableCouponCodeData()
+    public IQueryable<CouponCodeEntity> GetQuarableCouponCodeData()
     {
         return _context.CouponCodes
-            .Select(s => new CouponCode()
+            .Select(s => new CouponCodeEntity()
             {
                 Id = s.Id,
                 Code = s.Code,

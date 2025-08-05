@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Booking.Domain.Entities;
 
-public class CouponCode
+public class CouponCodeEntity
 {
     public int Id { get; set; }
 

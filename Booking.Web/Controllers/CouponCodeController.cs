@@ -1,23 +1,60 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Booking.Application.DTOs;
+using Booking.Application.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Booking.Web.Controllers
 {
-    public class CouponCodeController : Controller
+    public class CouponCodeController(ICouponCodeService couponCodeService) : Controller
     {
-        // GET: CouponCodeController
-        public ActionResult Index()
+        private readonly ICouponCodeService _couponCodeService = couponCodeService;
+        /// <summary>
+        /// Display all couponcodes
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> Index(CancellationToken token)
         {
-            return View();
+            return await Task.Run(() => View(),token);
         }
 
-        // GET: CouponCodeController/Details/5
-        public ActionResult Details(int id)
+        /// <summary>
+        /// Get couponcodes list items
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> LoadData(DataTableRequestDto request, CancellationToken cancellationToken)
         {
-            return View();
+            var couponCodes = await _couponCodeService.GetAllCouponCodesAsync(request,[],cancellationToken);
+            return Json(couponCodes);
         }
 
-        // GET: CouponCodeController/Create
+        /// <summary>
+        ///  Check the couponcode existance
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="promotionId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [AcceptVerbs("GET", "POST")]
+        public async Task<IActionResult> VerifyCouponCode(string couponCode, int couponCodeId)
+        {
+            if (await _couponCodeService.FindCouponCodeAsync(couponCodeId, couponCode, CancellationToken.None))
+                return Json($"Coupon code {couponCode} is already in use.");
+
+            return Json(true);
+        }
+
+        /// <summary>
+        /// Display Create promotion form
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public ActionResult Create()
         {
             return View();

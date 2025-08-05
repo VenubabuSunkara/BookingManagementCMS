@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,11 +11,11 @@ namespace Booking.Domain.Interfaces;
 
 public interface ICouponCodeRepository
 {
-    Task<bool> CreateCouponCodeAsync(CouponCode couponCode, CancellationToken cancellationToken);
-    Task<bool> UpdateCouponCodeAsync(CouponCode couponCode, CancellationToken cancellationToken);
+    Task<bool> CreateCouponCodeAsync(CouponCodeEntity couponCode, CancellationToken cancellationToken);
+    Task<bool> UpdateCouponCodeAsync(CouponCodeEntity couponCode, CancellationToken cancellationToken);
     Task<bool> DeleteCouponCodeAsync(int couponCodeId, CancellationToken cancellationToken);
-    Task<bool> FindCouponCodeAsync(int couponCodeId, CancellationToken cancellationToken);
-    Task<IEnumerable<CouponCode>> GetAllCouponCodesAsync(CancellationToken cancellationToken);
-    Task<CouponCode?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken);
-    IQueryable<CouponCode> GetQuarableCouponCodeData();
+    Task<bool> FindCouponCodeAsync([Optional]int couponCodeId, [Optional] string couponCode, CancellationToken cancellationToken = default);
+    Task<IEnumerable<CouponCodeEntity>> GetAllCouponCodesAsync(CancellationToken cancellationToken);
+    Task<CouponCodeEntity?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken);
+    IQueryable<CouponCodeEntity> GetQuarableCouponCodeData();
 }

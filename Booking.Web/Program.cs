@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Booking.Infrastructure;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
+using Booking.Domain.DomainServices.DataTableLoader;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
+builder.Services.AddTransient<ICouponCodeService, CouponCodeService>();
+builder.Services.AddScoped<IDataTableService, DataTableService>();
 
 // Runtime Compilation
 var mvcBuilder = builder.Services.AddControllersWithViews();
