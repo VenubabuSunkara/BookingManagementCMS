@@ -39,10 +39,13 @@ namespace Booking.Application.Services
                 DriverId = d.Driver.Id,
                 VehicleId = d.Vehicle.Id,
                 DriverName = d.Driver.GetFullName(),
+                DriverContact = d.Driver.PhoneNumber ?? string.Empty,
                 VehicleName = d.Vehicle.VehicleName ?? "Unknown",
                 SeatingCapacity = d.Vehicle.SeatingCapacity ?? 2,
                 VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
-                VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown"
+                VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown",
+                Created = d.Driver.Created ?? DateTime.Now
+
             }).AsParallel();
 
         }

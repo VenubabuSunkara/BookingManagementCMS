@@ -78,6 +78,7 @@ namespace Booking.Infrastructure.Repositories
                         LicenseNumber = x.Driver.LicenseNumber,
                         AboutOn = x.Driver.AboutOn,
                         AvailabilityStatus = x.Driver.AvailabilityStatus,
+                        Created = x.Driver.CreatedAt
                     },
                     Vehicle = new Vehicle()
                     {

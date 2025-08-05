@@ -22,6 +22,8 @@ namespace Booking.Domain.Entities
         public Driver Driver { get; set; }
         public Vehicle Vehicle { get; set; }
         public VehicleMedia VehicleMedia { get; set; }
+        public int Total { get; set; }
+        public int Filtered { get; set; }
         public DriverVehicle()
         {
             Driver = new Driver();

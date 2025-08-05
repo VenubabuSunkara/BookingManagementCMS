@@ -29,6 +29,7 @@ namespace Booking.Domain.Entities
         public Guid? TenantId { get; set; }
 
         public string? AboutOn { get; set; }
+        public DateTime? Created { get; set; } = DateTime.Now;
 
         public string? Photo { get; set; }
         public string GetFullName() => $"{FirstName} {LastName}";
