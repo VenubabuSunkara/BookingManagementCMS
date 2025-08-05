@@ -18,7 +18,13 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
-builder.Services.AddControllersWithViews();
+
+// Runtime Compilation
+var mvcBuilder = builder.Services.AddControllersWithViews();
+if (builder.Environment.IsDevelopment())
+{
+    mvcBuilder.AddRazorRuntimeCompilation();
+}
 
 var app = builder.Build();
 
