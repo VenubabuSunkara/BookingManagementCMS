@@ -15,30 +15,29 @@ namespace Booking.Web.Controllers
             _logger = logger;
             _driverService = driverService;
         }
-          [HttpPost]
-        //public async Task<IActionResult> LoadDriverData(DatatableRequest request, CancellationToken cancellationToken)
-        //{
-        //    var result = await _driverService.GetAllAsync();
-        //    return Json(new
-        //    {
-        //        draw = result.draw,
-        //        recordsFiltered = result.recordsFiltered,
-        //        recordsTotal = result.recordsTotal,
-        //        data = result?.data?.Select(x => new
-        //        {
-        //            x.VehicleName,
-        //            x.Capacity,
-        //            Photo = x.DriverVehicleMedia
-        //                     .FirstOrDefault(m => m.IsDefault)?
-        //                     .MediaValue,
-        //            VehicleType = x.VehicleType,
-        //            DriverName = x.DriverFirstName + " " + x.DriverLastName,
-        //            Contact = x.DriverContact,
-        //            CreatedDate = x.CreatedOn,
-        //            x.Id
-        //        }).ToArray()
-        //    });
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoadDriverData(DataTableAjaxPostModel request, CancellationToken cancellationToken)
+        {
+            var result = await _driverService.GetDriverVehicleList(request.start, request.length);
+            return Json(new
+            {
+                draw = request.draw,
+                recordsFiltered = result.recordsFiltered,
+                recordsTotal = result.recordsTotal,
+                data = result?.Select(x => new
+                {
+                    x.VehicleName,
+                    x.SeatingCapacity,
+                    Photo = x.VehicleThumbnail,
+                    VehicleType = x.VehicleType,
+                    DriverName = x.DriverName,
+                    Contact = x.DriverContact,
+                    CreatedDate = x.CreatedOn,
+                    x.DriverId
+                }).ToArray()
+            });
+        }
         public async Task<int> Approve(int DriverVehileId)
         {
             if (DriverVehileId == 0)

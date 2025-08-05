@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿b
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -10,36 +11,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <meta name="keywords" content="" />
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200&amp;family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet" />
-
-    <!-- FontAsowme css start  -->
-    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" asp-append-version="true" />
-
-    <!-- Themify icon-->
-    <link rel="stylesheet" type="text/css" href="~/css/themify.css" asp-append-version="true" />
-    <!-- ratio start -->
-    <link rel="stylesheet" type="text/css" href="~/css/ratio.css" asp-append-version="true" />
-
-    <!-- Feather icon-->
-    <link rel="stylesheet" type="text/css" href="~/css/feather-icon.css" asp-append-version="true" />
-    <!-- Plugins css start-->
-    <link rel="stylesheet" type="text/css" href="~/css/scrollbar.css" asp-append-version="true" />
-    <link rel="stylesheet" type="text/css" href="~/css/animate.css" asp-append-version="true" />
-    <!-- Plugins css Ends-->
-    <!-- datepicker -->
-    <link rel="stylesheet" type="text/css" href="~/css/date-picker.css" asp-append-version="true" />
-    <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.css" />
-    <!-- vector map css start -->
-    <link rel="stylesheet" type="text/css" href="~/css/vector-map.css" asp-append-version="true" />
-    <!-- vector map css start -->
-    <!-- slick slider-->
-    <link rel="stylesheet" type="text/css" href="~/css/slick.css" asp-append-version="true" />
-    <link rel="stylesheet" type="text/css" href="~/css/slick-theme.css" asp-append-version="true" />
-    <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true" />
-    <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="~/css/responsive.css" asp-append-version="true" />
+    @await Html.PartialAsync("_Styles")
 </head>
 <body>
     <!--Loader-->
@@ -82,7 +54,7 @@
                         </div>
                         <div id="sidebar-menu">
 
-                            @await Html.PartialAsync("_SideMenu.cshtml");
+                            @await Html.PartialAsync("_SideMenu");
                         </div>
                         <div class="right-arrow" id="right-arrow">
                             <i data-feather="arrow-right"></i>
@@ -95,7 +67,7 @@
                 @RenderBody()
                 <div class="container-fluid">
                     <!-- footer start-->
-                    @await Html.PartialAsync("_Footer.cshtml");
+                    @await Html.PartialAsync("_Footer");
                     <!-- footer End-->
                 </div>
             </div>
@@ -131,8 +103,7 @@
             </div>
         </div>
     </div>
-    <!-- <div class="customizer-links"></div> -->    <!-- latest jquery-->
-    <partial name="_LayoutScriptsPartial" />
+    @await Html.PartialAsync("_Scripts")
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
