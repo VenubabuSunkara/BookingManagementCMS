@@ -37,10 +37,10 @@
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
-    @if (!string.IsNullOrEmpty(Convert.ToString(TempData["PromotionSuccessMessage"])))
+    @if (!string.IsNullOrEmpty(Convert.ToString(TempData["couponCodeSuccessMessage"])))
     {
-        <div id="promotionAlertMessage" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-            @Convert.ToString(TempData["PromotionSuccessMessage"])
+        <div id="couponCodeAlertMessage" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            @Convert.ToString(TempData["couponCodeSuccessMessage"])
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
@@ -115,13 +115,13 @@
                     { data: 'code', autoWidth: true },
                     { data: 'validityFrom', autoWidth: true },
                     { data: 'validityTo', autoWidth: true },
-                    { data: 'rangeMin', autoWidth: true },
-                    { data: 'rangeMax', autoWidth: true },
+                    { data: 'priceRangeMin', autoWidth: true },
+                    { data: 'priceRangeMax', autoWidth: true },
                     {
-                        data: 'id',
+                        data: 'couponCodeId',
                         render: function (data, type, row) {
                             return `
-                                    <form method="post" action="/Promotion/Details" onsubmit="event.stopPropagation();" style="display:inline;">
+                                    <form method="post" action="/CouponCode/Details" onsubmit="event.stopPropagation();" style="display:inline;">
                                     <input type="hidden" name="id" value="${data}" />
                                     <button type="submit" class="btn btn-link p-0" title="View" style="border: none; background: none;">
                                             <i class="fa fa-eye" aria-hidden="true" style="color: #747dc6;"></i>
@@ -130,10 +130,10 @@
                         }
                     },
                     {
-                        data: 'id',
+                        data: 'couponCodeId',
                         render: function (data, type, row) {
                             return `
-                                    <form method="post" action="/Promotion/Edit" onsubmit="event.stopPropagation();" style="display:inline;">
+                                    <form method="post" action="/CouponCode/Edit" onsubmit="event.stopPropagation();" style="display:inline;">
                                     <input type="hidden" name="id" value="${data}" />
                                     <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
                                             <i class="fa fa-pencil-square-o"aria-hidden="true" style="color: #4aa4d9"></i>
@@ -142,7 +142,7 @@
                         }
                     },
                     {
-                        data: 'id',
+                        data: 'couponCodeId',
                         render: function (data, type, row) {
                             return `<a class="delete-promotion" href="javascript:void(0);" data-id="${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                             //return `<a onclick=DeleteData(${data})><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
@@ -203,10 +203,10 @@
             });
             //Delere promotion post event handeler
             function Delete(promotionId) {
-                var url = '@Url.Content("~/")' + "Promotion/Delete";
+                var url = '@Url.Content("~/")' + "CouponCode/Delete";
                 $.post(url, { id: promotionId }, function (data) {
                     if (data) {
-                        $('.container-fluid').first().prepend(`<div id="promotionAlertMessage"
+                        $('.container-fluid').first().prepend(`<div id="couponCodeAlertMessage"
                                                                   class="alert alert-success alert-dismissible fade show mt-3" role="alert">
                                                                   Promotion deleted successfully.
                                                                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -214,7 +214,7 @@
                         table.ajax.reload();
                         HidePromotionMessageLabel();
                     } else {
-                         $('.container-fluid').first().prepend(`<div id="promotionAlertMessage"
+                         $('.container-fluid').first().prepend(`<div id="couponCodeAlertMessage"
                                                                   class="alert alert-success alert-dismissible fade show mt-3" role="alert">
                                                                   Unable to delete promotion.Please try again after some time.
                                                                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -230,7 +230,7 @@
             //Hide the success message
             setTimeout(() =>
             {
-                $('#promotionAlertMessage').hide();
+                $('#couponCodeAlertMessage').hide();
             },3000);
         }
     </script>

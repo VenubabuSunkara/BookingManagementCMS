@@ -24,9 +24,9 @@ public class DateComparisonAttribute(string comparisonProperty) : ValidationAttr
         if (property == null)
             return new ValidationResult($"Unknown property: {comparisonProperty}");
 
-        var comparisonValue = DateOnly.FromDateTime((DateTime)property.GetValue(validationContext.ObjectInstance)!);
+        var comparisonValue = (DateOnly)property.GetValue(validationContext.ObjectInstance)!;
 
-        var currentValue = DateOnly.FromDateTime((DateTime)value!);
+        var currentValue = (DateOnly)value!;
 
         if (currentValue < comparisonValue)
             return new ValidationResult(ErrorMessage ?? GetErrorMessage());

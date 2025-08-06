@@ -5,9 +5,9 @@ function ValidatePromotions() {
     // Clear previous errors
     $('#name-Error, #startDate-Error, #endDate-Error').text('').hide();
     //Name validation
-    if (!validateName()) {
-        isValid = false;
-    }
+    //if (!validateName()) {
+    //    isValid = false;
+    //}
     //Couponcode validation
     if (!validateCouponcode()) {
         isValid = false;
@@ -28,25 +28,25 @@ function ValidatePromotions() {
     return isValid;
 }
 //Validate Name
-const validateName = () => {
-    try {
-        const name = $('#name').val() || ''
-        const $error = $('#name-Error');
-        let isValid = true;
+//const validateName = () => {
+//    try {
+//        const name = $('#name').val() || ''
+//        const $error = $('#name-Error');
+//        let isValid = true;
 
-        if (!name) {
-            $error.text('This field is required.').show();
-            isValid = false;
-        } else {
-            $error.text('');
-        }
+//        if (!name) {
+//            $error.text('This field is required.').show();
+//            isValid = false;
+//        } else {
+//            $error.text('');
+//        }
 
-        return isValid;
-    } catch (e) {
-        console.error('Validation error:', e.message);
-        return false;
-    }
-};
+//        return isValid;
+//    } catch (e) {
+//        console.error('Validation error:', e.message);
+//        return false;
+//    }
+//};
 //Validate Couponcode
 const validateCouponcode = () => {
     try {

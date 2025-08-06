@@ -3,8 +3,9 @@
 @model CouponCodeDto;
 
 @{
-    ViewData["Title"] = "Create CouponCode";
+    ViewData["Title"] = "Edit Coupon Code";
 }
+
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
@@ -13,7 +14,7 @@
             <h5>Pramotion Information</h5>
         </div>
         <div class="card-body">
-            <form asp-controller="CouponCode" asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data" method="post" id="promotionCreateForm" class="theme-form mega-form">
+            <form asp-controller="CouponCode" asp-action="Update" asp-antiforgery="true" enctype="multipart/form-data" method="post" id="couponCodeUpdateForm" class="theme-form mega-form">
                 <div class="row">
                     <div class="col-sm-12">
                         <label class="form-label-title mt-3">Couponcode</label>
@@ -128,8 +129,9 @@
                     </div>
 
                 </div>
+                <input asp-for="CouponCodeId" type="hidden">
                 <button id="couponCodeFieldsClear" class="btn btn-primary mt-3">Clear Fields</button>
-                <button id="couponCodeSubmit" class="btn btn-primary mt-3">Save Change</button>
+                <button id="couponCodeUpdate" class="btn btn-primary mt-3">Update Change</button>
                 <a asp-controller="CouponCode" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
             </form>
         </div>
@@ -144,12 +146,12 @@
     <script type="text/javascript">
         $(() => {
             //Validate Form fields
-            $('#couponCodeSubmit').on("click",() => {
+            $('#couponCodeUpdate').on("click",() => {
                 return ValidatePromotions();
             });
             //Clear form fileds
             $('#couponCodeFieldsClear').on("click",() => {
-                ClearPromotionForm('#promotionCreateForm');
+                ClearPromotionForm('#couponCodeUpdateForm');
                 return false;
             });
             //Change Events

@@ -22,18 +22,18 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     {
         return await _couponCodeRepository.CreateCouponCodeAsync(new()
         {
-            Code = couponCodeDto.Code,
+            Code = couponCodeDto.Code ?? string.Empty,
             ValidityFrom = couponCodeDto.ValidityFrom,
             ValidityTo = couponCodeDto.ValidityTo,
             PriceRangeMin = couponCodeDto.PriceRangeMin,
             PriceRangeMax = couponCodeDto.PriceRangeMax,
-            DiscountType = couponCodeDto.DiscountType,
-            DiscountValue = couponCodeDto.DiscountValue,
+            DiscountType = couponCodeDto.DiscountType ?? string.Empty,
+            DiscountValue = couponCodeDto.DiscountValue ?? string.Empty,
             CreatedOn = couponCodeDto.CreatedOn,
             UpdatedOn = couponCodeDto.UpdatedOn,
             CreatedBy = couponCodeDto.CreatedBy,
             UpdatedBy = couponCodeDto.UpdatedBy,
-            MediaUrl = couponCodeDto.MediaUrl
+            MediaUrl = couponCodeDto.MediaUrl ?? string.Empty
         }, cancellationToken);
     }
 
@@ -140,6 +140,7 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
                 DiscountType = s.DiscountType ?? string.Empty,
                 DiscountValue = s.DiscountValue ?? string.Empty,
                 MediaUrl = s.MediaUrl ?? string.Empty,
+                UpdatedOn = s.UpdatedOn
             }).AsParallel()]
         };
     }
