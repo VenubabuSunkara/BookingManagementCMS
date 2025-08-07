@@ -30,23 +30,28 @@ namespace Booking.Application.Services
             }).AsParallel();
         }
 
-        public async Task<IEnumerable<DriverVehicleDto>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        public async Task<DriverDataTableDto> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
         {
-            var DriverVehicleList = await _driverRepository.GetDriverVehicleList(pageIndex, pageSize, searchKey);
+            var driverData = await _driverRepository.GetDriverVehicleList(pageIndex, pageSize, searchKey);
 
-            return DriverVehicleList.Select(d => new DriverVehicleDto
+            return new DriverDataTableDto()
             {
-                DriverId = d.Driver.Id,
-                VehicleId = d.Vehicle.Id,
-                DriverName = d.Driver.GetFullName(),
-                DriverContact = d.Driver.PhoneNumber ?? string.Empty,
-                VehicleName = d.Vehicle.VehicleName ?? "Unknown",
-                SeatingCapacity = d.Vehicle.SeatingCapacity ?? 2,
-                VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
-                VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown",
-                Created = d.Driver.Created ?? DateTime.Now
+                TotalRecords = driverData.Total,
+                FilterRecords = driverData.Filtered,
+                DriverInfo = driverData.driverVehicle.Select(d => new DriverVehicleDto
+                {
+                    DriverId = d.Driver.Id,
+                    VehicleId = d.Vehicle.Id,
+                    DriverName = d.Driver.GetFullName(),
+                    DriverContact = d.Driver.PhoneNumber ?? string.Empty,
+                    VehicleName = d.Vehicle.VehicleName ?? "Unknown",
+                    SeatingCapacity = d.Vehicle.SeatingCapacity ?? 2,
+                    VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
+                    VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown",
+                    Created = d.Driver.Created ?? DateTime.Now
 
-            }).AsParallel();
+                }).AsParallel()
+            };
 
         }
 

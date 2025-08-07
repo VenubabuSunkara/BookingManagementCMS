@@ -26,7 +26,7 @@ namespace Booking.Domain.Interfaces
     public interface IDriverRepository
     {
         Task<IEnumerable<Driver>> GetAllAsync();
-        Task<IEnumerable<DriverVehicle>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
+        Task<DriverVehicleDTable> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
         Task<IEnumerable<VehicleMedia>> GetVehicleMediaList(int vehicleId);
         Task<int> ApproveDriverAsync(int DriverId);
     }

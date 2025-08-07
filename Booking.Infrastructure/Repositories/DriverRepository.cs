@@ -48,61 +48,119 @@ namespace Booking.Infrastructure.Repositories
             }).AsParallel();
         }
 
-        public async Task<IEnumerable<DriverVehicle>> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        public async Task<DriverVehicleDTable> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
         {
-            var DriverVehicleList = await _context.DriverVehicleMappings.AsNoTracking()
-                .Include(x => x.Vehicle)
-                .ThenInclude(x => x.VehicleMedia)
-                .Include(x => x.Driver)
+        //    var baseQuery = _context.DriverVehicleMappings
+        //.AsNoTracking()
+        //.Where(mapping =>
+        //    string.IsNullOrEmpty(searchKey) ||
+        //    mapping.Driver.FirstName.ToLower().Contains(searchKey) ||
+        //    mapping.Driver.LastName.ToLower().Contains(searchKey) ||
+        //    mapping.Driver.Email.ToLower().Contains(searchKey) ||
+        //    mapping.Driver.PhoneNumber.ToLower().Contains(searchKey) ||
+        //    mapping.Vehicle.VehicleName.ToLower().Contains(searchKey) ||
+        //    mapping.Vehicle.VehicleNumber.ToLower().Contains(searchKey) ||
+        //    mapping.Vehicle.Model.ToLower().Contains(searchKey)
+        //)
+            // Get total count for pagination
+            var totalCount = await _context.DriverVehicleMappings.AsNoTracking().CountAsync();
+
+            // Get paginated result with selected fields only
+            var driverVehicleList = await _context.DriverVehicleMappings
+                .AsNoTracking()
+                .Select(mapping => new
+                {
+                    Driver = new
+                    {
+                        mapping.Driver.Id,
+                        mapping.Driver.FirstName,
+                        mapping.Driver.LastName,
+                        mapping.Driver.Email,
+                        mapping.Driver.PhoneNumber,
+                        mapping.Driver.Photo,
+                        mapping.Driver.Address,
+                        mapping.Driver.LicenseNumber,
+                        mapping.Driver.AboutOn,
+                        mapping.Driver.AvailabilityStatus,
+                        CreatedAt = mapping.Driver.CreatedAt
+                    },
+                    Vehicle = new
+                    {
+                        mapping.Vehicle.Id,
+                        mapping.Vehicle.VehicleName,
+                        mapping.Vehicle.Color,
+                        mapping.Vehicle.Description,
+                        mapping.Vehicle.AboutOnVehicle,
+                        mapping.Vehicle.Features,
+                        mapping.Vehicle.Make,
+                        mapping.Vehicle.VehicleNumber,
+                        mapping.Vehicle.SeatingCapacity,
+                        mapping.Vehicle.Model,
+                        mapping.Vehicle.VehicleTypeId,
+                        DefaultMedia = mapping.Vehicle.VehicleMedia
+                            .Where(m => m.IsDefault)
+                            .Select(m => new
+                            {
+                                m.MediaName,
+                                m.MediaType,
+                                m.MediaUrl,
+                                m.ThumbnailUrl
+                            })
+                            .FirstOrDefault()
+                    }
+                })
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
-                .Select(x => new
-                {
-                    x.Vehicle,
-                    x.Driver,
-                    VehicleMedia = x.Vehicle.VehicleMedia.FirstOrDefault(x => x.IsDefault)
-                }).ToListAsync();
+                .ToListAsync();
 
-            return DriverVehicleList
-                .Select(x => new DriverVehicle()
+            // Final transformation to your actual models
+            var resultList = driverVehicleList.Select(x => new DriverVehicle
+            {
+                Driver = new Driver
                 {
-                    Driver = new Driver()
-                    {
-                        Id = x.Driver.Id,
-                        FirstName = x.Driver.FirstName,
-                        LastName = x.Driver.LastName,
-                        Email = x.Driver.Email,
-                        PhoneNumber = x.Driver.PhoneNumber,
-                        Photo = x.Driver.Photo,
-                        Address = x.Driver.Address,
-                        LicenseNumber = x.Driver.LicenseNumber,
-                        AboutOn = x.Driver.AboutOn,
-                        AvailabilityStatus = x.Driver.AvailabilityStatus,
-                        Created = x.Driver.CreatedAt
-                    },
-                    Vehicle = new Vehicle()
-                    {
-                        VehicleName = x.Vehicle.VehicleName,
-                        Color = x.Vehicle.Color,
-                        Description = x.Vehicle.Description,
-                        AboutOnVehicle = x.Vehicle.AboutOnVehicle,
-                        Id = x.Vehicle.Id,
-                        Features = x.Vehicle.Features,
-                        Make = x.Vehicle.Make,
-                        VehicleNumber = x.Vehicle.VehicleNumber,
-                        SeatingCapacity = x.Vehicle.SeatingCapacity,
-                        Model = x.Vehicle.Model,
-                        VehicleTypeId = x.Vehicle.VehicleTypeId,
-                    },
-                    VehicleMedia = new VehicleMedia()
-                    {
-                        MediaName = x.VehicleMedia?.MediaName ?? string.Empty,
-                        MediaType = x.VehicleMedia?.MediaType ?? string.Empty,
-                        MediaUrl = x.VehicleMedia?.MediaUrl ?? string.Empty,
-                        ThumbnailUrl = x.VehicleMedia?.ThumbnailUrl ?? string.Empty,
-                    }
+                    Id = x.Driver.Id,
+                    FirstName = x.Driver.FirstName,
+                    LastName = x.Driver.LastName,
+                    Email = x.Driver.Email,
+                    PhoneNumber = x.Driver.PhoneNumber,
+                    Photo = x.Driver.Photo,
+                    Address = x.Driver.Address,
+                    LicenseNumber = x.Driver.LicenseNumber,
+                    AboutOn = x.Driver.AboutOn,
+                    AvailabilityStatus = x.Driver.AvailabilityStatus,
+                    Created = x.Driver.CreatedAt
+                },
+                Vehicle = new Vehicle
+                {
+                    Id = x.Vehicle.Id,
+                    VehicleName = x.Vehicle.VehicleName,
+                    Color = x.Vehicle.Color,
+                    Description = x.Vehicle.Description,
+                    AboutOnVehicle = x.Vehicle.AboutOnVehicle,
+                    Features = x.Vehicle.Features,
+                    Make = x.Vehicle.Make,
+                    VehicleNumber = x.Vehicle.VehicleNumber,
+                    SeatingCapacity = x.Vehicle.SeatingCapacity,
+                    Model = x.Vehicle.Model,
+                    VehicleTypeId = x.Vehicle.VehicleTypeId
+                },
+                VehicleMedia = new VehicleMedia
+                {
+                    MediaName = x.Vehicle.DefaultMedia?.MediaName ?? string.Empty,
+                    MediaType = x.Vehicle.DefaultMedia?.MediaType ?? string.Empty,
+                    MediaUrl = x.Vehicle.DefaultMedia?.MediaUrl ?? string.Empty,
+                    ThumbnailUrl = x.Vehicle.DefaultMedia?.ThumbnailUrl ?? string.Empty
+                }
+            }).ToList();
 
-                }).AsParallel().ToList();
+            // Final DTO return
+            return new DriverVehicleDTable
+            {
+                Total = totalCount,
+                Filtered = totalCount, // update if using filters
+                driverVehicle = resultList
+            };
+
         }
 
         public async Task<IEnumerable<VehicleMedia>> GetVehicleMediaList(int vehicleId)

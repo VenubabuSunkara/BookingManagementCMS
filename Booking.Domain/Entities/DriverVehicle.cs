@@ -17,13 +17,18 @@ namespace Booking.Domain.Entities
         public string VehicleType { get; set; } = string.Empty;
         public int? VehicleId { get; set; }
     }
+    public class DriverVehicleDTable
+    {
+        public int Total { get; set; }
+        public int Filtered { get; set; }
+        public IEnumerable<DriverVehicle> driverVehicle { get; set; } = [];
+
+    }
     public class DriverVehicle
     {
         public Driver Driver { get; set; }
         public Vehicle Vehicle { get; set; }
         public VehicleMedia VehicleMedia { get; set; }
-        public int Total { get; set; }
-        public int Filtered { get; set; }
         public DriverVehicle()
         {
             Driver = new Driver();

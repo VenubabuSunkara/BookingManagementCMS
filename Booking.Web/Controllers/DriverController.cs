@@ -22,27 +22,27 @@ namespace Booking.Web.Controllers
             var result = await _driverService.GetDriverVehicleList(request.start, request.length);
             return Json(new
             {
-                draw = request.draw,
-                recordsFiltered = result.recordsFiltered,
-                recordsTotal = result.recordsTotal,
-                data = result?.Select(x => new
+                draw = request.draw == 0 ? 1 : request.draw,
+                recordsFiltered = result.FilterRecords,
+                recordsTotal = result.TotalRecords,
+                data = result.DriverInfo.Select(x => new
                 {
                     x.VehicleName,
                     x.SeatingCapacity,
                     Photo = x.VehicleThumbnail,
-                    VehicleType = x.VehicleType,
-                    DriverName = x.DriverName,
+                    x.VehicleType,
+                    x.DriverName,
                     Contact = x.DriverContact,
-                    CreatedDate = x.CreatedOn,
+                    CreatedDate = x.Created,
                     x.DriverId
                 }).ToArray()
             });
         }
-        public async Task<int> Approve(int DriverVehileId)
+        public async Task<int> Approve(int DriverVehicleId)
         {
-            if (DriverVehileId == 0)
+            if (DriverVehicleId == 0)
                 throw new ArgumentException();
-            return await _driverService.ApproveDriverAsync(DriverVehileId);
+            return await _driverService.ApproveDriverAsync(DriverVehicleId);
         }
 
         public async Task<IActionResult> Index()

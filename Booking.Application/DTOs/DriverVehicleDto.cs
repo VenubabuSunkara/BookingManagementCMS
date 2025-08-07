@@ -16,6 +16,14 @@ namespace Booking.Application.DTOs
         public string VehicleThumbnail { get; set; } = string.Empty;
         public string VehicleType { get; set; } = string.Empty;
         public int VehicleId { get; set; }
-        public DateTime Created { get;set; }
+        public DateTime Created { get; set; }
+    }
+    public class DriverDataTableDto
+    {
+        public int TotalRecords { get; set; }
+        public int FilterRecords { get; set; }
+        public IEnumerable<DriverVehicleDto> DriverInfo { get; set; } = [];
+        public string NextLink { get; set; } = string.Empty;
+        public string PrevLink { get; set; } = string.Empty;
     }
 }
