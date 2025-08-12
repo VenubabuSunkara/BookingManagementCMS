@@ -30,9 +30,9 @@ namespace Booking.Application.Services
             }).AsParallel();
         }
 
-        public async Task<DriverDataTableDto> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        public async Task<DriverDataTableDto> GetDriverVehicleList(int Skip, int Take, string searchKey = "")
         {
-            var driverData = await _driverRepository.GetDriverVehicleList(pageIndex, pageSize, searchKey);
+            var driverData = await _driverRepository.GetDriverVehicleList(Skip, Take, searchKey);
 
             return new DriverDataTableDto()
             {

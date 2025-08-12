@@ -1,7 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Driver Vehicle List";
 }
-@* <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" /> *@
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <style>
 
@@ -80,43 +79,47 @@
 <!-- Container-fluid ends-->
 <!-- Container-fluid Ends-->
 @section Scripts {
-     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
-    @* <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> *@
-    @* <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script> *@
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
     <script type="text/javascript">
-        var driverListVM;
-            driverListVM = {
+        var  driverListVM = {
                 Driverdt: null,
-                init: function (event) {
-                     Driverdt = $('#tblvehicledriver').DataTable({
+                init: function () {
+                     const token = $('input[name="__RequestVerificationToken"]').val();
+                     this.Driverdt = $('#tblvehicledriver').DataTable({
                      processing: true,
                      serverSide: true,
-                     info: false, // Hide "Showing X to Y of Z entries"
                      stateSave: true,
                      ajax: {
                             url: '/Driver/LoadDriverData',
                             type: 'POST',
-                            contentType: 'application/json',
-                            headers: {
-                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: function (d) {
+                                console.log(d);
+                                return JSON.stringify(d); // Send as JSON string
                             },
-                              data: function (d) {
-                                return JSON.stringify(d); // send as JSON
+                            headers: {
+                                'RequestVerificationToken': token
+                            },
+                            error: function (xhr, error, thrown) {
+                                console.error("DataTable error: ", xhr.responseText);
                             }
                         },
-                     layout: {
-                         bottomStart: {
-                                    info: {
-                                        empty: 'No entries to show'
-                                    }
-                                }
-                     },
+                     // layout: {
+                     //     bottomStart: {
+                     //                info: {
+                     //                    empty: 'No entries to show'
+                     //                }
+                     //            }
+                     // },
                      columns: [
-                         {   data: 'Photo', autoWidth: true,
-                             render: function (data, type, full, meta) {
-                                    return `<img src="${data}" alt="${full.DriverId}" />`
+                             {
+                                data: 'Photo',
+                                autoWidth: true,
+                                render: function (data, type, full, meta) {
+                                    return `<img src="${data}" alt="${full.DriverId}" class="img-thumbnail" style="height:40px;" />`;
                                 }
-                         },
+                            },
                             { data: 'VehicleName', autoWidth: true },
                             { data: 'SeatingCapacity', autoWidth: true },
                             { data: 'VehicleType', autoWidth: true },
@@ -135,58 +138,20 @@
                                     return `<a href="/DriverVehicle/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                                 }
                             }
-                        ]
-                    })
+                        ],
+                          language: {
+                                emptyTable: "No entries to show"
+                            }
+                    });
                 },
                 refresh: function () {
-                        Driverdt.ajax.reload();
+                    if (this.Driverdt) {
+                        this.Driverdt.ajax.reload();
+                    }
                 }
             };
             $(document).ready(function () {
                 driverListVM.init();
         });
-
-        // function customizePagination(table) {
-        //     const pagination = $('#vehicledriver-pagination');
-        //     const currentPage = table.page.info().page + 1;
-        //     const totalPages = table.page.info().pages;
-
-        //     let customPagination = `
-        //         <div class="pagination-box">
-        //           <div class="dtpagination-height my-4">
-        //             <nav class="ms-auto me-auto" aria-label="...">
-        //                 <ul class="pagination pagination-primary justify-content-center">
-        //                     <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-        //                         <a class="page-link" href="javascript:void(0)" data-page="prev">Previous</a>
-        //                     </li>`;
-
-        //     for (let i = 1; i <= totalPages; i++) {
-        //         customPagination += `
-        //             <li class="page-item ${i === currentPage ? 'active' : ''}">
-        //                 <a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a>
-        //             </li>`;
-        //     }
-
-        //     customPagination += `
-        //                     <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-        //                         <a class="page-link" href="javascript:void(0)" data-page="next">Next</a>
-        //                     </li>
-        //                 </ul>
-        //             </nav>
-        //         </div></div>`;
-
-        //     pagination.html(customPagination);
-
-        //     $('.pagination-box .page-link').off('click').on('click', function () {
-        //         const page = $(this).data('page');
-        //         if (page === 'next') {
-        //             table.page('next').draw('page');
-        //         } else if (page === 'prev') {
-        //             table.page('previous').draw('page');
-        //         } else {
-        //             table.page(parseInt(page) - 1).draw('page');
-        //         }
-        //     });
-        //}
     </script>
 }

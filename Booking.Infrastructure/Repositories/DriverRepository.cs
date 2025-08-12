@@ -48,23 +48,22 @@ namespace Booking.Infrastructure.Repositories
             }).AsParallel();
         }
 
-        public async Task<DriverVehicleDTable> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        public async Task<DriverVehicleDTable> GetDriverVehicleList(int Skip, int Take, string searchKey = "")
         {
-        //    var baseQuery = _context.DriverVehicleMappings
-        //.AsNoTracking()
-        //.Where(mapping =>
-        //    string.IsNullOrEmpty(searchKey) ||
-        //    mapping.Driver.FirstName.ToLower().Contains(searchKey) ||
-        //    mapping.Driver.LastName.ToLower().Contains(searchKey) ||
-        //    mapping.Driver.Email.ToLower().Contains(searchKey) ||
-        //    mapping.Driver.PhoneNumber.ToLower().Contains(searchKey) ||
-        //    mapping.Vehicle.VehicleName.ToLower().Contains(searchKey) ||
-        //    mapping.Vehicle.VehicleNumber.ToLower().Contains(searchKey) ||
-        //    mapping.Vehicle.Model.ToLower().Contains(searchKey)
-        //)
+            //    var baseQuery = _context.DriverVehicleMappings
+            //.AsNoTracking()
+            //.Where(mapping =>
+            //    string.IsNullOrEmpty(searchKey) ||
+            //    mapping.Driver.FirstName.ToLower().Contains(searchKey) ||
+            //    mapping.Driver.LastName.ToLower().Contains(searchKey) ||
+            //    mapping.Driver.Email.ToLower().Contains(searchKey) ||
+            //    mapping.Driver.PhoneNumber.ToLower().Contains(searchKey) ||
+            //    mapping.Vehicle.VehicleName.ToLower().Contains(searchKey) ||
+            //    mapping.Vehicle.VehicleNumber.ToLower().Contains(searchKey) ||
+            //    mapping.Vehicle.Model.ToLower().Contains(searchKey)
+            //)
             // Get total count for pagination
             var totalCount = await _context.DriverVehicleMappings.AsNoTracking().CountAsync();
-
             // Get paginated result with selected fields only
             var driverVehicleList = await _context.DriverVehicleMappings
                 .AsNoTracking()
@@ -109,8 +108,8 @@ namespace Booking.Infrastructure.Repositories
                             .FirstOrDefault()
                     }
                 })
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
+                .Skip(Skip)
+                .Take(Take)
                 .ToListAsync();
 
             // Final transformation to your actual models

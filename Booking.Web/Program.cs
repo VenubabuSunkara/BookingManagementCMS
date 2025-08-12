@@ -19,8 +19,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
-builder.Services.AddTransient<ICouponCodeService, CouponCodeService>();
+builder.Services.AddScoped<ICouponCodeService, CouponCodeService>();
 builder.Services.AddScoped<IDataTableService, DataTableService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IBookingDetailsService, BookingDetailsService>();
 
 // Runtime Compilation
 var mvcBuilder = builder.Services.AddControllersWithViews();
