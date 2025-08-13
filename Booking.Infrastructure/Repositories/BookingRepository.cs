@@ -71,11 +71,78 @@ namespace Booking.Infrastructure.Repositories
         public async Task<BookingsDTable> GetAllBookings(int Skip, int Take, string searchKey = "")
         {
             var totalCount = await _context.BookingOrders.AsNoTracking().CountAsync();
-            var bookings = await _context.BookingOrders.Include(x => x.BookingDetails).Skip(Skip).Take(Take).ToListAsync();
+            var bookings = await _context.BookingOrders
+                                        .AsNoTracking()
+                                        .AsSplitQuery()
+                                        .Include(x => x.BookingDetails)
+                                        .Include(x => x.Package)
+                                        .Include(x => x.Customer)
+                                        .Select(mapping => new
+                                        {
+                                            Id = mapping.Id,
+                                            mapping.BookingDate,
+                                            mapping.TravelDate,
+                                            mapping.TotalAmount,
+                                            mapping.VehicleId,
+                                            mapping.CustomerId,
+                                            mapping.CouponCodeId,
+                                            mapping.PackageId,
+                                            mapping.Status,
+                                            Driver = new
+                                            {
+                                                mapping.Driver.Id,
+                                                mapping.Driver.FirstName,
+                                                mapping.Driver.LastName,
+                                                mapping.Driver.Email,
+                                                mapping.Driver.PhoneNumber,
+                                                mapping.Driver.Photo,
+                                                mapping.Driver.Address,
+                                                mapping.Driver.LicenseNumber,
+                                                mapping.Driver.AboutOn,
+                                                mapping.Driver.AvailabilityStatus,
+                                                mapping.Driver.ApproveDriver,
+                                                mapping.Driver.CreatedAt
+                                            },
+                                            Vehicle = new
+                                            {
+                                                mapping.Vehicle.Id,
+                                                mapping.Vehicle.VehicleName,
+                                                mapping.Vehicle.Color,
+                                                mapping.Vehicle.Description,
+                                                mapping.Vehicle.AboutOnVehicle,
+                                                mapping.Vehicle.Features,
+                                                mapping.Vehicle.Make,
+                                                mapping.Vehicle.VehicleNumber,
+                                                mapping.Vehicle.SeatingCapacity,
+                                                mapping.Vehicle.Model,
+                                                mapping.Vehicle.VehicleTypeId,
+                                                DefaultMedia = mapping.Vehicle.VehicleMedia
+                                                                    .Where(m => m.IsDefault)
+                                                                    .Select(m => new
+                                                                    {
+                                                                        m.MediaName,
+                                                                        m.MediaType,
+                                                                        m.MediaUrl,
+                                                                        m.ThumbnailUrl
+                                                                    }).FirstOrDefault()
+                                            },
+                                            BookingDetails = mapping.BookingDetails.Select(y => new
+                                            {
+                                                y.BookingId,
+                                                y.Id,
+                                                y.PassengerName,
+                                                y.PassengerAge,
+                                                y.PassengerGender,
+                                                y.RelativeId
+                                            }).ToList()
+                                        })
+                                        .Skip(Skip)
+                                        .Take(Take)
+                                        .ToListAsync();
             return new BookingsDTable
             {
                 Total = totalCount,
-                BookingOrders = [.. bookings.Select(x => new BookingOrder()
+                BookingOrders = [..bookings.Select(x => new BookingOrder()
                 {
                     BookingDate = x.BookingDate,
                     TravelDate = x.TravelDate,
@@ -86,6 +153,28 @@ namespace Booking.Infrastructure.Repositories
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
                     VehicleId = x.VehicleId,
+                    Vehicle=new Vehicle(){
+                        VehicleName=x.Vehicle.VehicleName,
+                        VehicleNumber=x.Vehicle.VehicleNumber,
+                        Color=x.Vehicle.Color,
+                        Features=x.Vehicle.Features,
+                        AboutOnVehicle=x.Vehicle.AboutOnVehicle,
+                        Make=x.Vehicle.Make,
+                        Model=x.Vehicle.Model,
+                        SeatingCapacity=x.Vehicle.SeatingCapacity,
+                        Description=x.Vehicle.Description,
+                    },
+                    Driver=new Driver (){
+                        AboutOn =x.Driver.AboutOn,
+                        Address=x.Driver.Address,
+                        AvailabilityStatus=x.Driver.AvailabilityStatus,
+                        Email=x.Driver.Email,
+                        FirstName=x.Driver.FirstName,
+                        LastName=x.Driver.LastName,
+                        IsApproved=x.Driver.ApproveDriver,
+                        LicenseNumber=x.Driver.LicenseNumber,
+                        PhoneNumber=x.Driver.PhoneNumber,
+                    },
                     BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
                     {
                         BookingId = y.BookingId,

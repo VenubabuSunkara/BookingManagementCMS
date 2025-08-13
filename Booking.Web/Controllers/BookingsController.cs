@@ -34,15 +34,13 @@ namespace Booking.Web.Controllers
                 recordsTotal = result.TotalRecords,
                 data = result.BookingsInfo.Select(x => new
                 {
+                    VehicleName = x.Vehicle.VehicleName,
+                    DriverName = x.Driver.FullName,
                     BookingDate = x.BookingDate,
                     TravelDate = x.TravelDate,
-                    CouponCodeId = x.CouponCodeId,
-                    CustomerId = x.CustomerId,
-                    Id = x.Id,
-                    PackageId = x.PackageId,
-                    Status = x.Status,
-                    TotalAmount = x.TotalAmount,
-                    VehicleId = x.VehicleId,
+                    Amount = x.TotalAmount,
+                    PackageName = x.PackageId,
+                    Id = x.Id
                 }).ToArray()
             });
         }

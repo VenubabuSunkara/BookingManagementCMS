@@ -27,19 +27,15 @@ namespace Booking.Domain.Entities
         public decimal? TotalAmount { get; set; }
 
         public ICollection<BookingDetailsEntity> BookingDetails { get; set; } = new List<BookingDetailsEntity>();
-
-        //public virtual CouponCode? CouponCode { get; set; }
-
-        //public virtual Customer Customer { get; set; } = null!;
-
-        //public virtual Package Package { get; set; } = null!;
-
-        //public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public Vehicle Vehicle { get; set; } = new Vehicle();
+        public Driver Driver { get; set; } = new Driver();
     }
     public class BookingsDTable
     {
         public int Total { get; set; }
         public int Filtered { get; set; }
+        public Vehicle Vehicle { get; set; } = new Vehicle();
+        public Driver Driver { get; set; } = new Driver();
         public IEnumerable<BookingOrder> BookingOrders { get; set; } = [];
 
     }

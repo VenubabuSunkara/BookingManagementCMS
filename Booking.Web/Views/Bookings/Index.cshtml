@@ -52,7 +52,7 @@
                                         <th>Driver Name</th>
                                         <th>Package Name</th>
                                         <th>Booking Date</th>
-                                        <th>Booking Time</th>
+                                        <th>Travel Date</th>
                                         <th>Amount</th>
                                         <th>Actions</th>
                                     </tr>
@@ -96,12 +96,12 @@
                             }
                         },
                      columns: [
-                            { data: 'BookingDate', autoWidth: true },
-                            { data: 'TravelDate', autoWidth: true },
-                            { data: 'CouponCodeId', autoWidth: true },
-                            { data: 'CustomerId', autoWidth: true },
-                            { data: 'TotalAmount', autoWidth: true },
-                            { data: 'VehicleId', autoWidth: true },
+                            { data: 'vehicleName', autoWidth: true },
+                            { data: 'driverName', autoWidth: true },
+                            { data: 'bookingDate', autoWidth: true },
+                            { data: 'travelDate', autoWidth: true },
+                            { data: 'amount', autoWidth: true },
+                            { data: 'packageName', autoWidth: true },
                             {
                                 data: 'Id',
                                 render: function (data, type, full, meta) {

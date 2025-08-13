@@ -41,6 +41,8 @@ public partial class BookingOrder
     [Column(TypeName = "datetime")]
     public DateTime? UpdatedOn { get; set; }
 
+    public int? DriverId { get; set; }
+
     [InverseProperty("Booking")]
     public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
 
@@ -52,10 +54,18 @@ public partial class BookingOrder
     [InverseProperty("BookingOrders")]
     public virtual Customer Customer { get; set; } = null!;
 
+    [ForeignKey("DriverId")]
+    [InverseProperty("BookingOrders")]
+    public virtual Driver? Driver { get; set; }
+
     [ForeignKey("PackageId")]
     [InverseProperty("BookingOrders")]
     public virtual Package Package { get; set; } = null!;
 
     [InverseProperty("Booking")]
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+    [ForeignKey("VehicleId")]
+    [InverseProperty("BookingOrders")]
+    public virtual Vehicle? Vehicle { get; set; }
 }

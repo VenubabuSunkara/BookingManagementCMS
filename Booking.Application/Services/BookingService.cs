@@ -28,6 +28,20 @@ namespace Booking.Application.Services
                 TotalAmount = x.TotalAmount,
                 TravelDate = x.TravelDate,
                 Id = x.Id,
+                Vehicle = new VehicleDto()
+                {
+                    VehicleName = x.Vehicle.VehicleNumber,
+                    Id = x.Vehicle.Id,
+                    VehicleNumber = x.Vehicle.VehicleNumber,
+                    Description = x.Vehicle.Description,
+                    AboutOnVehicle = x.Vehicle.AboutOnVehicle,
+                    Color = x.Vehicle.Color,
+                    Make = x.Vehicle.Make,
+                    Model = x.Vehicle.Model,
+                    SeatingCapacity = x.Vehicle.SeatingCapacity,
+                    Features = x.Vehicle.Features,
+                    VehicleTypeId = x.Vehicle.VehicleTypeId
+                },
                 BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsDto()
                 {
                     Id = y.Id,
@@ -84,6 +98,29 @@ namespace Booking.Application.Services
                     TotalAmount = x.TotalAmount,
                     TravelDate = x.TravelDate,
                     Id = x.Id,
+                    Vehicle = new VehicleDto()
+                    {
+                        VehicleName = x.Vehicle.VehicleNumber,
+                        Id = x.Vehicle.Id,
+                        VehicleNumber = x.Vehicle.VehicleNumber,
+                        Description = x.Vehicle.Description,
+                        AboutOnVehicle = x.Vehicle.AboutOnVehicle,
+                        Color = x.Vehicle.Color,
+                        Make = x.Vehicle.Make,
+                        Model = x.Vehicle.Model,
+                        SeatingCapacity = x.Vehicle.SeatingCapacity,
+                        Features = x.Vehicle.Features,
+                        VehicleTypeId = x.Vehicle.VehicleTypeId
+                    },
+                    Driver=new DriverDto (){
+                        FullName=x.Driver.GetFullName(),
+                        LicenseNumber  = x.Driver.LicenseNumber,
+                        Email=x.Driver.Email,
+                        PhoneNumber=x.Driver.PhoneNumber,
+                        AboutOn=x.Driver.AboutOn,
+                        Address=x.Driver.Address,
+                        AvailabilityStatus=x.Driver.IsDriverAvailable(),
+                    },
                     BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsDto()
                         {
                             Id = y.Id,

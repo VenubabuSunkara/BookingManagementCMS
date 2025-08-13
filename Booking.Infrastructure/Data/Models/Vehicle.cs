@@ -54,6 +54,9 @@ public partial class Vehicle
     public string? Model { get; set; }
 
     [InverseProperty("Vehicle")]
+    public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
+
+    [InverseProperty("Vehicle")]
     public virtual ICollection<DriverVehicleMapping> DriverVehicleMappings { get; set; } = new List<DriverVehicleMapping>();
 
     [InverseProperty("Vehicle")]

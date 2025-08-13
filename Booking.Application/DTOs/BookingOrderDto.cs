@@ -34,7 +34,8 @@ namespace Booking.Application.DTOs
         public string? Status { get; set; }
 
         public decimal? TotalAmount { get; set; }
-
+        public DriverDto Driver { get; set; } = new DriverDto();
+        public VehicleDto Vehicle { get; set; } = new VehicleDto();
         public ICollection<BookingDetailsDto> BookingDetails { get; set; } = [];
     }
 }

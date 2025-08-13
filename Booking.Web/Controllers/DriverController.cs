@@ -54,7 +54,7 @@ namespace Booking.Web.Controllers
                     VehicleType = x.VehicleType,
                     DriverName = x.DriverName,
                     Contact = x.DriverContact,
-                    CreatedDate = x.Created,
+                    CreatedDate = x.Created.ToShortDateString(),
                     DriverId = x.DriverId,
                     ApproveDriver=x.isApproved
                 }).ToArray()

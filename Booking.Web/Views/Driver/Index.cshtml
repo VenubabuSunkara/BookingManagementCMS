@@ -2,6 +2,7 @@
     ViewData["Title"] = "Driver Vehicle List";
 }
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
 <style>
 
     table.dataTable {
@@ -50,12 +51,16 @@
                         <h5>All Driver Vehicles</h5>
                     </div>
                     <form class="d-inline-flex">
-                        <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
-                            <i data-feather="plus-square"></i>Add New
-                        </a>
-                        @* <a href="@Url.ActionLink("Create", "DriverVehicle")" class="btn btn-theme">
-                            <i data-feather="plus-square"></i>Add New
-                        </a> *@
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
+                                <i data-feather="plus-square"></i>Add New
+                            </a>
+
+                            <a href="@Url.ActionLink("Import", "Driver")" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Import
+                            </a>
+                        </div>
+
                     </form>
                 </div>
 
@@ -89,6 +94,16 @@
 <!-- Container-fluid Ends-->
 @section Scripts {
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
         function approveDriver(driverid){
                  $.ajax({
@@ -126,8 +141,16 @@
                      const token = $('input[name="__RequestVerificationToken"]').val();
                      this.Driverdt = $('#tblvehicledriver').DataTable({
                      processing: true,
+                     //dom: 'Bfrtip',
                      serverSide: true,
                      stateSave: true,
+                     lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                     layout: {
+                        topStart: {
+                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        }
+                    },
+
                      ajax: {
                             url: '/Driver/LoadDriverData',
                             type: 'POST',
