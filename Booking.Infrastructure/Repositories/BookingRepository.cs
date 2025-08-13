@@ -1,4 +1,5 @@
-﻿using Booking.Domain.Entities;
+﻿using Booking.Application.DTOs;
+using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -66,6 +67,37 @@ namespace Booking.Infrastructure.Repositories
                     RelativeId = y.RelativeId,
                 })]
             }).AsParallel();
+        }
+        public async Task<BookingsDTable> GetAllBookings(int Skip, int Take, string searchKey = "")
+        {
+            var totalCount = await _context.BookingOrders.AsNoTracking().CountAsync();
+            var bookings = await _context.BookingOrders.Include(x => x.BookingDetails).Skip(Skip).Take(Take).ToListAsync();
+            return new BookingsDTable
+            {
+                Total = totalCount,
+                BookingOrders = [.. bookings.Select(x => new BookingOrder()
+                {
+                    BookingDate = x.BookingDate,
+                    TravelDate = x.TravelDate,
+                    CouponCodeId = x.CouponCodeId,
+                    CustomerId = x.CustomerId,
+                    Id = x.Id,
+                    PackageId = x.PackageId,
+                    Status = x.Status,
+                    TotalAmount = x.TotalAmount,
+                    VehicleId = x.VehicleId,
+                    BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
+                    {
+                        BookingId = y.BookingId,
+                        Id = y.Id,
+                        PassengerName = y.PassengerName,
+                        PassengerAge = y.PassengerAge,
+                        PassengerGender = y.PassengerGender,
+                        RelativeId = y.RelativeId
+                    })]
+                })],
+                Filtered = totalCount
+            };
         }
     }
 }

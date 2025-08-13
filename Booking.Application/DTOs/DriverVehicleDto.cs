@@ -17,6 +17,7 @@ namespace Booking.Application.DTOs
         public string VehicleType { get; set; } = string.Empty;
         public int VehicleId { get; set; }
         public DateTime Created { get; set; }
+        public bool? isApproved { get; set; }
     }
     public class DriverDataTableDto
     {
@@ -26,4 +27,5 @@ namespace Booking.Application.DTOs
         public string NextLink { get; set; } = string.Empty;
         public string PrevLink { get; set; } = string.Empty;
     }
+
 }

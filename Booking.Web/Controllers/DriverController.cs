@@ -1,3 +1,4 @@
+using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace Booking.Web.Controllers
             _bookingDetailsService = bookingDetailsService;
         }
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadDriverData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
         {
             var result = await _driverService.GetDriverVehicleList(request.start, request.length);
@@ -47,22 +48,31 @@ namespace Booking.Web.Controllers
                 recordsTotal = result.TotalRecords,
                 data = result.DriverInfo.Select(x => new
                 {
-                    x.VehicleName,
-                    x.SeatingCapacity,
+                    VehicleName = x.VehicleName,
+                    SeatingCapacity = x.SeatingCapacity,
                     Photo = x.VehicleThumbnail,
-                    x.VehicleType,
-                    x.DriverName,
+                    VehicleType = x.VehicleType,
+                    DriverName = x.DriverName,
                     Contact = x.DriverContact,
                     CreatedDate = x.Created,
-                    x.DriverId
+                    DriverId = x.DriverId,
+                    ApproveDriver=x.isApproved
                 }).ToArray()
             });
         }
-        public async Task<int> Approve(int DriverVehicleId)
+        [HttpGet]
+        public async Task<IActionResult> Approve(int DriverVehicleId)
         {
             if (DriverVehicleId == 0)
                 throw new ArgumentException();
-            return await _driverService.ApproveDriverAsync(DriverVehicleId);
+            return Json(await _driverService.ApproveDriverAsync(DriverVehicleId));
+        }
+        [HttpGet]
+        public async Task<IActionResult> Reject(int DriverVehicleId)
+        {
+            if (DriverVehicleId == 0)
+                throw new ArgumentException();
+            return Json(await _driverService.RejectDriverAsync(DriverVehicleId));
         }
 
         public async Task<IActionResult> Index()
@@ -72,6 +82,18 @@ namespace Booking.Web.Controllers
                 return View();
             });
         }
-       // public async Task<IActionResult> GetOrders()
+        // public async Task<IActionResult> GetOrders()
+        public async Task<IActionResult> Create(CancellationToken token)
+        {
+            if (token.IsCancellationRequested)
+                return await Task.Run(() =>
+                {
+                    return View("Index", new NewDriverVehicleDto());
+                }, token);
+            return await Task.Run(() =>
+            {
+                return View(new NewDriverVehicleDto());
+            }, token);
+        }
     }
 }

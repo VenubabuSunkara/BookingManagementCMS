@@ -36,4 +36,11 @@ namespace Booking.Domain.Entities
 
         //public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
+    public class BookingsDTable
+    {
+        public int Total { get; set; }
+        public int Filtered { get; set; }
+        public IEnumerable<BookingOrder> BookingOrders { get; set; } = [];
+
+    }
 }

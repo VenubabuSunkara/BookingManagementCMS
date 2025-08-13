@@ -23,6 +23,15 @@ namespace Booking.Infrastructure.Repositories
                               );
             return affected;
         }
+        public async Task<int> RejectDriverAsync(int DriverId)
+        {
+            var affected = await _context.Drivers
+                              .Where(d => d.Id == DriverId)
+                              .ExecuteUpdateAsync(setters => setters
+                                  .SetProperty(d => d.ApproveDriver, false)
+                              );
+            return affected;
+        }
 
         /// <summary>
         /// Get All driver details
@@ -81,6 +90,7 @@ namespace Booking.Infrastructure.Repositories
                         mapping.Driver.LicenseNumber,
                         mapping.Driver.AboutOn,
                         mapping.Driver.AvailabilityStatus,
+                        mapping.Driver.ApproveDriver,
                         CreatedAt = mapping.Driver.CreatedAt
                     },
                     Vehicle = new
@@ -127,7 +137,9 @@ namespace Booking.Infrastructure.Repositories
                     LicenseNumber = x.Driver.LicenseNumber,
                     AboutOn = x.Driver.AboutOn,
                     AvailabilityStatus = x.Driver.AvailabilityStatus,
-                    Created = x.Driver.CreatedAt
+                    Created = x.Driver.CreatedAt,
+                    IsApproved = x.Driver.ApproveDriver
+
                 },
                 Vehicle = new Vehicle
                 {
@@ -157,7 +169,7 @@ namespace Booking.Infrastructure.Repositories
             {
                 Total = totalCount,
                 Filtered = totalCount, // update if using filters
-                driverVehicle = resultList
+                DriverVehicle = resultList
             };
 
         }

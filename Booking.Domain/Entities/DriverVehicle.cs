@@ -21,19 +21,19 @@ namespace Booking.Domain.Entities
     {
         public int Total { get; set; }
         public int Filtered { get; set; }
-        public IEnumerable<DriverVehicle> driverVehicle { get; set; } = [];
+        public IEnumerable<DriverVehicle> DriverVehicle { get; set; } = [];
 
     }
     public class DriverVehicle
-    {
-        public Driver Driver { get; set; }
-        public Vehicle Vehicle { get; set; }
-        public VehicleMedia VehicleMedia { get; set; }
-        public DriverVehicle()
         {
-            Driver = new Driver();
-            Vehicle = new Vehicle();
-            VehicleMedia = new VehicleMedia();
-        }
+            public Driver Driver { get; set; }
+            public Vehicle Vehicle { get; set; }
+            public VehicleMedia VehicleMedia { get; set; }
+            public DriverVehicle()
+            {
+                Driver = new Driver();
+                Vehicle = new Vehicle();
+                VehicleMedia = new VehicleMedia();
+            }
     }
 }

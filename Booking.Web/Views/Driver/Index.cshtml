@@ -30,6 +30,15 @@
         margin-left: 0px;
         border: none !important;
     }
+
+    table.dataTable thead th, table.dataTable tfoot th {
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    table.dataTable tbody td {
+        font-size: 12px;
+    }
 </style>
 <!-- Container-fluid starts-->
 <div class="container-fluid">
@@ -41,7 +50,7 @@
                         <h5>All Driver Vehicles</h5>
                     </div>
                     <form class="d-inline-flex">
-                        <a asp-controller="DriverVehicle" asp-action="Create" class="btn btn-theme">
+                        <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
                             <i data-feather="plus-square"></i>Add New
                         </a>
                         @* <a href="@Url.ActionLink("Create", "DriverVehicle")" class="btn btn-theme">
@@ -81,6 +90,36 @@
 @section Scripts {
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
     <script type="text/javascript">
+        function approveDriver(driverid){
+                 $.ajax({
+                         type: "GET",
+                         url: "/Driver/Approve",
+                         data: { DriverVehicleId:driverid },
+                         dataType: "json",
+                         success: function(result) {
+                            console.log(result);
+                         },
+                         error: function(req, status, error) {
+                            console.error(error);
+                         }
+                    });
+                }
+
+        function rejectDriver(driverid){
+             $.ajax({
+                    type: "GET",
+                    url: "/Driver/Reject",
+                    data: { DriverVehicleId:driverid },
+                    dataType: "json",
+                    success: function(result) {
+                    console.log("Sum is:", result);
+                    },
+                    error: function(req, status, error) {
+                    console.error(error);
+                    }
+                });
+
+        }
         var  driverListVM = {
                 Driverdt: null,
                 init: function () {
@@ -95,7 +134,6 @@
                             contentType: 'application/json; charset=utf-8',
                             dataType: 'json',
                             data: function (d) {
-                                console.log(d);
                                 return JSON.stringify(d); // Send as JSON string
                             },
                             headers: {
@@ -114,28 +152,24 @@
                      // },
                      columns: [
                              {
-                                data: 'Photo',
+                                data: 'photo',
                                 autoWidth: true,
                                 render: function (data, type, full, meta) {
-                                    return `<img src="${data}" alt="${full.DriverId}" class="img-thumbnail" style="height:40px;" />`;
+                                    return `<img src="${data}" alt="${full.driverId}" class="img-thumbnail" style="height:40px;" />`;
                                 }
                             },
-                            { data: 'VehicleName', autoWidth: true },
-                            { data: 'SeatingCapacity', autoWidth: true },
-                            { data: 'VehicleType', autoWidth: true },
-                            { data: 'DriverName', autoWidth: true },
-                            { data: 'Contact', autoWidth: true },
-                            { data: 'CreatedDate', autoWidth: true },
+                            { data: 'vehicleName', autoWidth: true },
+                            { data: 'seatingCapacity', autoWidth: true },
+                            { data: 'vehicleType', autoWidth: true },
+                            { data: 'driverName', autoWidth: true },
+                            { data: 'contact', autoWidth: true },
+                            { data: 'createdDate', autoWidth: true },
                             {
-                                data: 'DriverId',
+                                data: 'driverId',
                                 render: function (data, type, full, meta) {
-                                    return `<a href="/DriverVehicle/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
-                                }
-                            },
-                            {
-                                data: 'DriverId',
-                                render: function (data, type, full, meta) {
-                                    return `<a href="/DriverVehicle/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                    console.log(full.ApproveDriver)
+                                    return `<a href="javascript:void(0)" onclick="approveDriver(${data})"><i class="fa fa-check" aria-hidden="true"></i></a>
+                                         |  <a href="javascript:void(0)" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                                 }
                             }
                         ],

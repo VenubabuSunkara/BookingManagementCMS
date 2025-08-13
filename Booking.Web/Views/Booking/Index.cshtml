@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "All Bookings";
+}
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<style>
+
+    table.dataTable {
+        table-layout: fixed;
+        word-wrap: break-word;
+        width: 100% !important;
+    }
+
+    .all-cars-table th, .all-cars-table td {
+        white-space: normal !important;
+        vertical-align: middle;
+    }
+
+    /* Align DataTable controls */
+    div.dataTables_wrapper div.dataTables_length {
+        float: left;
+        padding-left: 15px;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        float: right;
+        padding-right: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        margin-left: 0px;
+        border: none !important;
+    }
+</style>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Driver Bookings</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblbookings">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle Name</th>
+                                        <th>Driver Name</th>
+                                        <th>Package Name</th>
+                                        <th>Booking Date</th>
+                                        <th>Booking Time</th>
+                                        <th>Amount</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div id="tblbookings-pagination" class="pagination-controls"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <script type="text/javascript">
+        var  bookingsListVM = {
+                bookingdt: null,
+                init: function () {
+                     const token = $('input[name="__RequestVerificationToken"]').val();
+                     this.bookingdt = $('#tblbookings').DataTable({
+                     processing: true,
+                     serverSide: true,
+                     stateSave: true,
+                     ajax: {
+                            url: '/Bookings/GetAllBookings',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: function (d) {
+                                console.log(d);
+                                return JSON.stringify(d); // Send as JSON string
+                            },
+                            headers: {
+                                'RequestVerificationToken': token
+                            },
+                            error: function (xhr, error, thrown) {
+                                console.error("DataTable error: ", xhr.responseText);
+                            }
+                        },
+                     columns: [
+                            { data: 'BookingDate', autoWidth: true },
+                            { data: 'TravelDate', autoWidth: true },
+                            { data: 'CouponCodeId', autoWidth: true },
+                            { data: 'CustomerId', autoWidth: true },
+                            { data: 'TotalAmount', autoWidth: true },
+                            { data: 'VehicleId', autoWidth: true },
+                            {
+                                data: 'Id',
+                                render: function (data, type, full, meta) {
+                                    return `<a href="/Booking/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
+                                }
+                            },
+                            {
+                                data: 'Id',
+                                render: function (data, type, full, meta) {
+                                    return `<a href="/Booking/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                }
+                            }
+                        ],
+                          language: {
+                                emptyTable: "No entries to show"
+                            }
+                    });
+                },
+                refresh: function () {
+                    if (this.bookingdt) {
+                        this.bookingdt.ajax.reload();
+                    }
+                }
+            };
+            $(document).ready(function () {
+                bookingsListVM.init();
+        });
+    </script>
+}
