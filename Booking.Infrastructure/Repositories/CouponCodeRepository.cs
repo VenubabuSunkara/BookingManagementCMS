@@ -114,7 +114,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
             CreatedBy = s.CreatedBy,
             UpdatedBy = s.UpdatedBy,
             MediaUrl = s.MediaUrl
-        }).AsParallel().ToList();
+        }).AsParallel();
     }
 
     /// <summary>
