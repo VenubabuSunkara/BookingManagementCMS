@@ -34,6 +34,7 @@ namespace Booking.Domain.Entities
         public string? Photo { get; set; }
         public string GetFullName() => $"{FirstName} {LastName}";
         public bool IsDriverAvailable() => AvailabilityStatus == true;
+        public bool? IsApproved { get; set; }
 
     }
 }

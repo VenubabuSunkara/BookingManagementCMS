@@ -29,5 +29,6 @@ namespace Booking.Domain.Interfaces
         Task<DriverVehicleDTable> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
         Task<IEnumerable<VehicleMedia>> GetVehicleMediaList(int vehicleId);
         Task<int> ApproveDriverAsync(int DriverId);
+        Task<int> RejectDriverAsync(int DriverId);
     }
 }

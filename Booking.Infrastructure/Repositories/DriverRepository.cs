@@ -23,6 +23,15 @@ namespace Booking.Infrastructure.Repositories
                               );
             return affected;
         }
+        public async Task<int> RejectDriverAsync(int DriverId)
+        {
+            var affected = await _context.Drivers
+                              .Where(d => d.Id == DriverId)
+                              .ExecuteUpdateAsync(setters => setters
+                                  .SetProperty(d => d.ApproveDriver, false)
+                              );
+            return affected;
+        }
 
         /// <summary>
         /// Get All driver details
@@ -48,23 +57,22 @@ namespace Booking.Infrastructure.Repositories
             }).AsParallel();
         }
 
-        public async Task<DriverVehicleDTable> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        public async Task<DriverVehicleDTable> GetDriverVehicleList(int Skip, int Take, string searchKey = "")
         {
-        //    var baseQuery = _context.DriverVehicleMappings
-        //.AsNoTracking()
-        //.Where(mapping =>
-        //    string.IsNullOrEmpty(searchKey) ||
-        //    mapping.Driver.FirstName.ToLower().Contains(searchKey) ||
-        //    mapping.Driver.LastName.ToLower().Contains(searchKey) ||
-        //    mapping.Driver.Email.ToLower().Contains(searchKey) ||
-        //    mapping.Driver.PhoneNumber.ToLower().Contains(searchKey) ||
-        //    mapping.Vehicle.VehicleName.ToLower().Contains(searchKey) ||
-        //    mapping.Vehicle.VehicleNumber.ToLower().Contains(searchKey) ||
-        //    mapping.Vehicle.Model.ToLower().Contains(searchKey)
-        //)
+            //    var baseQuery = _context.DriverVehicleMappings
+            //.AsNoTracking()
+            //.Where(mapping =>
+            //    string.IsNullOrEmpty(searchKey) ||
+            //    mapping.Driver.FirstName.ToLower().Contains(searchKey) ||
+            //    mapping.Driver.LastName.ToLower().Contains(searchKey) ||
+            //    mapping.Driver.Email.ToLower().Contains(searchKey) ||
+            //    mapping.Driver.PhoneNumber.ToLower().Contains(searchKey) ||
+            //    mapping.Vehicle.VehicleName.ToLower().Contains(searchKey) ||
+            //    mapping.Vehicle.VehicleNumber.ToLower().Contains(searchKey) ||
+            //    mapping.Vehicle.Model.ToLower().Contains(searchKey)
+            //)
             // Get total count for pagination
             var totalCount = await _context.DriverVehicleMappings.AsNoTracking().CountAsync();
-
             // Get paginated result with selected fields only
             var driverVehicleList = await _context.DriverVehicleMappings
                 .AsNoTracking()
@@ -82,6 +90,7 @@ namespace Booking.Infrastructure.Repositories
                         mapping.Driver.LicenseNumber,
                         mapping.Driver.AboutOn,
                         mapping.Driver.AvailabilityStatus,
+                        mapping.Driver.ApproveDriver,
                         CreatedAt = mapping.Driver.CreatedAt
                     },
                     Vehicle = new
@@ -109,8 +118,8 @@ namespace Booking.Infrastructure.Repositories
                             .FirstOrDefault()
                     }
                 })
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
+                .Skip(Skip)
+                .Take(Take)
                 .ToListAsync();
 
             // Final transformation to your actual models
@@ -128,7 +137,9 @@ namespace Booking.Infrastructure.Repositories
                     LicenseNumber = x.Driver.LicenseNumber,
                     AboutOn = x.Driver.AboutOn,
                     AvailabilityStatus = x.Driver.AvailabilityStatus,
-                    Created = x.Driver.CreatedAt
+                    Created = x.Driver.CreatedAt,
+                    IsApproved = x.Driver.ApproveDriver
+
                 },
                 Vehicle = new Vehicle
                 {
@@ -158,7 +169,7 @@ namespace Booking.Infrastructure.Repositories
             {
                 Total = totalCount,
                 Filtered = totalCount, // update if using filters
-                driverVehicle = resultList
+                DriverVehicle = resultList
             };
 
         }

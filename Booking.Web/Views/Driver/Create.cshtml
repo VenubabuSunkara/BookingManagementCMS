@@ -1,0 +1,88 @@
+﻿@model Booking.Application.DTOs.NewDriverVehicleDto
+@{
+    ViewData["Title"] = "AddVehicle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Driver Vehicle Details</h5>
+        </div>
+        <div class="card-body">
+            <form class="theme-form mega-form" id="frmDrivervehicleinfo" method="post">
+                @Html.AntiForgeryToken()
+                <div class="personal-info">
+                    <div class="personal-info__img">
+                        <img src="@Model.Driver.Photo" alt="@(Model.Driver.FullName)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Driver.FirstName</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Driver.LastName</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Driver.Email</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Driver.PhoneNumber</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Driver.LicenseNumber</label>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <p class="form-label-title mt-3">@Html.Raw(Model.Driver.AboutOn)</p>
+                    </div>
+                </div>
+
+                <div class="personal-info">
+                    <div class="personal-info__img">
+                        <img src="@(Model.VehicleMedia.ThumbnailUrl)" alt="@(Model.Vehicle.VehicleName)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Vehicle.VehicleName</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="form-label-title mt-3">@Model.Vehicle.AboutOnVehicle</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Vehicle.VehicleNumber</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Vehicle.VehicleTypeId</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">(@Model.Vehicle.SeatingCapacity)</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Vehicle.Features</label>
+                    </div>
+                </div>`
+
+                <input type="submit" id="btnSubmit" value="Approve" />
+                <input type="reset" id="btnReject" value="Reject" />
+            </form>
+        </div>
+    </div>
+    <
+</div>
+<!-- Container-fluid Ends-->
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

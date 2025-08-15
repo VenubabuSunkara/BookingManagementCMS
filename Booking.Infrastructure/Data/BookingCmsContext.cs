@@ -70,9 +70,9 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<VehicleMedium> VehicleMedia { get; set; }
 
-    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-    //        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingCMS;Trusted_Connection=True;TrustServerCertificate=True;");
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingCMS;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -93,7 +93,7 @@ public partial class BookingCmsContext : DbContext
 
             entity.HasOne(d => d.Booking).WithMany(p => p.BookingDetails)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BookingDetails_BookingOrders");
+                .HasConstraintName("FK_BookingDetails_BookingOrder");
 
             entity.HasOne(d => d.Relative).WithMany(p => p.BookingDetails).HasConstraintName("FK_BookingDetails_UserRelatives");
         });
@@ -112,9 +112,13 @@ public partial class BookingCmsContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BookingOrders_Customers");
 
+            entity.HasOne(d => d.Driver).WithMany(p => p.BookingOrders).HasConstraintName("FK_BookingOrders_Drivers");
+
             entity.HasOne(d => d.Package).WithMany(p => p.BookingOrders)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BookingOrders_Packages");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.BookingOrders).HasConstraintName("FK_BookingOrders_Vehicle");
         });
 
         modelBuilder.Entity<CmsCompany>(entity =>
@@ -298,8 +302,6 @@ public partial class BookingCmsContext : DbContext
 
         modelBuilder.Entity<VehicleMedium>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleMedia)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VehicleMedia_VehicleId");

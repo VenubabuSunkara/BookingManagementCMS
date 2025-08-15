@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.DTOs
 {
+    public class BookingsDataTableDto
+    {
+        public int TotalRecords { get; set; }
+        public int FilterRecords { get; set; }
+        public IEnumerable<BookingOrderDto> BookingsInfo { get; set; } = [];
+        public string NextLink { get; set; } = string.Empty;
+        public string PrevLink { get; set; } = string.Empty;
+    }
     public class BookingOrderDto
     {
         public int Id { get; set; }
@@ -26,7 +34,8 @@ namespace Booking.Application.DTOs
         public string? Status { get; set; }
 
         public decimal? TotalAmount { get; set; }
-
-        public ICollection<BookingDetailsDto> BookingDetails { get; set; } = new List<BookingDetailsDto>();
+        public DriverDto Driver { get; set; } = new DriverDto();
+        public VehicleDto Vehicle { get; set; } = new VehicleDto();
+        public ICollection<BookingDetailsDto> BookingDetails { get; set; } = [];
     }
 }

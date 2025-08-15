@@ -58,5 +58,8 @@ public partial class Driver
     public bool? ApproveDriver { get; set; }
 
     [InverseProperty("Driver")]
+    public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
+
+    [InverseProperty("Driver")]
     public virtual ICollection<DriverVehicleMapping> DriverVehicleMappings { get; set; } = new List<DriverVehicleMapping>();
 }

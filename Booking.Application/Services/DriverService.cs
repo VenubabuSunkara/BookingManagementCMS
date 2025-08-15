@@ -18,6 +18,10 @@ namespace Booking.Application.Services
         {
             return await _driverRepository.ApproveDriverAsync(DriverId);
         }
+        public async Task<int> RejectDriverAsync(int DriverId)
+        {
+            return await _driverRepository.RejectDriverAsync(DriverId);
+        }
 
         public async Task<IEnumerable<DriverDto>> GetAllAsync()
         {
@@ -30,15 +34,15 @@ namespace Booking.Application.Services
             }).AsParallel();
         }
 
-        public async Task<DriverDataTableDto> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "")
+        public async Task<DriverDataTableDto> GetDriverVehicleList(int Skip, int Take, string searchKey = "")
         {
-            var driverData = await _driverRepository.GetDriverVehicleList(pageIndex, pageSize, searchKey);
+            var driverData = await _driverRepository.GetDriverVehicleList(Skip, Take, searchKey);
 
             return new DriverDataTableDto()
             {
                 TotalRecords = driverData.Total,
                 FilterRecords = driverData.Filtered,
-                DriverInfo = driverData.driverVehicle.Select(d => new DriverVehicleDto
+                DriverInfo = driverData.DriverVehicle.Select(d => new DriverVehicleDto
                 {
                     DriverId = d.Driver.Id,
                     VehicleId = d.Vehicle.Id,
@@ -48,7 +52,8 @@ namespace Booking.Application.Services
                     SeatingCapacity = d.Vehicle.SeatingCapacity ?? 2,
                     VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
                     VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown",
-                    Created = d.Driver.Created ?? DateTime.Now
+                    Created = d.Driver.Created ?? DateTime.Now,
+                    isApproved=d.Driver.IsApproved
 
                 }).AsParallel()
             };
