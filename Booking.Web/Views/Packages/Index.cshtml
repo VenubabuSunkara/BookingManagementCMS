@@ -1,46 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "All Bookings";
+    ViewData["Title"] = "All Packages List";
 }
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
-<style>
-
-    table.dataTable {
-        table-layout: fixed;
-        word-wrap: break-word;
-        width: 100% !important;
-    }
-
-    .all-cars-table th, .all-cars-table td {
-        white-space: normal !important;
-        vertical-align: middle;
-    }
-
-    /* Align DataTable controls */
-    div.dataTables_wrapper div.dataTables_length {
-        float: left;
-        padding-left: 15px;
-    }
-
-    div.dataTables_wrapper div.dataTables_filter {
-        float: right;
-        padding-right: 15px;
-    }
-
-    .dataTables_wrapper .dataTables_paginate {
-        margin-left: 0px;
-        border: none !important;
-    }
-
-    table.dataTable thead th, table.dataTable tfoot th {
-        font-weight: bold;
-        font-size: 12px;
-    }
-
-    table.dataTable tbody td {
-        font-size: 12px;
-    }
-</style>
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
@@ -48,27 +10,40 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Driver Bookings</h5>
+                        <h5>All Packages </h5>
                     </div>
+                    <form class="d-inline-flex">
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Packages" asp-action="Create" class="btn btn-theme">
+                                <i data-feather="plus-square"></i>Add New Package
+                            </a>
+
+                            <a href="@Url.ActionLink("Import", "Packages")" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Import
+                            </a>
+                        </div>
+
+                    </form>
                 </div>
+
                 <div class="card-body">
                     <div>
                         <div class="table-desi">
                             @Html.AntiForgeryToken()
-                            <table class="all-cars-table table table-striped w-100" id="tblbookings">
+                            <table class="all-cars-table table table-striped w-100" id="tblpackages">
                                 <thead>
                                     <tr>
-                                        <th>Vehicle Name</th>
-                                        <th>Driver Name</th>
-                                        <th>Booking Date</th>
-                                        <th>Travel Date</th>
-                                        <th>Amount</th>
-                                        <th>Package Name</th>
+                                        <th>Destinations Image</th>
+                                        <th>Name</th>
+                                        <th>Source</th>
+                                        <th>Destinations</th>
+                                        <th>Duration</th>
+                                        <th>Price</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                             </table>
-                            <div id="tblbookings-pagination" class="pagination-controls"></div>
+                            <div id="packages-pagination" class="pagination-controls"></div>
                         </div>
                     </div>
                 </div>
@@ -91,11 +66,11 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
-         function viewDetails(bookingId){
+        function viewPackageDetails(packageId){
                  $.ajax({
                          type: "GET",
-                         url: "/Bookings/ViewDetails",
-                         data: { BookingId:bookingId },
+                         url: "/Packages/GetPackageDetails",
+                         data: { PackageId:packageId },
                          dataType: "json",
                          success: function(result) {
                             console.log(result);
@@ -106,15 +81,32 @@
                     });
                 }
 
-        var  bookingsListVM = {
-                bookingdt: null,
+        function deletePackage(packageId){
+             $.ajax({
+                    type: "GET",
+                    url: "/Packages/Remove",
+                    data: { PackageId:packageId },
+                    dataType: "json",
+                    success: function(result) {
+                    console.log("Sum is:", result);
+                    },
+                    error: function(req, status, error) {
+                    console.error(error);
+                    }
+                });
+
+        }
+
+        var  packageListVM = {
+                packagedt: null,
                 init: function () {
                      const token = $('input[name="__RequestVerificationToken"]').val();
-                     this.bookingdt = $('#tblbookings').DataTable({
+                     this.packagedt = $('#tblpackages').DataTable({
                      processing: true,
+                     //dom: 'Bfrtip',
                      serverSide: true,
                      stateSave: true,
-                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                     lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
                      layout: {
                         topStart: {
                             buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
@@ -122,12 +114,11 @@
                     },
 
                      ajax: {
-                            url: '/Bookings/GetAllBookings',
+                            url: '/Packages/SearchPackages',
                             type: 'POST',
                             contentType: 'application/json; charset=utf-8',
                             dataType: 'json',
                             data: function (d) {
-                                console.log(d);
                                 return JSON.stringify(d); // Send as JSON string
                             },
                             headers: {
@@ -137,18 +128,32 @@
                                 console.error("DataTable error: ", xhr.responseText);
                             }
                         },
+                     // layout: {
+                     //     bottomStart: {
+                     //                info: {
+                     //                    empty: 'No entries to show'
+                     //                }
+                     //            }
+                     // },
                      columns: [
-                            { data: 'vehicleName', autoWidth: true },
-                            { data: 'driverName', autoWidth: true },
-                            { data: 'bookingDate', autoWidth: true },
-                            { data: 'travelDate', autoWidth: true },
-                            { data: 'amount', autoWidth: true },
-                            { data: 'packageName', autoWidth: true },
-                            {
-                                data: 'Id',
+                             {
+                                data: 'packageImage',
+                                autoWidth: true,
                                 render: function (data, type, full, meta) {
-                                    return `<a href="/Booking/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>
-                                            <a href="/Booking/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                    return `<img src="${data}" alt="${full.driverId}" class="img-thumbnail" style="height:40px;" />`;
+                                }
+                            },
+                            { data: 'title', autoWidth: true },
+                            { data: 'source', autoWidth: true },
+                            { data: 'destination', autoWidth: true },
+                            { data: 'durationDays', autoWidth: true },
+                            { data: 'price', autoWidth: true },
+                            {
+                                data: 'id',
+                                render: function (data, type, full, meta) {
+                                    return `<a href="javascript:void(0)" onclick="viewPackageDetails(${data})"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                         |  <a href="\Packages\EditPackage\${data}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                         |  <a href="javascript:void(0)" onclick="deletePackage(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                                 }
                             }
                         ],
@@ -158,13 +163,13 @@
                     });
                 },
                 refresh: function () {
-                    if (this.bookingdt) {
-                        this.bookingdt.ajax.reload();
+                    if (this.packagedt) {
+                        this.packagedt.ajax.reload();
                     }
                 }
             };
             $(document).ready(function () {
-                bookingsListVM.init();
+                packageListVM.init();
         });
     </script>
 }

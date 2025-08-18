@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Data.Models;
 
-[Index("Name", Name = "UQ__Modules__737584F696CCD388", IsUnique = true)]
+[Microsoft.EntityFrameworkCore.Index("Name", Name = "UQ__Modules__737584F696CCD388", IsUnique = true)]
 public partial class Module
 {
     [Key]

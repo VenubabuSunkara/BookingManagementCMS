@@ -17,10 +17,12 @@ namespace Booking.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
         {
             services.AddDbContext<BookingCmsContext>(opt => opt.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            services.AddMemoryCache();
             services.AddScoped<IDriverRepository, DriverRepository>();
             services.AddScoped<ICouponCodeRepository, CouponCodeRepository>();
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingDetailsRepository, BookingDetailsRepository>();
+            services.AddScoped<IPackageRepository, PackageRepository>();
 
             return services;
         }

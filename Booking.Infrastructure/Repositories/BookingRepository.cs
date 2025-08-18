@@ -3,11 +3,6 @@ using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Infrastructure.Repositories
 {
@@ -73,7 +68,6 @@ namespace Booking.Infrastructure.Repositories
             var totalCount = await _context.BookingOrders.AsNoTracking().CountAsync();
             var bookings = await _context.BookingOrders
                                         .AsNoTracking()
-                                        .AsSplitQuery()
                                         .Include(x => x.BookingDetails)
                                         .Include(x => x.Package)
                                         .Include(x => x.Customer)
@@ -88,7 +82,8 @@ namespace Booking.Infrastructure.Repositories
                                             mapping.CouponCodeId,
                                             mapping.PackageId,
                                             mapping.Status,
-                                            Driver = new
+
+                                            Driver = mapping.Driver == null ? null : new
                                             {
                                                 mapping.Driver.Id,
                                                 mapping.Driver.FirstName,
@@ -103,7 +98,8 @@ namespace Booking.Infrastructure.Repositories
                                                 mapping.Driver.ApproveDriver,
                                                 mapping.Driver.CreatedAt
                                             },
-                                            Vehicle = new
+
+                                            Vehicle = mapping.Vehicle == null ? null : new
                                             {
                                                 mapping.Vehicle.Id,
                                                 mapping.Vehicle.VehicleName,
@@ -116,29 +112,36 @@ namespace Booking.Infrastructure.Repositories
                                                 mapping.Vehicle.SeatingCapacity,
                                                 mapping.Vehicle.Model,
                                                 mapping.Vehicle.VehicleTypeId,
+
                                                 DefaultMedia = mapping.Vehicle.VehicleMedia
-                                                                    .Where(m => m.IsDefault)
-                                                                    .Select(m => new
-                                                                    {
-                                                                        m.MediaName,
-                                                                        m.MediaType,
-                                                                        m.MediaUrl,
-                                                                        m.ThumbnailUrl
-                                                                    }).FirstOrDefault()
+                                                    .Where(m => m.IsDefault)
+                                                    .Select(m => new
+                                                    {
+                                                        m.MediaName,
+                                                        m.MediaType,
+                                                        m.MediaUrl,
+                                                        m.ThumbnailUrl
+                                                    })
+                                                    .FirstOrDefault()
                                             },
-                                            BookingDetails = mapping.BookingDetails.Select(y => new
-                                            {
-                                                y.BookingId,
-                                                y.Id,
-                                                y.PassengerName,
-                                                y.PassengerAge,
-                                                y.PassengerGender,
-                                                y.RelativeId
-                                            }).ToList()
+
+                                            BookingDetails = mapping.BookingDetails == null ? null :
+                                                mapping.BookingDetails
+                                                .Select(y => new
+                                                {
+                                                    y.BookingId,
+                                                    y.Id,
+                                                    y.PassengerName,
+                                                    y.PassengerAge,
+                                                    y.PassengerGender,
+                                                    y.RelativeId
+                                                })
+                                                .ToList()
                                         })
                                         .Skip(Skip)
                                         .Take(Take)
                                         .ToListAsync();
+
             return new BookingsDTable
             {
                 Total = totalCount,
@@ -153,37 +156,40 @@ namespace Booking.Infrastructure.Repositories
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
                     VehicleId = x.VehicleId,
-                    Vehicle=new Vehicle(){
-                        VehicleName=x.Vehicle.VehicleName,
-                        VehicleNumber=x.Vehicle.VehicleNumber,
-                        Color=x.Vehicle.Color,
-                        Features=x.Vehicle.Features,
-                        AboutOnVehicle=x.Vehicle.AboutOnVehicle,
-                        Make=x.Vehicle.Make,
-                        Model=x.Vehicle.Model,
-                        SeatingCapacity=x.Vehicle.SeatingCapacity,
-                        Description=x.Vehicle.Description,
-                    },
-                    Driver=new Driver (){
-                        AboutOn =x.Driver.AboutOn,
-                        Address=x.Driver.Address,
-                        AvailabilityStatus=x.Driver.AvailabilityStatus,
-                        Email=x.Driver.Email,
-                        FirstName=x.Driver.FirstName,
-                        LastName=x.Driver.LastName,
-                        IsApproved=x.Driver.ApproveDriver,
-                        LicenseNumber=x.Driver.LicenseNumber,
-                        PhoneNumber=x.Driver.PhoneNumber,
-                    },
-                    BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
-                    {
-                        BookingId = y.BookingId,
-                        Id = y.Id,
-                        PassengerName = y.PassengerName,
-                        PassengerAge = y.PassengerAge,
-                        PassengerGender = y.PassengerGender,
-                        RelativeId = y.RelativeId
-                    })]
+                    Vehicle= x.Vehicle== null ? null :
+                                new Vehicle(){
+                                    VehicleName=x.Vehicle?.VehicleName,
+                                    VehicleNumber=x.Vehicle?.VehicleNumber,
+                                    Color=x.Vehicle?.Color,
+                                    Features=x.Vehicle?.Features,
+                                    AboutOnVehicle=x.Vehicle?.AboutOnVehicle,
+                                    Make=x.Vehicle?.Make,
+                                    Model=x.Vehicle?.Model,
+                                    SeatingCapacity=x.Vehicle?.SeatingCapacity,
+                                    Description=x.Vehicle?.Description,
+                                },
+                    Driver=x.Driver== null ? null :
+                            new Driver (){
+                                AboutOn =x.Driver?.AboutOn,
+                                Address=x.Driver?.Address,
+                                AvailabilityStatus=x.Driver?.AvailabilityStatus,
+                                Email=x.Driver ?.Email,
+                                FirstName=x.Driver ?.FirstName,
+                                LastName=x.Driver ?.LastName,
+                                IsApproved=x.Driver ?.ApproveDriver,
+                                LicenseNumber=x.Driver ?.LicenseNumber,
+                                PhoneNumber=x.Driver?.PhoneNumber,
+                            },
+                    BookingDetails =x.BookingDetails.Count==0?null:
+                        [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
+                        {
+                            BookingId = y.BookingId,
+                            Id = y.Id,
+                            PassengerName = y.PassengerName,
+                            PassengerAge = y.PassengerAge,
+                            PassengerGender = y.PassengerGender,
+                            RelativeId = y.RelativeId
+                        })]
                 })],
                 Filtered = totalCount
             };

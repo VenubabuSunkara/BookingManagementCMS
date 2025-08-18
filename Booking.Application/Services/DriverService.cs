@@ -2,6 +2,7 @@
 using Booking.Application.Interfaces;
 using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace Booking.Application.Services
     public class DriverService(IDriverRepository driverRepository) : IDriverService
     {
         private readonly IDriverRepository _driverRepository = driverRepository;
-
         public async Task<int> ApproveDriverAsync(int DriverId)
         {
             return await _driverRepository.ApproveDriverAsync(DriverId);
@@ -53,7 +53,7 @@ namespace Booking.Application.Services
                     VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
                     VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown",
                     Created = d.Driver.Created ?? DateTime.Now,
-                    isApproved=d.Driver.IsApproved
+                    isApproved = d.Driver.IsApproved
 
                 }).AsParallel()
             };
@@ -73,6 +73,32 @@ namespace Booking.Application.Services
                 VehicleId = v.VehicleId,
                 ThumbnailUrl = v.ThumbnailUrl ?? "Unknown",
             }).AsParallel();
+        }
+
+        public async Task<IEnumerable<DriverVehicleExportDto>> ExportAllAsync()
+        {
+            var driverVehicleExportData=await _driverRepository.ExportAllAsync();
+            return driverVehicleExportData.Select(x => new DriverVehicleExportDto()
+            {
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                PhoneNumber = x.PhoneNumber,
+                Address = x.Address,
+                LicenseNumber = x.LicenseNumber,
+                AboutOn = x.AboutOn,
+                AvailabilityStatus = x.AvailabilityStatus,
+                ApproveDriver = x.ApproveDriver,
+                VehicleName = x.VehicleName,
+                AboutOnVehicle = x.AboutOnVehicle,
+                VehicleNumber = x.VehicleNumber,
+                SeatingCapacity = x.SeatingCapacity,
+                Color = x.Color,
+                Description = x.Description,
+                Make = x.Make,
+                Features = x.Features,
+                Model = x.Model,
+            });
         }
     }
 }

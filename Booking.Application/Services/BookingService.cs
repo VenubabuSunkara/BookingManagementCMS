@@ -98,9 +98,9 @@ namespace Booking.Application.Services
                     TotalAmount = x.TotalAmount,
                     TravelDate = x.TravelDate,
                     Id = x.Id,
-                    Vehicle = new VehicleDto()
+                    Vehicle = x.Vehicle==null?null:new VehicleDto()
                     {
-                        VehicleName = x.Vehicle.VehicleNumber,
+                        VehicleName = x.Vehicle.VehicleName,
                         Id = x.Vehicle.Id,
                         VehicleNumber = x.Vehicle.VehicleNumber,
                         Description = x.Vehicle.Description,
@@ -112,7 +112,7 @@ namespace Booking.Application.Services
                         Features = x.Vehicle.Features,
                         VehicleTypeId = x.Vehicle.VehicleTypeId
                     },
-                    Driver=new DriverDto (){
+                    Driver=x.Driver==null?null:new DriverDto (){
                         FullName=x.Driver.GetFullName(),
                         LicenseNumber  = x.Driver.LicenseNumber,
                         Email=x.Driver.Email,

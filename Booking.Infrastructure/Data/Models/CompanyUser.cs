@@ -34,10 +34,6 @@ public partial class CompanyUser
     [Unicode(false)]
     public string Contact { get; set; } = null!;
 
-    [StringLength(200)]
-    [Unicode(false)]
-    public string PasswordHash { get; set; } = null!;
-
     public int? CreatedBy { get; set; }
 
     [Column(TypeName = "datetime")]
@@ -51,6 +47,8 @@ public partial class CompanyUser
     public bool? IsActive { get; set; }
 
     public string? Address { get; set; }
+
+    public byte[]? Passwordhash { get; set; }
 
     [InverseProperty("Admin")]
     public virtual ICollection<CompanyUserRoleMapping> CompanyUserRoleMappings { get; set; } = new List<CompanyUserRoleMapping>();

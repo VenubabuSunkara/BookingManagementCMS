@@ -1,6 +1,7 @@
 using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Web.Models;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -38,7 +39,7 @@ namespace Booking.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoadDriverData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadDriverData([FromBody] DataTableAjaxPostModel request)
         {
             var result = await _driverService.GetDriverVehicleList(request.start, request.length);
             return Json(new
@@ -56,9 +57,24 @@ namespace Booking.Web.Controllers
                     Contact = x.DriverContact,
                     CreatedDate = x.Created.ToShortDateString(),
                     DriverId = x.DriverId,
-                    ApproveDriver=x.isApproved
+                    ApproveDriver = x.isApproved
                 }).ToArray()
             });
+        }
+        public async Task<IActionResult> ExportAll()
+        {
+            var data = await _driverService.ExportAllAsync(); // fetch unpaginated filtered data
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Drivers and Vehicles");
+            worksheet.Cell(1, 1).InsertTable(data);
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            var content = stream.ToArray();
+
+            return File(content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "DriversList.xlsx");
         }
         [HttpGet]
         public async Task<IActionResult> Approve(int DriverVehicleId)

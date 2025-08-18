@@ -20,24 +20,22 @@
     </li>
 
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title" href="#"><i data-feather="map"></i><span>Destinations</span></a>
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Packages</span></a>
         <ul class="sidebar-submenu">
-            <li><a href="all-packages.html">All Destinations</a></li>
+            <li><a href="@Url.Action("Index", "Packages")">All Packages</a></li>
             <li>
-                <a href="package-detail.html">Destinations Detail</a>
+                <a href="@Url.Action("ViewPackage", "Packages")">Package Detail</a>
             </li>
             <li>
-                <a href="add-new-destinations.html">Add Destinations</a>
+                <a href="@Url.Action("AddPackage", "Packages")">Add Destinations</a>
             </li>
-            <li>
+           @*  <li>
                 <a href="all-package-categories.html">All Destination Categories</a>
             </li>
             <li>
                 <a href="add-package-category.html">Add Destination Category</a>
-            </li>
-            <li>
-                <a href="@Url.Action("Index", "Roles")">Roles</a>
-            </li>
+            </li> *@
+
         </ul>
     </li>
 
@@ -84,10 +82,11 @@
     </li>
 
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title" href="#"><i data-feather="users"></i><span>Users </span></a>
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="users"></i><span>Users Management</span></a>
         <ul class="sidebar-submenu">
-            <li><a href="all-users.html">All users</a></li>
-            <li><a href="add-new-user.html">Add new user</a></li>
+            <li><a href="@Url.Action("Index", "Account")">All users</a></li>
+            <li><a href="@Url.Action("AddUser", "Account")">Add new user</a></li>
+            <li><a href="@Url.Action("Roles", "Account")">Roles</a></li>
         </ul>
     </li>
     <li class="sidebar-list">
@@ -96,7 +95,7 @@
     </li>
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title link-nav"
-           href="login.html"><i data-feather="log-in"> </i><span>Log In</span></a>
+           href="@Url.Action("Index", "Account")"><i data-feather="log-in"> </i><span>Log In</span></a>
     </li>
 
     <li class="sidebar-list">

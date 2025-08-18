@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Data.Models;
 
-[Index("PhoneNumber", Name = "UQ__Customer__85FB4E382CAFDA36", IsUnique = true)]
-[Index("Email", Name = "UQ__Customer__A9D1053474500301", IsUnique = true)]
+[Microsoft.EntityFrameworkCore.Index("PhoneNumber", Name = "UQ__Customer__85FB4E382CAFDA36", IsUnique = true)]
+[Microsoft.EntityFrameworkCore.Index("Email", Name = "UQ__Customer__A9D1053474500301", IsUnique = true)]
 public partial class Customer
 {
     [Key]
