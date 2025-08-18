@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Booking.Web.Controllers
 {
-    public class CouponCodeController(ICouponCodeService couponCodeService) : Controller
+    public class CouponCodeController(ICouponCodeService couponCodeService) : BaseController
     {
         private readonly ICouponCodeService _couponCodeService = couponCodeService;
         /// <summary>
