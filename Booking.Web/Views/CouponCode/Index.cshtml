@@ -15,8 +15,8 @@
     }
 
     /* .pagination-box {
-                                            margin-top: 20px;
-                                        } */
+                                                margin-top: 20px;
+                                            } */
 
     /* Align DataTable controls */
     div.dataTables_wrapper div.dataTables_length {
@@ -61,6 +61,7 @@
                 <div class="card-body">
                     <!-- Removed table-responsive to prevent scroll -->
                     <div class="table-desi">
+                        @Html.AntiForgeryToken()
                         <table id="dtPromotion" class="all-cars-table table table-striped w-100">
                             <thead>
                                 <tr>
@@ -83,9 +84,6 @@
 </div>
 <!-- Container-fluid Ends-->
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
     <script type="text/javascript">
         $(document).ready(function () {
 
@@ -97,9 +95,17 @@
                 processing: true,
                 serverSide: true,
                 info: false, // Hide "Showing X to Y of Z entries"
+                stateSave: true,
                 ajax: {
                     url: '/CouponCode/LoadData',
-                    type: 'POST'
+                    type: 'POST',
+                    //contentType: 'application/json',
+                    headers: {
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    }//,
+                    // data: function (d) {
+                    //             return JSON.stringify(d); // send as JSON
+                    //         }
                 },
                 language: {
                     processing: `

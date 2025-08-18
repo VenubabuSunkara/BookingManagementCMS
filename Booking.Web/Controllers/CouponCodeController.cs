@@ -29,6 +29,7 @@ namespace Booking.Web.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadData(DataTableRequestDto request, CancellationToken cancellationToken)
         {
             var couponCodes = await _couponCodeService.GetAllCouponCodesAsync(request, [], cancellationToken);
