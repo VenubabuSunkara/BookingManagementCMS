@@ -23,6 +23,7 @@ namespace Booking.Infrastructure
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingDetailsRepository, BookingDetailsRepository>();
             services.AddScoped<IPackageRepository, PackageRepository>();
+            services.AddScoped<IRolesRepository, RolesRepository>();
 
             return services;
         }

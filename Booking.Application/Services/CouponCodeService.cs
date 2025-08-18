@@ -129,7 +129,9 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
             draw = couponCodeList.draw,
             recordsFiltered = couponCodeList.recordsFiltered,
             recordsTotal = couponCodeList.recordsTotal,
-            data = [.. couponCodeList.data.Select(s => new CouponCodeDto
+            data = couponCodeList == null ? null :
+            couponCodeList.data == null ? null :
+            [.. couponCodeList.data.Select(s => new CouponCodeDto
             {
                 CouponCodeId = s.Id,
                 Code = s.Code,
