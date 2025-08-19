@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Booking.Web.Controllers
 {
-    public class RolesController(IRoleService roleService) : BaseController
+    public class RolesController(IRoleService roleService, ILogger<RolesController> logger) : BaseController
     {
         private readonly IRoleService _roleService = roleService;
-
+        private readonly ILogger<RolesController> _logger = logger;
         [HttpGet]
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
@@ -16,6 +16,7 @@ namespace Booking.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
         {
             var roles = await _roleService.GetAllRoles();

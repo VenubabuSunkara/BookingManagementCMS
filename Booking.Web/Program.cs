@@ -29,7 +29,7 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IBookingDetailsService, BookingDetailsService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-
+builder.Services.AddScoped<ISettingService, SettingService>();
 
 
 //builder.Services.AddResponseCompression(options => {

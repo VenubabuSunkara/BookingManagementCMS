@@ -24,7 +24,7 @@ namespace Booking.Infrastructure
             services.AddScoped<IBookingDetailsRepository, BookingDetailsRepository>();
             services.AddScoped<IPackageRepository, PackageRepository>();
             services.AddScoped<IRolesRepository, RolesRepository>();
-
+            services.AddScoped<ISettingRepository, SettingsRepository>();
             return services;
         }
 

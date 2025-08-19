@@ -1,40 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Promotions List";
 }
-
-<style>
-    table.dataTable {
-        table-layout: fixed;
-        word-wrap: break-word;
-        width: 100% !important;
-    }
-
-    .all-cars-table th, .all-cars-table td {
-        white-space: normal !important;
-        vertical-align: middle;
-    }
-
-    /* .pagination-box {
-                                                margin-top: 20px;
-                                            } */
-
-    /* Align DataTable controls */
-    div.dataTables_wrapper div.dataTables_length {
-        float: left;
-        padding-left: 15px;
-    }
-
-    div.dataTables_wrapper div.dataTables_filter {
-        float: right;
-        padding-right: 15px;
-    }
-
-    .dataTables_wrapper .dataTables_paginate {
-        margin-left: 0px;
-        border: none !important;
-    }
-</style>
-
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     @if (!string.IsNullOrEmpty(Convert.ToString(TempData["couponCodeSuccessMessage"])))
@@ -65,11 +32,11 @@
                         <table id="dtPromotion" class="all-cars-table table table-striped w-100">
                             <thead>
                                 <tr>
-                                    <th>Couponcode</th>
+                                    <th>Coupon Code</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
-                                    <th>MinRange</th>
-                                    <th>MaxRange</th>
+                                    <th>Min Range</th>
+                                    <th>Max Range</th>
                                     <th>View</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
@@ -84,6 +51,16 @@
 </div>
 <!-- Container-fluid Ends-->
 @section Scripts {
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
 
@@ -99,13 +76,9 @@
                 ajax: {
                     url: '/CouponCode/LoadData',
                     type: 'POST',
-                    //contentType: 'application/json',
                     headers: {
                             'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    }//,
-                    // data: function (d) {
-                    //             return JSON.stringify(d); // send as JSON
-                    //         }
+                    }
                 },
                 language: {
                     processing: `
@@ -151,7 +124,6 @@
                         data: 'couponCodeId',
                         render: function (data, type, row) {
                             return `<a class="delete-promotion" href="javascript:void(0);" data-id="${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
-                            //return `<a onclick=DeleteData(${data})><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                         }
                     }
                 ]
