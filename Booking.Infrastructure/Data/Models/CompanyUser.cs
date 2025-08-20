@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Data.Models;
 
 [Table("CompanyUser")]
-public partial class CompanyUser
+public partial class CompanyUser 
 {
     [Key]
     public int Id { get; set; }
@@ -48,7 +49,7 @@ public partial class CompanyUser
 
     public string? Address { get; set; }
 
-    public byte[]? Passwordhash { get; set; }
+    public string PasswordHashText { get; set; } = string.Empty;
 
     [InverseProperty("Admin")]
     public virtual ICollection<CompanyUserRoleMapping> CompanyUserRoleMappings { get; set; } = new List<CompanyUserRoleMapping>();

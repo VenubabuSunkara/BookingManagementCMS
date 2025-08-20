@@ -2,25 +2,30 @@ using Booking.Application.Interfaces;
 using Booking.Application.Services;
 using Booking.Domain.DomainServices.DataTableLoader;
 using Booking.Infrastructure;
+using Booking.Infrastructure.Data;
+using Booking.Infrastructure.Data.Models;
 using Booking.Web.Data;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using System.IO.Compression;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddResponseCaching();
 builder.Services.AddOutputCache();
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IPasswordHasher<CompanyUser>, PasswordHasher<CompanyUser>>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+    options.Cookie.Name = ".AspNetCore.Identity.Application";
+    options.LoginPath = "/Account/Login";
+});
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<ICouponCodeService, CouponCodeService>();
@@ -30,6 +35,7 @@ builder.Services.AddScoped<IBookingDetailsService, BookingDetailsService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 
 //builder.Services.AddResponseCompression(options => {
@@ -56,6 +62,8 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -90,7 +98,7 @@ app.UseOutputCache();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Account}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.Run();
