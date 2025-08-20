@@ -39,7 +39,7 @@ namespace Booking.Infrastructure.Repositories
         public async Task<IEnumerable<BookingOrder>> GetAllBookings(int VehicleId, int Year)
         {
             var bookings = await _context.BookingOrders.Include(x => x.BookingDetails)
-                                         .Where(x => x.VehicleId.Equals(VehicleId) && x.CreatedOn.Value.Year == Year)
+                                         .Where(x => x.VehicleId.Equals(VehicleId) && (x.CreatedOn.HasValue && x.CreatedOn.Value.Year == Year))
                                          .ToListAsync();
             return bookings.Select(x => new BookingOrder
             {
@@ -156,17 +156,19 @@ namespace Booking.Infrastructure.Repositories
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
                     VehicleId = x.VehicleId,
+
                     Vehicle= x.Vehicle== null ? null :
                                 new Vehicle(){
-                                    VehicleName=x.Vehicle?.VehicleName,
-                                    VehicleNumber=x.Vehicle?.VehicleNumber,
-                                    Color=x.Vehicle?.Color,
-                                    Features=x.Vehicle?.Features,
-                                    AboutOnVehicle=x.Vehicle?.AboutOnVehicle,
-                                    Make=x.Vehicle?.Make,
-                                    Model=x.Vehicle?.Model,
-                                    SeatingCapacity=x.Vehicle?.SeatingCapacity,
-                                    Description=x.Vehicle?.Description,
+                                    VehicleName=x.Vehicle.VehicleName,
+                                    VehicleNumber=x.Vehicle.VehicleNumber,
+                                    Color=x.Vehicle.Color,
+                                    Features=x.Vehicle.Features,
+                                    AboutOnVehicle= x.Vehicle.AboutOnVehicle,
+                                    Make=x.Vehicle.Make,
+                                    Model=x.Vehicle.Model,
+                                    SeatingCapacity=x.Vehicle.SeatingCapacity,
+                                    Description=x.Vehicle.Description,
+                                    Id=x.Vehicle.Id
                                 },
                     Driver=x.Driver== null ? null :
                             new Driver (){

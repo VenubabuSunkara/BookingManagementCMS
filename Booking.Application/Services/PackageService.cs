@@ -32,12 +32,12 @@ namespace Booking.Application.Services
                     TurmsandConditions = x.TurmsandConditions,
                     Title = x.Title,
                     CreatedBy = x.CreatedBy,
-                    PackageMedia=x.PackageMedia==null?null:new PackageMediaDto(){
+                    PackageMedia=new PackageMediaDto(){
                         MediaType=x.PackageMedia.MediaType,
                         ThumbnailImage=x.PackageMedia.ThumbnailImage,
                         IsDefault=x.PackageMedia.IsDefault,
-                        MediaUrl=x.PackageMedia.MediaUrl                        
-                    }                  
+                        MediaUrl=x.PackageMedia.MediaUrl
+                    }
                 })]
             };
         }

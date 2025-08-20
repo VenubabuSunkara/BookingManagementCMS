@@ -18,9 +18,12 @@ namespace Booking.Web.Controllers
             _bookingService = bookingService;
             _bookingDetailsService = bookingDetailsService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return await Task.Run(() =>
+            {
+                return View();
+            });
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

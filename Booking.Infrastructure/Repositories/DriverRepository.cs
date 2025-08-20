@@ -116,7 +116,8 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<DriverVehicleDTable> GetDriverVehicleList(int Skip, int Take, string searchKey = "")
         {
-            if (!_cache.TryGetValue("drivervehiclelist", out var driverListing))
+            var cacheKey = $"drivervehiclelist_{Skip}_{Take}";
+            if (!_cache.TryGetValue(cacheKey, out var driverListing))
             {
                 //    var baseQuery = _context.DriverVehicleMappings
                 //.AsNoTracking()
@@ -230,7 +231,7 @@ namespace Booking.Infrastructure.Repositories
                     Filtered = totalCount, // update if using filters
                     DriverVehicle = resultList
                 };
-                _cache.Set("drivervehiclelist", driverListing, new MemoryCacheEntryOptions
+                _cache.Set(cacheKey, driverListing, new MemoryCacheEntryOptions
                 {
                     SlidingExpiration = TimeSpan.FromMinutes(2),
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20),
