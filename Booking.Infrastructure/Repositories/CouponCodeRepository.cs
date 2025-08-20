@@ -82,7 +82,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// <returns></returns>
     public async Task<bool> FindCouponCodeAsync([Optional] int couponCodeId, [Optional] string couponCode, CancellationToken cancellationToken = default)
     {
-        if(string.IsNullOrEmpty(couponCode)) return false;
+        if (string.IsNullOrEmpty(couponCode)) return false;
 
         Expression<Func<CouponCode, bool>> expression = x => couponCodeId > 0 ? x.Id.Equals(couponCodeId) && x.Code.Equals(couponCode)
                                                                               : x.Code.Equals(couponCode);
@@ -93,28 +93,81 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     /// <summary>
     /// Get all the couponcodes
     /// </summary>
+    /// <param name="Skip"></param>
+    /// <param name="Take"></param>
+    /// <param name="searchKey"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<CouponCodeEntity>> GetAllCouponCodesAsync(CancellationToken cancellationToken)
+    public async Task<CouponCodeDataTableEntity> GetCouponCodeListAsync(int Skip, int Take, string searchKey, CancellationToken cancellationToken)
     {
-        var couponCodeList = await _context.CouponCodes.AsNoTracking().ToListAsync(cancellationToken);
+        // Base query (read-only, optimized)
+        var query = _context.CouponCodes.AsNoTracking();
 
-        return couponCodeList.Select(s => new CouponCodeEntity()
+        // Apply search if provided
+        if (!string.IsNullOrWhiteSpace(searchKey))
         {
-            Id = s.Id,
-            Code = s.Code,
-            ValidityFrom = s.ValidityFrom,
-            ValidityTo = s.ValidityTo,
-            PriceRangeMin = s.PriceRangeMin,
-            PriceRangeMax = s.PriceRangeMax,
-            DiscountType = s.DiscountType,
-            DiscountValue = s.DiscountValue,
-            CreatedOn = s.CreatedOn,
-            UpdatedOn = s.UpdatedOn,
-            CreatedBy = s.CreatedBy,
-            UpdatedBy = s.UpdatedBy,
-            MediaUrl = s.MediaUrl
-        }).AsParallel();
+            query = query.Where(c =>
+                c.Code!.Contains(searchKey) ||
+                (c.DiscountType ?? string.Empty).Contains(searchKey) ||
+                Convert.ToString(c.ValidityFrom)!.Contains(searchKey) ||
+                Convert.ToString(c.ValidityTo)!.Contains(searchKey) ||
+                Convert.ToString(c.UpdatedBy)!.Contains(searchKey));
+        }
+
+        //Total Count
+        var totalCount = await query.AsNoTracking().CountAsync(cancellationToken);
+
+        var couponCodeList = await query.AsNoTracking()
+            .Select(s => new CouponCodeEntity()
+            {
+                Id = s.Id,
+                Code = s.Code ?? string.Empty,
+                ValidityFrom = s.ValidityFrom,
+                ValidityTo = s.ValidityTo,
+                PriceRangeMin = s.PriceRangeMin,
+                PriceRangeMax = s.PriceRangeMax,
+                DiscountType = s.DiscountType ?? string.Empty,
+                DiscountValue = s.DiscountValue ?? string.Empty,
+                CreatedOn = s.CreatedOn,
+                UpdatedOn = s.UpdatedOn,
+                CreatedBy = s.CreatedBy,
+                UpdatedBy = s.UpdatedBy,
+                MediaUrl = s.MediaUrl ?? string.Empty
+            })
+            .Skip(Skip)
+            .Take(Take)
+            .ToListAsync(cancellationToken) ?? new List<CouponCodeEntity>();
+
+        //Final Result
+        return new()
+        {
+            Total = totalCount,
+            Filtered = totalCount,
+            CouponCode = couponCodeList
+        };
+    }
+
+    /// <summary>
+    /// Get coupon code export results
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IEnumerable<CouponCodeExportEntity>> ExportAllAsync()
+    {
+        return await _context.CouponCodes.AsNoTracking()
+            .Select(s => new CouponCodeExportEntity()
+            {
+                Code = s.Code ?? string.Empty,
+                ValidityFrom = s.ValidityFrom,
+                ValidityTo = s.ValidityTo,
+                PriceRangeMin = s.PriceRangeMin,
+                PriceRangeMax = s.PriceRangeMax,
+                DiscountType = s.DiscountType ?? string.Empty,
+                DiscountValue = s.DiscountValue ?? string.Empty,
+                CreatedOn = s.CreatedOn,
+                UpdatedOn = s.UpdatedOn,
+                CreatedBy = s.CreatedBy,
+                UpdatedBy = s.UpdatedBy
+            }).ToListAsync() ?? new List<CouponCodeExportEntity>();
     }
 
     /// <summary>

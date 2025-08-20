@@ -1,4 +1,5 @@
 ﻿using Booking.Application.CustomValidationAttributes;
+using Booking.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -27,4 +28,13 @@ public class CouponCodeDto
     public int? UpdatedBy { get; set; }
     public string? MediaUrl { get; set; }
     public IFormFile? FileUpload { get; set; }
+}
+
+public class CouponCodeDataTableDto
+{
+    public int TotalRecords { get; set; }
+    public int FilterRecords { get; set; }
+    public IEnumerable<CouponCodeDto> CouponCode { get; set; } = [];
+    public string NextLink { get; set; } = string.Empty;
+    public string PrevLink { get; set; } = string.Empty;
 }
