@@ -1,18 +1,22 @@
+using Amazon.Runtime;
+using Amazon.S3;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
 using Booking.Domain.DomainServices.DataTableLoader;
 using Booking.Infrastructure;
-using Booking.Infrastructure.Data;
 using Booking.Infrastructure.Data.Models;
-using Booking.Web.Data;
+using Booking.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SendGrid.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddResponseCaching();
 builder.Services.AddOutputCache();
@@ -24,7 +28,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
     options.SlidingExpiration = true;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.LoginPath = "/Account/Login";
+    options.LoginPath = "/Account/Index";
 });
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
@@ -36,6 +40,25 @@ builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+
+builder.Services.AddSendGrid(options =>
+{
+    options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
+});
+builder.Services.AddTransient<IEmailService, SendGridEmailService>();
+
+builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
+// or for AWS:
+var awsOptions = builder.Configuration.GetAWSOptions();
+awsOptions.Credentials = new BasicAWSCredentials(
+    builder.Configuration["AWS:AccessKey"],
+    builder.Configuration["AWS:SecretKey"]
+);
+builder.Services.AddDefaultAWSOptions(awsOptions);
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddSingleton<ICloudStorageService, AwsS3StorageService>();
+// or for GCP:
+builder.Services.AddSingleton<ICloudStorageService, GoogleCloudStorageService>();
 
 
 //builder.Services.AddResponseCompression(options => {

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Booking.Web.Data.Migrations
+namespace Booking.Infrastructure.Identity.Data.Migrations
 {
     /// <inheritdoc />
     public partial class application : Migration
