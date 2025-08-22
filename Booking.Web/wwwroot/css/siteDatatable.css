@@ -1,0 +1,36 @@
+﻿
+table.dataTable {
+    table-layout: fixed;
+    word-wrap: break-word;
+    width: 100% !important;
+}
+
+.all-cars-table th, .all-cars-table td {
+    white-space: normal !important;
+    vertical-align: middle;
+}
+
+/* Align DataTable controls */
+div.dataTables_wrapper div.dataTables_length {
+    float: left;
+    padding-left: 15px;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    float: right;
+    padding-right: 15px;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    margin-left: 0px;
+    border: none !important;
+}
+
+table.dataTable thead th, table.dataTable tfoot th {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+table.dataTable tbody td {
+    font-size: 12px;
+}

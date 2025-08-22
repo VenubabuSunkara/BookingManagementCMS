@@ -1,0 +1,100 @@
+﻿@model Entities.DriverAndVehicle
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>DriverAndVehicle</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DriverFirstName" class="control-label"></label>
+                <input asp-for="DriverFirstName" class="form-control" />
+                <span asp-validation-for="DriverFirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DriverLastName" class="control-label"></label>
+                <input asp-for="DriverLastName" class="form-control" />
+                <span asp-validation-for="DriverLastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DriverContact" class="control-label"></label>
+                <input asp-for="DriverContact" class="form-control" />
+                <span asp-validation-for="DriverContact" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DriverEmail" class="control-label"></label>
+                <input asp-for="DriverEmail" class="form-control" />
+                <span asp-validation-for="DriverEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DriverPhoto" class="control-label"></label>
+                <input asp-for="DriverPhoto" class="form-control" />
+                <span asp-validation-for="DriverPhoto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DriverLicenceNumber" class="control-label"></label>
+                <input asp-for="DriverLicenceNumber" class="form-control" />
+                <span asp-validation-for="DriverLicenceNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VehicleName" class="control-label"></label>
+                <input asp-for="VehicleName" class="form-control" />
+                <span asp-validation-for="VehicleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VehicleNumber" class="control-label"></label>
+                <input asp-for="VehicleNumber" class="form-control" />
+                <span asp-validation-for="VehicleNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VehicleTypeId" class="control-label"></label>
+                <select asp-for="VehicleTypeId" class ="form-control" asp-items="ViewBag.VehicleTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Features" class="control-label"></label>
+                <input asp-for="Features" class="form-control" />
+                <span asp-validation-for="Features" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AboutOnVehicle" class="control-label"></label>
+                <input asp-for="AboutOnVehicle" class="form-control" />
+                <span asp-validation-for="AboutOnVehicle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Capacity" class="control-label"></label>
+                <input asp-for="Capacity" class="form-control" />
+                <span asp-validation-for="Capacity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedBy" class="control-label"></label>
+                <input asp-for="CreatedBy" class="form-control" />
+                <span asp-validation-for="CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UpdatedBy" class="control-label"></label>
+                <input asp-for="UpdatedBy" class="form-control" />
+                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

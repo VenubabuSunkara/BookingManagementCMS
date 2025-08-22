@@ -1,0 +1,183 @@
+﻿@{
+    ViewData["Title"] = "Roles List";
+}
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Roles</h5>
+                    </div>
+                    <form class="d-inline-flex">
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Roles" asp-action="Create" class="btn btn-theme">
+                                <i data-feather="plus-square"></i>Add New
+                            </a>
+                            <a asp-controller="Roles" asp-action="Import" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Import
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <!-- Removed table-responsive to prevent scroll -->
+                    <div class="table-desi">
+                        @Html.AntiForgeryToken()
+                        <table id="dtRoles" class="all-cars-table table table-striped w-100">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Notes</th>
+                                    <th>Created Date</th>
+                                    <th>Modified Date</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <div id="roles-pagination" class="pagination-controls"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+
+    <script type="text/javascript">
+         var  roleListVM = {
+                roledt: null,
+                init: function () {
+                     const token = $('input[name="__RequestVerificationToken"]').val();
+                     this.roledt = $('#dtRoles').DataTable({
+                     processing: true,
+                     //dom: 'Bfrtip',
+                     serverSide: false,
+                     stateSave: true,
+                     lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                     layout: {
+                        topStart: {
+                                     buttons: [
+                                  {
+                                    extend: 'collection',
+                                    text: 'Export All',
+                                    buttons: [
+                                      'excel',
+                                      'copy',
+                                      'csv',
+                                      'pdf',
+                                      'print'
+                                    ]
+                                  }
+                                ]
+                        },
+                        bottomEnd: {
+                            paging: {
+                                type: 'simple'
+                            }
+                        }
+                    },
+
+                     ajax: {
+                             url: '/Roles/LoadData',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: function (d) {
+                                return JSON.stringify(d); // Send as JSON string
+                            },
+                            headers: {
+                                'RequestVerificationToken': token
+                            },
+                            error: function (xhr, error, thrown) {
+                                console.error("DataTable error: ", xhr.responseText);
+                            }
+                        },
+           columns: [
+                    { data: 'name', autoWidth: true },
+                    { data: 'notes', autoWidth: true },
+                    { data: 'createdOn',autoWidth: true},
+                    { data: 'updatedOn',autoWidth: true },
+                    {
+                     data: 'id',
+                        render: function (data, type, row) {
+                            return `
+                                <form method="post" action="/Roles/Edit" style="display:inline;" onsubmit="event.stopPropagation();">
+                                 @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="${data}" />
+                                    <button type="submit" class="btn btn-link p-0" style="border: none; background: none;">
+                                        <i class="fa fa-pencil-square-o" style="color: #007bff; font-size: 20px;" aria-hidden="true"></i>
+                                    </button>
+                                </form>
+                            `;
+                        }
+                    },
+                    {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        return `
+                            <form action="/Roles/DeleteConfirmed" method="post" style="display:inline;" onsubmit="event.stopPropagation();">
+                            @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="${data}" />
+                                <button type="submit"
+                                        class="btn btn-link p-0" style="border: none; background: none;"
+                                        style="background-color: #5b6bc0; border: none; padding: 6px 12px; border-radius: 8px; width: 75px;"
+                                        onclick="return confirm('Are you sure you want to permanently delete this role?');"
+                                        title="Delete">
+                                    <i class="fa fa-trash-o" style="color: red; font-size: 20px;" aria-hidden="true"></i>
+                                </button>
+                            </form>`;
+                    }
+                    }
+                ],
+
+                          language: {
+                                emptyTable: "No entries to show"
+                            }
+                    });
+                },
+                refresh: function () {
+                    if (this.roledt) {
+                        this.roledt.ajax.reload();
+                    }
+                }
+            };
+            $(document).ready(function () {
+                roleListVM.init();
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(function () {
+                var alert = document.getElementById('successAlert');
+                if (alert) {
+                    alert.classList.remove('show');
+                }
+            }, 3000);
+        });
+            });
+
+    </script>
+}

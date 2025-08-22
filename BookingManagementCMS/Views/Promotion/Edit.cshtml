@@ -1,0 +1,172 @@
+﻿@using CMS.Models;
+
+@model PromotionViewModel;
+
+@{
+    ViewData["Title"] = "Edit Promotion";
+}
+
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Pramotion Information</h5>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Promotion" asp-action="Update" asp-antiforgery="true" enctype="multipart/form-data" method="post" id="promotionUpdateForm" class="theme-form mega-form">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Name</label>
+                        <input asp-for="Name"
+                               autocomplete="off"
+                               id="name"
+                               class="form-control"
+                               type="text"
+                               placeholder="Name" />
+                        <span asp-validation-for="Name" class="text-danger" id="name-Error"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Couponcode</label>
+                        <input asp-for="Code"
+                               autocomplete="off"
+                               id="couponcode"
+                               class="form-control"
+                               type="text"
+                               placeholder="Code" />
+                        <span asp-validation-for="Code" id="couponcode-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">
+                            Start Date
+                        </label>
+                        <div class="input-group date"
+                             id="dt-date"
+                             data-target-input="nearest">
+                            <div class="input-group">
+                                <input asp-for="ValidityFrom"
+                                       autocomplete="off"
+                                       id="startDate"
+                                       class="datepicker-here form-control"
+                                       type="text"
+                                       data-language="en"
+                                       data-target="#dt-date" />
+
+                                <div class="input-group-text"
+                                     data-target="#dt-date"
+                                     data-toggle="datetimepicker">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ValidityFrom" id="startDate-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">
+                            End Date
+                        </label>
+                        <div class="input-group date"
+                             id="dt-date"
+                             data-target-input="nearest">
+                            <div class="input-group">
+                                <input asp-for="ValidityTo"
+                                       autocomplete="off"
+                                       id="endDate"
+                                       class="datepicker-here form-control"
+                                       type="text"
+                                       data-language="en"
+                                       data-target="#dt-date" />
+
+                                <div class="input-group-text"
+                                     data-target="#dt-date"
+                                     data-toggle="datetimepicker">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ValidityTo" id="endDate-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Minimum Range</label>
+                        <input asp-for="RangeMin"
+                               autocomplete="off"
+                               class="form-control"
+                               type="text"
+                               placeholder="Minimum Range" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Maximum Range</label>
+                        <input asp-for="RangeMax"
+                               autocomplete="off"
+                               class="form-control"
+                               type="text"
+                               placeholder="Maximum Range" />
+                    </div>
+
+                    <div class="mb-3 choose">
+                        <label class="form-label-title">Fileupload</label>
+                        <input asp-for="FileUpload"
+                               class="form-control"
+                               type="file"
+                               data-bs-original-title=""
+                               title="" />
+                    </div>
+                    @if (!string.IsNullOrEmpty(@Model.MediaUrl))
+                    {
+                        <input asp-for="MediaUrl" type="hidden" />
+                        <img src="@Model.MediaUrl" alt="Internal server error" asp-append-version="true" />
+                    }
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">IsActive</label>
+                        <input asp-for="IsActive"
+                               type="checkbox" />
+                    </div>
+                </div>
+                <input asp-for="promotionId" type="hidden">
+                <button id="promotionFieldsClear" class="btn btn-primary mt-3">Clear Fields</button>
+                <button id="promotionUpdate" class="btn btn-primary mt-3">Update Change</button>
+                <a asp-controller="Promotion" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/promotion-validation.js"></script>
+
+    <!--Validate Form Fields And Clear From Fields-->
+    <script type="text/javascript">
+        $(() => {
+            //Validate Form fields
+            $('#promotionUpdate').on("click",() => {
+                return ValidatePromotions();
+            });
+            //Clear form fileds
+            $('#promotionFieldsClear').on("click",() => {
+                ClearPromotionForm('#promotionUpdateForm');
+                return false;
+            });
+            //Change Events
+            $('#name').on("change focusout blur",() => {
+                return validateName();
+            });
+            $('#startDate').on("change focusout blur",() => {
+                return validateStartDate();
+            });
+            $('#endDate').on("change focusout blur",() => {
+                let endDate = validateEndDate();
+                if(endDate)
+                {
+                    return CompareDate();
+                }
+            });
+        })
+    </script>
+}

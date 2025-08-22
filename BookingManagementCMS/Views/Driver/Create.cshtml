@@ -1,0 +1,89 @@
+﻿@model Entities.DriverAndVehicle
+
+@{
+    ViewData["Title"] = "AddVehicle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Driver Vehicle Details</h5>
+        </div>
+        <div class="card-body">
+            <form class="theme-form mega-form" id="frmDrivervehicleinfo" method="post">
+                @Html.AntiForgeryToken()
+                <div class="personal-info">
+                    <div class="personal-info__img">
+                        <img src="@Model.DriverPhoto" alt="@(Model.DriverFirstName + " " + Model.DriverLastName)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.DriverFirstName</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.DriverFirstName</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.DriverEmail</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.DriverContact</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.DriverLicenceNumber</label>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <p class="form-label-title mt-3">@Html.Raw(Model.Description)</p>
+                    </div>
+                </div>
+
+                <div class="personal-info">
+                    <div class="personal-info__img">
+                        <img src="@(Model.DriverVehicleMedia.FirstOrDefault()?.MediaValue)" alt="@(Model.VehicleName)" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.VehicleName</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="form-label-title mt-3">@Model.AboutOnVehicle</p>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.VehicleNumber</label>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.VehicleType</label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">(@Model.Capacity)</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="form-label-title mt-3">@Model.Features</label>
+                    </div>
+                </div>`
+
+                <input type="submit" id="btnSubmit" value="Approve" />
+                <input type="reset" id="btnReject" value="Reject" />
+            </form>
+        </div>
+    </div>
+    <
+</div>
+<!-- Container-fluid Ends-->
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

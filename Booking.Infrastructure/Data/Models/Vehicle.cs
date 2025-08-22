@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace Booking.Infrastructure.Data.Models;
+
+public partial class Vehicle
+{
+    public int Id { get; set; }
+
+    public string? Description { get; set; }
+
+    public string? VehicleName { get; set; }
+
+    public string? VehicleNumber { get; set; }
+
+    public int? VehicleTypeId { get; set; }
+
+    public string? Features { get; set; }
+
+    public string? AboutOnVehicle { get; set; }
+
+    public int? SeatingCapacity { get; set; }
+
+    public int? CreatedBy { get; set; }
+
+    public int? UpdatedBy { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime? UpdatedOn { get; set; }
+
+    public string? Color { get; set; }
+
+    public string? Make { get; set; }
+
+    public string? Model { get; set; }
+
+    public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
+
+    public virtual ICollection<DriverVehicleMapping> DriverVehicleMappings { get; set; } = new List<DriverVehicleMapping>();
+
+    public virtual ICollection<VehicleMedium> VehicleMedia { get; set; } = new List<VehicleMedium>();
+}

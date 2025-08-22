@@ -1,0 +1,49 @@
+﻿@model Entities.CouponCode;
+
+@{
+    ViewData["Title"] = "Promotion Details";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow rounded-3">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="mb-0">Promotion Details</h3>
+                </div>
+
+                <div class="card-body p-4">
+                    <dl class="row">
+                        <dt class="col-5 col-sm-4">Name</dt>
+                        <dd class="col-7 col-sm-8 fw-bold">@(Model.Name ?? "NA")</dd>
+
+                        <dt class="col-5 col-sm-4">Couponcode</dt>
+                        <dd class="col-7 col-sm-8">@(Model.Code ?? "NA")</dd>
+
+                        <dt class="col-5 col-sm-4">Start Date</dt>
+                        <dd class="col-7 col-sm-8">@(Model.ValidityFrom != null ? Model.ValidityFrom?.ToString("dd-MM-yyyy") : "NA")</dd>
+
+                        <dt class="col-5 col-sm-4">End Date</dt>
+                        <dd class="col-7 col-sm-8">@(Model.ValidityTo != null ? Model.ValidityTo?.ToString("dd-MM-yyyy") : "NA")</dd>
+
+                        <dt class="col-5 col-sm-4">Minimum Range</dt>
+                        <dd class="col-7 col-sm-8 fw-bold">@Model.RangeMin</dd>
+
+                        <dt class="col-5 col-sm-4">Maximum Range</dt>
+                        <dd class="col-7 col-sm-8">@Model.RangeMax</dd>
+
+                        <dt class="col-5 col-sm-4">Media File</dt>
+                        <dd class="col-7 col-sm-8"><img src="@Model.MediaUrl" alt="Internal server error" asp-append-version="true" style="width:100%;height:auto;"></dd>
+
+                        <dt class="col-5 col-sm-4">IsActive</dt>
+                        <dd class="col-7 col-sm-8">@(Model.IsActive.HasValue && Model.IsActive.Value ? "True" : "False")</dd>
+                    </dl>
+                </div>
+
+                <div class="card-footer text-center">
+                    <a asp-controller="Promotion" asp-action="Index" class="btn btn-outline-primary w-50">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

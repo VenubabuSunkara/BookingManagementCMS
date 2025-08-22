@@ -1,0 +1,175 @@
+﻿@{
+    ViewData["Title"] = "All Packages List";
+}
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Packages </h5>
+                    </div>
+                    <form class="d-inline-flex">
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Packages" asp-action="AddPackage" class="btn btn-theme">
+                                <i data-feather="plus-square"></i>Add New Package
+                            </a>
+
+                            <a href="@Url.ActionLink("Import", "Packages")" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Import
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblpackages">
+                                <thead>
+                                    <tr>
+                                        <th>Destinations Image</th>
+                                        <th>Name</th>
+                                        <th>Source</th>
+                                        <th>Destinations</th>
+                                        <th>Duration</th>
+                                        <th>Price</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div id="packages-pagination" class="pagination-controls"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript">
+        function editpackagecategory(categoryId){
+                 $.ajax({
+                         type: "GET",
+                         url: "/Packages/EditPackageCategory",
+                         data: { CategoryId:categoryId },
+                         dataType: "json",
+                         success: function(result) {
+                            console.log(result);
+                         },
+                         error: function(req, status, error) {
+                            console.error(error);
+                         }
+                    });
+                }
+
+        function deletePackage(categoryId){
+             $.ajax({
+                    type: "GET",
+                    url: "/Packages/DeletePackageCategory",
+                    data: { CategoryId:categoryId },
+                    dataType: "json",
+                    success: function(result) {
+                    console.log("Sum is:", result);
+                    },
+                    error: function(req, status, error) {
+                    console.error(error);
+                    }
+                });
+
+        }
+
+        var  packageListVM = {
+                packagedt: null,
+                init: function () {
+                     const token = $('input[name="__RequestVerificationToken"]').val();
+                     this.packagedt = $('#tblpackages').DataTable({
+                     processing: true,
+                     //dom: 'Bfrtip',
+                     serverSide: true,
+                     stateSave: true,
+                     lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                     layout: {
+                        topStart: {
+                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+                        }
+                    },
+
+                     ajax: {
+                            url: '/Packages/SearchPackages',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: function (d) {
+                                return JSON.stringify(d); // Send as JSON string
+                            },
+                            headers: {
+                                'RequestVerificationToken': token
+                            },
+                            error: function (xhr, error, thrown) {
+                                console.error("DataTable error: ", xhr.responseText);
+                            }
+                        },
+                     // layout: {
+                     //     bottomStart: {
+                     //                info: {
+                     //                    empty: 'No entries to show'
+                     //                }
+                     //            }
+                     // },
+                     columns: [
+                             {
+                                data: 'packageImage',
+                                autoWidth: true,
+                                render: function (data, type, full, meta) {
+                                    return `<img src="${data}" alt="${full.driverId}" class="img-thumbnail" style="height:40px;" />`;
+                                }
+                            },
+                            { data: 'title', autoWidth: true },
+                            { data: 'source', autoWidth: true },
+                            { data: 'destination', autoWidth: true },
+                            { data: 'durationDays', autoWidth: true },
+                            { data: 'price', autoWidth: true },
+                            {
+                                data: 'id',
+                                render: function (data, type, full, meta) {
+                                    return `<a href="javascript:void(0)" onclick="viewPackageDetails(${data})"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                         |  <a href="\Packages\EditPackage\${data}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                                         |  <a href="javascript:void(0)" onclick="deletePackage(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                }
+                            }
+                        ],
+                          language: {
+                                emptyTable: "No entries to show"
+                            }
+                    });
+                },
+                refresh: function () {
+                    if (this.packagedt) {
+                        this.packagedt.ajax.reload();
+                    }
+                }
+            };
+            $(document).ready(function () {
+                packageListVM.init();
+        });
+    </script>
+}

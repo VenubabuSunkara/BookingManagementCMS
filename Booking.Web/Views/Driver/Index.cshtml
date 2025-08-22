@@ -1,0 +1,300 @@
+﻿@{
+    ViewData["Title"] = "Driver Vehicle List";
+}
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Driver Vehicles</h5>
+                    </div>
+                    <form class="d-inline-flex">
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
+                                <i data-feather="plus-square"></i>Add New
+                            </a>
+
+                            <a href="@Url.ActionLink("Import", "Driver")" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Import
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle Photo</th>
+                                        <th>Vehicle Name</th>
+                                        <th>Vehicle Type</th>
+                                        <th>Seating Capacity</th>
+                                        <th>Driver Name</th>
+                                        <th>Driver Contact</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div class="pagination-box">
+                                <nav aria-label="Table navigation">
+                                    <ul id="customPaginate" class="pagination pagination-primary justify-content-center"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript">
+         function approveDriver(driverid){
+                  $.ajax({
+                          type: "GET",
+                          url: "/Driver/Approve",
+                          data: { DriverVehicleId:driverid },
+                          dataType: "json",
+                          success: function(result) {
+                             console.log(result);
+                          },
+                          error: function(req, status, error) {
+                             console.error(error);
+                          }
+                     });
+                 }
+
+         function rejectDriver(driverid){
+              $.ajax({
+                     type: "GET",
+                     url: "/Driver/Reject",
+                     data: { DriverVehicleId:driverid },
+                     dataType: "json",
+                     success: function(result) {
+                     console.log("Sum is:", result);
+                     },
+                     error: function(req, status, error) {
+                     console.error(error);
+                     }
+                 });
+
+         }
+         var  driverListVM = {
+                 Driverdt: null,
+                 init: function () {
+                      const token = $('input[name="__RequestVerificationToken"]').val();
+                      this.Driverdt = $('#tblvehicledriver').DataTable({
+                      processing: true,
+                      serverSide: true,
+                      info: false,
+                      stateSave: true,
+                      paging: true,
+                      pagingType: 'custom',
+                      pageLength: 10,
+                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                      layout: {
+                      topStart: {
+                        buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/Driver/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                     },
+
+                      ajax: {
+                             url: '/Driver/LoadDriverData',
+                             type: 'POST',
+                             contentType: 'application/json; charset=utf-8',
+                             dataType: 'json',
+                             data: function (d) {
+                                 return JSON.stringify(d); // Send as JSON string
+                             },
+                             headers: {
+                                 'RequestVerificationToken': token
+                             },
+                             error: function (xhr, error, thrown) {
+                                 console.error("DataTable error: ", xhr.responseText);
+                             }
+                         },
+                      columns: [
+                             { data: 'photo',
+                                 autoWidth: true,
+                                 render: function (data, type, full, meta) {
+                                     return `<img src="${data}" alt="${full.driverId}" class="img-thumbnail" style="height:40px;" />`;
+                                 }
+                             },
+                             { data: 'vehicleName', autoWidth: true },
+                             { data: 'seatingCapacity', autoWidth: true },
+                             { data: 'vehicleType', autoWidth: true },
+                             { data: 'driverName', autoWidth: true },
+                             { data: 'contact', autoWidth: true },
+                             { data: 'createdDate', autoWidth: true },
+                             { data: 'driverId',
+                                 render: function (data, type, full, meta) {
+                                    let actions = full.approveDriver === '1'
+                                    ? `<a href="javascript:void(0)" onclick="approveDriver(${data})"><i class="fa fa-check"></i></a>`
+                                    : `<a href="javascript:void(0)" onclick="ViewDriver(${data})"><i class="fa fa-eye"></i></a> |
+                                       <a href="javascript:void(0)" onclick="EditDriver(${data})"><i class="fa fa-pencil-square-o"></i></a>`;
+                                  actions += ` | <a href="javascript:void(0)" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
+                                  return actions;
+                                 }
+                             }
+                         ],
+                           language: {
+                                 emptyTable: "No entries to show"
+                             },
+                             drawCallback: () => this.renderPagination()
+                     });
+                 },
+                 renderPagination: function() {
+                          const info = this.Driverdt.page.info();
+                          const total = info.pages;
+                          const current = info.page + 1;
+
+                          const $ul = $('#customPaginate').empty();
+
+                          // Previous button
+                          $ul.append(
+                            `<li class="page-item ${current === 1 ? 'disabled' : ''}">
+                               <button class="page-link" >Previous</button>
+                             </li>`
+                          );
+
+                          // Page numbers
+                          for (let i = 1; i <= total; i++) {
+                            $ul.append(
+                              `<li class="page-item ${i === current ? 'active' : ''}">
+                                 <button  class="page-link" >${i}${i===current ? ' <span class="sr-only">(current)</span>' : ''}</button >
+                               </li>`
+                            );
+                          }
+
+                          // Next button
+                          $ul.append(
+                            `<li class="page-item ${current === total ? 'disabled' : ''}">
+                               <button  class="page-link" >Next</button>
+                             </li>`
+                          );
+
+                          // Click behaviors
+                          $ul.find('li.page-item').each((idx, li) => {
+                            const $li = $(li);
+                            const $a = $li.find('button');
+
+                            if ($li.hasClass('disabled') || $li.hasClass('active')) return;
+
+                            $a.on('click', (e) => {
+                              e.preventDefault();
+                              if (idx === 0) this.Driverdt.page('previous').draw(false);
+                              else if (idx === total + 1) this.Driverdt.page('next').draw(false);
+                              else this.Driverdt.page(idx - 1).draw(false);
+                            });
+                          });
+                        },
+                 refresh: function () {
+                     if (this.Driverdt) {
+                         this.Driverdt.ajax.reload();
+                     }
+                 },
+                 draw:function(){
+                     if (this.Driverdt) {
+                        this.Driverdt.on('draw', renderPagination(this.Driverdt));
+                     }
+                 }
+
+             };
+             $(document).ready(function () {
+                 driverListVM.init();
+         });
+
+
+        function renderPagination(table) {
+           var info = table.page.info();
+           var totalPages = info.pages;
+           var currentPage = info.page + 1;
+
+           var $pag = $('#customPaginate').empty();
+
+           // Previous button
+           $pag.append(
+             `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === 1 ? '-1' : '0'}">Previous</a>
+             </li>`
+           );
+
+           // Page number buttons
+           for (var i = 1; i <= totalPages; i++) {
+             $pag.append(
+               `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                 <a class="page-link" href="javascript:void(0)">${i}${i === currentPage ? ' <span class="sr-only">(current)</span>' : ''}</a>
+               </li>`
+             );
+           }
+
+           // Next button
+           $pag.append(
+             `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === totalPages ? '-1' : '0'}">Next</a>
+             </li>`
+           );
+
+           // Bind click events
+           $pag.find('li.page-item').each(function(index, item) {
+             if ($(item).hasClass('disabled') || $(item).hasClass('active')) return;
+             $(item).find('a').on('click', function() {
+                $pag.find('li.page-item').removeClass('active');
+                $(item).parent().addClass('active');
+               if (index === 0) table.page('previous').draw(false);              // Previous
+               else if (index === totalPages + 1) table.page('next').draw(false); // Next
+               else table.page(index - 1).draw(false);                           // Specific page
+             });
+           });
+         }
+
+    </script>
+}

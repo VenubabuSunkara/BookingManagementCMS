@@ -1,0 +1,173 @@
+﻿@using Booking.Application.DTOs;
+
+@model CouponCodeDto;
+
+@{
+    ViewData["Title"] = "Edit Coupon Code";
+}
+
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h5>Pramotion Information</h5>
+        </div>
+        <div class="card-body">
+            <form asp-controller="CouponCode" asp-action="Update" asp-antiforgery="true" enctype="multipart/form-data" method="post" id="couponCodeUpdateForm" class="theme-form mega-form">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="form-label-title mt-3">Couponcode</label>
+                        <input asp-for="Code"
+                               autocomplete="off"
+                               id="couponcode"
+                               class="form-control"
+                               type="text"
+                               placeholder="Code" />
+                        <span asp-validation-for="Code" id="couponcode-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">
+                            Start Date
+                        </label>
+                        <div class="input-group date"
+                             id="dt-date"
+                             data-target-input="nearest">
+                            <div class="input-group">
+                                <input asp-for="ValidityFrom"
+                                       autocomplete="off"
+                                       id="startDate"
+                                       class="datepicker-here form-control"
+                                       type="text"
+                                       data-language="en"
+                                       data-target="#dt-date" />
+
+                                <div class="input-group-text"
+                                     data-target="#dt-date"
+                                     data-toggle="datetimepicker">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ValidityFrom" id="startDate-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">
+                            End Date
+                        </label>
+                        <div class="input-group date"
+                             id="dt-date"
+                             data-target-input="nearest">
+                            <div class="input-group">
+                                <input asp-for="ValidityTo"
+                                       autocomplete="off"
+                                       id="endDate"
+                                       class="datepicker-here form-control"
+                                       type="text"
+                                       data-language="en"
+                                       data-target="#dt-date" />
+
+                                <div class="input-group-text"
+                                     data-target="#dt-date"
+                                     data-toggle="datetimepicker">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <span asp-validation-for="ValidityTo" id="endDate-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Minimum Range</label>
+                        <input asp-for="PriceRangeMin"
+                               autocomplete="off"
+                               class="form-control"
+                               type="text"
+                               placeholder="Minimum Range" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Maximum Range</label>
+                        <input asp-for="PriceRangeMax"
+                               autocomplete="off"
+                               class="form-control"
+                               type="text"
+                               placeholder="Maximum Range" />
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Discount Type</label>
+                        <input asp-for="DiscountType"
+                               autocomplete="off"
+                               id="discountType"
+                               class="form-control"
+                               type="text"
+                               placeholder="Discount Type" />
+                        @* <span asp-validation-for="DiscountType" class="text-danger" id="discountType-Error"></span> *@
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Discount Value</label>
+                        <input asp-for="DiscountValue"
+                               autocomplete="off"
+                               id="discountValue"
+                               class="form-control"
+                               type="text"
+                               placeholder="Discount Value" />
+                        @* <span asp-validation-for="DiscountValue" id="discountValue-Error" class="text-danger"></span> *@
+                    </div>
+
+                    <div class="mb-3 choose">
+                        <label class="form-label-title">Fileupload</label>
+                        <input asp-for="FileUpload"
+                               class="form-control"
+                               type="file"
+                               data-bs-original-title=""
+                               title="" />
+                    </div>
+
+                </div>
+                <input asp-for="CouponCodeId" type="hidden">
+                <button id="couponCodeFieldsClear" class="btn btn-primary mt-3">Clear Fields</button>
+                <button id="couponCodeUpdate" class="btn btn-primary mt-3">Update Change</button>
+                <a asp-controller="CouponCode" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/promotion-validation.js"></script>
+
+    <!--Validate Form Fields And Clear From Fields-->
+    <script type="text/javascript">
+        $(() => {
+            //Validate Form fields
+            $('#couponCodeUpdate').on("click",() => {
+                return ValidatePromotions();
+            });
+            //Clear form fileds
+            $('#couponCodeFieldsClear').on("click",() => {
+                ClearPromotionForm('#couponCodeUpdateForm');
+                return false;
+            });
+            //Change Events
+            // $('#name').on("change focusout blur",() => {
+            //     return validateName();
+            // });
+            $('#startDate').on("change focusout blur",() => {
+                return validateStartDate();
+            });
+            $('#endDate').on("change focusout blur",() => {
+                let endDate = validateEndDate();
+                if(endDate)
+                {
+                    return CompareDate();
+                }
+            });
+        })
+    </script>
+}

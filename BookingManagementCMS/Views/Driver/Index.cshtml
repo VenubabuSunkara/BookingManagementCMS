@@ -1,0 +1,204 @@
+﻿@using Entities
+@model IEnumerable<DriverAndVehicle>
+@{
+    ViewData["Title"] = "Driver Vehicle List";
+}
+<style>
+    table.dataTable {
+        table-layout: fixed;
+        word-wrap: break-word;
+        width: 100% !important;
+    }
+
+    .all-cars-table th, .all-cars-table td {
+        white-space: normal !important;
+        vertical-align: middle;
+    }
+
+    /* Align DataTable controls */
+    div.dataTables_wrapper div.dataTables_length {
+        float: left;
+        padding-left: 15px;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        float: right;
+        padding-right: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        margin-left: 0px;
+        border: none !important;
+    }
+</style>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Driver Vehicles</h5>
+                    </div>
+                    <form class="d-inline-flex">
+                        <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
+                        @* <a href="@Url.ActionLink("Create", "DriverVehicle")" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a> *@
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
+                                <thead>
+                                    <tr>
+                                        <th>Vehicle Photo</th>
+                                        <th>Vehicle Name</th>
+                                        <th>Vehicle Type</th>
+                                        <th>Seating Capacity</th>
+                                        <th>Driver Name</th>
+                                        <th>Driver Contact</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @*  <div class="pagination-box">
+                    <nav class="ms-auto me-auto" aria-label="...">
+                        <ul class="pagination pagination-primary">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="javascript:void(0)" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">1</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:void(0)">2 <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div> *@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        var driverListVM;
+            driverListVM = {
+                Driverdt: null,
+                init: function (event) {
+                     Driverdt = $('#tblvehicledriver').DataTable({
+                     processing: true,
+                     serverSide: true,
+                     info: false, // Hide "Showing X to Y of Z entries"
+                     ajax: {
+                            url: '/DriverVehicle/LoadDriverData',
+                            type: 'POST',
+                        },
+                     language: {
+                            // processing: `
+                            //     <div style="text-align:center;padding:20px;">
+                            //         <i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i>
+                            //         <span class="sr-only">Loading...</span>
+                            //     </div>`
+                        },
+                     drawCallback: function (settings) {
+                         customizePagination(Driverdt);
+                     },
+                     columns: [
+                         {   data: 'VehicleName', autoWidth: true,
+                             render: function (data, type, full, meta) {
+                                    return `<img src="${data}" alt="${full.VehicleName}" />`
+                                }
+                         },
+                            { data: 'VehicleName', autoWidth: true },
+                            { data: 'Capacity', autoWidth: true },
+                            { data: 'VehicleType', autoWidth: true },
+                            { data: 'DriverName', autoWidth: true },
+                            { data: 'Contact', autoWidth: true },
+                            { data: 'CreatedDate', autoWidth: true },
+                            {
+                                data: 'Id',
+                                render: function (data, type, row) {
+                                    return `<a href="/DriverVehicle/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>`
+                                }
+                            },
+                            {
+                                data: 'id',
+                                render: function (data, type, row) {
+                                    return `<a href="/DriverVehicle/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                }
+                            }
+                        ]
+                    })
+                },
+                refresh: function () {
+                        Driverdt.ajax.reload();
+                }
+            };
+            $(document).ready(function () {
+                driverListVM.init();
+        });
+
+        function customizePagination(table) {
+            const pagination = $('#dtPromotion_paginate');
+            const currentPage = table.page.info().page + 1;
+            const totalPages = table.page.info().pages;
+
+            let customPagination = `
+                <div class="pagination-box">
+                  <div class="dtpagination-height my-4">
+                    <nav class="ms-auto me-auto" aria-label="...">
+                        <ul class="pagination pagination-primary justify-content-center">
+                            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                                <a class="page-link" href="javascript:void(0)" data-page="prev">Previous</a>
+                            </li>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                customPagination += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="javascript:void(0)" data-page="${i}">${i}</a>
+                    </li>`;
+            }
+
+            customPagination += `
+                            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                                <a class="page-link" href="javascript:void(0)" data-page="next">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div></div>`;
+
+            pagination.html(customPagination);
+
+            $('.pagination-box .page-link').off('click').on('click', function () {
+                const page = $(this).data('page');
+                if (page === 'next') {
+                    table.page('next').draw('page');
+                } else if (page === 'prev') {
+                    table.page('previous').draw('page');
+                } else {
+                    table.page(parseInt(page) - 1).draw('page');
+                }
+            });
+        }
+    </script>
+}

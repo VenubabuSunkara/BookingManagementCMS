@@ -1,0 +1,108 @@
+﻿<!-- Catalog Sidebar Menu -->
+<ul class="sidebar-links" id="simple-bar">
+    <li class="back-btn">
+        <a href="index.html">
+            <img class="img-fluid" src="~/images/logo-icon.png" alt="" />
+        </a>
+        <div class="mobile-back text-end">
+            <span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+        </div>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title link-nav"
+           href="/"><i data-feather="home"> </i><span>Dashboard</span></a>
+    </li>
+
+    <li class="sidebar-list">
+        <a asp-controller="CouponCode" asp-action="Index"
+           class="sidebar-link sidebar-title link-nav"><i data-feather="home"> </i><span>Promotions</span></a>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Packages</span></a>
+        <ul class="sidebar-submenu">
+            <li><a href="@Url.Action("PackageCategory", "Packages")">All Packages Categories</a></li>
+            <li><a href="@Url.Action("Index", "Packages")">All Packages</a></li>
+            <li>
+                <a href="@Url.Action("ViewPackage", "Packages")">Package Detail</a>
+            </li>
+            <li>
+                <a href="@Url.Action("AddPackage", "Packages")">Add Destinations</a>
+            </li>
+           @*  <li>
+                <a href="all-package-categories.html">All Destination Categories</a>
+            </li>
+            <li>
+                <a href="add-package-category.html">Add Destination Category</a>
+            </li> *@
+
+        </ul>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title" href="JavaScript:void(0)"><i data-feather="navigation"></i><span>Drivers And Vehicles</span></a>
+        <ul class="sidebar-submenu">
+            <li><a href="@Url.Action("Index", "Driver")">Vehicle Driver</a></li>
+        </ul>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title" href="JavaScript:void(0)"><i data-feather="navigation"> </i><span>Bookings</span></a>
+        <ul class="sidebar-submenu">
+            <li><a href="@Url.Action("Index", "Bookings")">Bookings</a></li>
+        </ul>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title link-nav"
+           href="location.html">
+            <span class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="24"
+                     height="24"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="feather feather-map-pin">
+                    <path d="M21 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </span>
+            <span>Location</span>
+        </a>
+    </li>
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title link-nav"
+           href="reviews.html">
+            <i data-feather="message-square"> </i><span>Reviews</span>
+        </a>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="users"></i><span>Users Management</span></a>
+        <ul class="sidebar-submenu">
+            <li><a href="@Url.Action("Index", "Users")">All users</a></li>
+            <li><a href="@Url.Action("AddUser", "Users")">Add new user</a></li>
+            <li><a href="@Url.Action("Index", "Roles")">Roles</a></li>
+        </ul>
+    </li>
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title link-nav"
+           href="setting.html"><i data-feather="settings"> </i><span>Setting</span></a>
+    </li>
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title link-nav"
+           href="@Url.Action("Login", "Account")"><i data-feather="log-in"> </i><span>Log In</span></a>
+    </li>
+
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title link-nav"
+           href="sign-up.html">
+            <i data-feather="plus-circle"> </i><span>Register</span>
+        </a>
+    </li>
+</ul>
