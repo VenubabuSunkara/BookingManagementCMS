@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Booking.Application.DTOs;
 
-namespace Booking.Domain.Entities;
-
-public class CouponCodeEntity
+public class CouponCodeExporDto
 {
-    public int Id { get; set; }
-
     public string? Code { get; set; }
 
     public DateOnly? ValidityFrom { get; set; }
@@ -31,13 +23,4 @@ public class CouponCodeEntity
     public int? CreatedBy { get; set; }
 
     public int? UpdatedBy { get; set; }
-
-    public string? MediaUrl { get; set; }
-}
-
-public class CouponCodeDataTableEntity
-{
-    public int Total { get; set; }
-    public int Filtered { get; set; }
-    public IEnumerable<CouponCodeEntity> CouponCode { get; set; } = [];
 }

@@ -1,10 +1,11 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Web.Helper;
-using Microsoft.AspNetCore.Http;
+using Booking.Web.Models;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
+using System.Formats.Asn1;
+using System.Text;
 
 namespace Booking.Web.Controllers
 {
@@ -30,10 +31,24 @@ namespace Booking.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoadData(DataTableRequestDto request, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
         {
-            var couponCodes = await _couponCodeService.GetAllCouponCodesAsync(request, [], cancellationToken);
-            return Json(couponCodes);
+            var couponCodesList = await _couponCodeService.GetCouponCodeListAsync(request.start, request.length, request.search.value ?? string.Empty, cancellationToken);
+            return Json(new
+            {
+                draw = request.draw == 0 ? 1 : request.draw,
+                recordsFiltered = couponCodesList.FilterRecords,
+                recordsTotal = couponCodesList.TotalRecords,
+                data = couponCodesList.CouponCode.Select(x => new
+                {
+                    Code = x.Code,
+                    ValidityFrom = x.ValidityFrom,
+                    ValidityTo = x.ValidityTo,
+                    priceRangeMin = x.PriceRangeMin,
+                    priceRangeMax = x.PriceRangeMax,
+                    CouponCodeId = x.CouponCodeId
+                }).AsParallel().ToArray()
+            });
         }
 
         /// <summary>
@@ -97,6 +112,8 @@ namespace Booking.Web.Controllers
             couponCodeDto.MediaUrl = couponCodeDto.FileUpload != null && couponCodeDto.FileUpload.Length > 0
                 ? await FileUpload.UploadFileAsync(couponCodeDto.FileUpload, "CouponCode", token)
                 : string.Empty;
+            couponCodeDto.CreatedOn = DateTime.Now;
+            couponCodeDto.UpdatedOn = DateTime.Now;
 
             var promotionCreationStatus = await _couponCodeService.CreateCouponCodeAsync(couponCodeDto, token);
             TempData["couponCodeSuccessMessage"] = promotionCreationStatus ? "Coupon code created successfully."
@@ -161,6 +178,7 @@ namespace Booking.Web.Controllers
             couponCodeDto.MediaUrl = couponCodeDto.FileUpload != null && couponCodeDto.FileUpload.Length > 0
                 ? await FileUpload.UploadFileAsync(couponCodeDto.FileUpload, "CouponCode", token)
                 : couponCodeDto.MediaUrl ?? string.Empty;
+            couponCodeDto.UpdatedOn = DateTime.Now;
 
             var promotionUpdateStatus = await _couponCodeService.UpdateCouponCodeAsync(couponCodeDto, token);
             TempData["couponCodeSuccessMessage"] = promotionUpdateStatus ? "Coupn Code updated successfully."
@@ -217,6 +235,68 @@ namespace Booking.Web.Controllers
         {
             bool delValue = await _couponCodeService.DeleteCouponCodeAsync(id, cancellationToken);
             return Json(new { delValue });
+        }
+
+        /// <summary>
+        /// Coupon code export to excel
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> ExporToExcelAll()
+        {
+            var data = await _couponCodeService.ExportAllAsync(); // fetch unpaginated filtered data
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Promotions");
+            worksheet.Cell(1, 1).InsertTable(data);
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            var content = stream.ToArray();
+
+            return File(content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "PromotionsList.xlsx");
+        }
+
+        /// <summary>
+        /// Generate coupon codes csv file
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> ExporToCsvAll()
+        {
+            var data = await _couponCodeService.ExportAllAsync(); // fetch unpaginated filtered data
+
+            if (data == null || !data.Any())
+                return Content("No records found to export");
+
+            var builder = new StringBuilder();
+
+            // Dynamically add CSV header from model properties
+            var properties = typeof(CouponCodeExporDto).GetProperties();
+            builder.AppendLine(string.Join(",", properties.Select(p => p.Name)));
+
+            // Add rows
+            foreach (var item in data)
+            {
+                var values = properties.Select(p =>
+                {
+                    var value = p.GetValue(item, null)?.ToString() ?? string.Empty;
+
+                    // Escape commas, quotes, and line breaks properly
+                    if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+                    {
+                        value = $"\"{value.Replace("\"", "\"\"")}\"";
+                    }
+                    return value;
+                });
+
+                builder.AppendLine(string.Join(",", values));
+            }
+
+            // Write to stream
+            var bytes = Encoding.UTF8.GetBytes(Convert.ToString(builder) ?? string.Empty);
+            var stream = new MemoryStream(bytes);
+
+            return File(stream, "text/csv", "Promotions.csv");
         }
     }
 }

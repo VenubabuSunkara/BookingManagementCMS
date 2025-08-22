@@ -15,7 +15,8 @@ public interface ICouponCodeRepository
     Task<bool> UpdateCouponCodeAsync(CouponCodeEntity couponCode, CancellationToken cancellationToken);
     Task<bool> DeleteCouponCodeAsync(int couponCodeId, CancellationToken cancellationToken);
     Task<bool> FindCouponCodeAsync([Optional]int couponCodeId, [Optional] string couponCode, CancellationToken cancellationToken = default);
-    Task<IEnumerable<CouponCodeEntity>> GetAllCouponCodesAsync(CancellationToken cancellationToken);
+    Task<CouponCodeDataTableEntity> GetCouponCodeListAsync(int Skip, int Take, string searchKey, CancellationToken cancellationToken);
+    Task<IEnumerable<CouponCodeExportEntity>> ExportAllAsync();
     Task<CouponCodeEntity?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken);
     IQueryable<CouponCodeEntity> GetQuarableCouponCodeData();
 }

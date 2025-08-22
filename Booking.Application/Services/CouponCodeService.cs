@@ -89,62 +89,60 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     /// <summary>
     /// Get all the couponcodes
     /// </summary>
+    /// <param name="Skip"></param>
+    /// <param name="Take"></param>
+    /// <param name="searchKey"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<DataTableResponseDto<CouponCodeDto>> GetAllCouponCodesAsync(DataTableRequestDto dataTableRequest, string[] searchColumns, CancellationToken cancellationToken)
+    public async Task<CouponCodeDataTableDto> GetCouponCodeListAsync(int Skip, int Take, string searchKey, CancellationToken cancellationToken)
     {
-        var couponCodeQuarable = _couponCodeRepository.GetQuarableCouponCodeData();
-        DataTableRequestEntity dataTableRequestEntity = new()
-        {
-            draw = dataTableRequest.draw,
-            start = dataTableRequest.start,
-            length = dataTableRequest.length,
-            search = new()
-            {
-                regex = dataTableRequest.search?.regex ?? string.Empty,
-                value = dataTableRequest.search?.value ?? string.Empty
-            },
-            order = [.. dataTableRequest.order.Select(s => new DataTableRequestEntity.Order
-            {
-                column = s.column,
-                dir = s.dir
-            }).AsParallel()],
-            columns = [.. dataTableRequest.columns.Select(s => new  DataTableRequestEntity.Column()
-            {
-                data = s.data,
-                name = s.name,
-                orderable = s.orderable,
-                searchable = s.searchable,
-                search = new()
-                {
-                    regex = s.search?.regex ?? string.Empty,
-                    value = s.search?.value ?? string.Empty
-                }
-            }).AsParallel()]
-        };
-        var couponCodeList = await _dataTableService.GetDataAsync<CouponCodeEntity>(couponCodeQuarable, dataTableRequestEntity, []);
+        var couponCodeList = await _couponCodeRepository.GetCouponCodeListAsync(Skip, Take, searchKey, cancellationToken);
 
         return new()
         {
-            draw = couponCodeList.draw,
-            recordsFiltered = couponCodeList.recordsFiltered,
-            recordsTotal = couponCodeList.recordsTotal,
-            data = couponCodeList == null ? null :
-            couponCodeList.data == null ? null :
-            [.. couponCodeList.data.Select(s => new CouponCodeDto
+            TotalRecords = couponCodeList.Total,
+            FilterRecords = couponCodeList.Filtered,
+            CouponCode = [.. couponCodeList.CouponCode.Select(s => new CouponCodeDto()
             {
                 CouponCodeId = s.Id,
-                Code = s.Code,
+                Code = s.Code ?? string.Empty,
                 ValidityFrom = s.ValidityFrom,
                 ValidityTo = s.ValidityTo,
                 PriceRangeMin = s.PriceRangeMin,
                 PriceRangeMax = s.PriceRangeMax,
                 DiscountType = s.DiscountType ?? string.Empty,
                 DiscountValue = s.DiscountValue ?? string.Empty,
-                MediaUrl = s.MediaUrl ?? string.Empty,
-                UpdatedOn = s.UpdatedOn
+                CreatedOn = s.CreatedOn,
+                UpdatedOn = s.UpdatedOn,
+                CreatedBy = s.CreatedBy,
+                UpdatedBy = s.UpdatedBy,
+                MediaUrl = s.MediaUrl ?? string.Empty
             }).AsParallel()]
         };
+    }
+
+    /// <summary>
+    /// Get coupon code export results
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IEnumerable<CouponCodeExporDto>> ExportAllAsync()
+    {
+        var couponCodeExportData = await _couponCodeRepository.ExportAllAsync();
+
+        return couponCodeExportData.Select(s => new CouponCodeExporDto()
+        {
+            Code = s.Code ?? string.Empty,
+            ValidityFrom = s.ValidityFrom,
+            ValidityTo = s.ValidityTo,
+            PriceRangeMin = s.PriceRangeMin,
+            PriceRangeMax = s.PriceRangeMax,
+            DiscountType = s.DiscountType ?? string.Empty,
+            DiscountValue = s.DiscountValue ?? string.Empty,
+            CreatedOn = s.CreatedOn,
+            UpdatedOn = s.UpdatedOn,
+            CreatedBy = s.CreatedBy,
+            UpdatedBy = s.UpdatedBy
+        }).AsParallel();
     }
 
     /// <summary>
