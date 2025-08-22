@@ -7,7 +7,7 @@ public partial class TourPackageCategory
 {
     public int Id { get; set; }
 
-    public Guid ItemId { get; set; }
+    public Guid ItemGuid { get; set; }
 
     public string CategoryName { get; set; } = null!;
 
@@ -22,6 +22,8 @@ public partial class TourPackageCategory
     public DateTime? UpdatedOn { get; set; }
 
     public int? UpdatedBy { get; set; }
+
+    public int? ItemOrder { get; set; }
 
     public virtual ICollection<TourPackage> TourPackages { get; set; } = new List<TourPackage>();
 }

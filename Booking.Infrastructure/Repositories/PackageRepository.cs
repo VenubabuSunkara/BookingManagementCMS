@@ -11,6 +11,11 @@ namespace Booking.Infrastructure.Repositories
     {
         private readonly BookingCmsContext _context = context;
 
+        public Task<IEnumerable<TourPackageEntity>> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory()
         {
             return await _context.TourPackageCategories.Include(x => x.TourPackages).Select(x => new TourPackageCategoryEntity()
@@ -22,63 +27,51 @@ namespace Booking.Infrastructure.Repositories
             }).ToListAsync();
         }
 
-        //public async Task<PackageDTable> SearchPackage(int Skip, int Take, string searchKey = "")
+        //public async Task<IEnumerable<TourPackageEntity>> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0)
         //{
-        //    var totalCount = await _context.Packages.AsNoTracking().CountAsync();
-        //    var packages = await _context.Packages
-        //                                .AsNoTracking()
-        //                                .Select(mapping => new
-        //                                {
-        //                                    Id = mapping.Id,
-        //                                    mapping.Destination,
-        //                                    mapping.DurationDays,
-        //                                    mapping.Source,
-        //                                    mapping.ShortDescription,
-        //                                    mapping.FullDescription,
-        //                                    mapping.Title,
-        //                                    mapping.Price,
-        //                                    mapping.IsActive,
-        //                                    mapping.TurmsandConditions,
-        //                                    PackageMedia = mapping.PackageMedia == null ? null :
-        //                                        mapping.PackageMedia
-        //                                        .Where(x => x.IsDefault == true)
-        //                                        .Select(x => new
-        //                                        {
-        //                                            x.PackageId,
-        //                                            x.Id,
-        //                                            x.MediaType,
-        //                                            x.MediaUrl,
-        //                                            x.IsDefault,
-        //                                            x.ThumbnailImage
-        //                                        }).FirstOrDefault()
-        //                                }).Where(x => x.IsActive == true)
-        //                                .Skip(Skip)
-        //                                .Take(Take)
-        //                                .ToListAsync();
+        //    var totalCount = await _context.TourPackages.AsNoTracking().CountAsync();
+        //    //var packages = await _context.TourPackages
+        //    //    .Include(x=>x.TourDestinations)
+        //    //    .Include(x=>x.TourItineraries)
+        //    //    .Include(x=>x.TourReviews)
+        //    //    .Include(x=>x.TourMediaGalleries)
+        //    //                            .AsNoTracking()
+        //    //                            .Select(mapping => new
+        //    //                            {
+        //    //                                ItemId = mapping.ItemId,
+        //    //                                mapping.DurationDays,
+        //    //                                mapping.Price,
+        //    //                                mapping.PackageName,
+        //    //                                mapping.Description,
+        //    //                                mapping.CategoryId    
+        //    //                            }).Where(x => x.IsActive == true)
+        //    //                            .Skip(Skip)
+        //    //                            .Take(Take)
+        //    //                            .ToListAsync();
 
-        //    return new PackageDTable
-        //    {
-        //        Total = totalCount,
-        //        PackageEntities = [..packages.Select(x => new PackageEntity()
-        //        {
-        //            Id= x.Id,
-        //            Price = x.Price,
-        //            ShortDescription = x.ShortDescription,
-        //            Source = x.Source,
-        //            Destination = x.Destination,
-        //            FullDescription = x.FullDescription,
-        //            Title = x.Title,
-        //            TurmsandConditions=x.TurmsandConditions,
-        //            DurationDays = x.DurationDays,
-        //            PackageMedia =x.PackageMedia ==null?null:
-        //            new  PackageMediaEntity(){
-        //                MediaType=x.PackageMedia.MediaType,
-        //                MediaUrl=x.PackageMedia.MediaUrl,
-        //                ThumbnailImage=x.PackageMedia.ThumbnailImage
-        //            }
-        //        })],
-        //        Filtered = totalCount
-        //    };
+        //    //return new PackageDTable
+        //    //{
+        //    //    Total = totalCount,
+        //    //    PackageEntities = [..packages.Select(x => new PackageEntity()
+        //    //    {
+        //    //        Id= x.Id,
+        //    //        Price = x.Price,
+        //    //        ShortDescription = x.ShortDescription,
+        //    //        Source = x.Source,
+        //    //        Destination = x.Destination,
+        //    //        FullDescription = x.FullDescription,
+        //    //        Title = x.Title,
+        //    //        TurmsandConditions=x.TurmsandConditions,
+        //    //        DurationDays = x.DurationDays,
+        //    //        PackageMedia =x.PackageMedia ==null?null:
+        //    //        new  PackageMediaEntity(){
+        //    //            MediaType=x.PackageMedia.MediaType,
+        //    //            MediaUrl=x.PackageMedia.MediaUrl,
+        //    //            ThumbnailImage=x.PackageMedia.ThumbnailImage
+        //    //        }
+        //    //    })],
+        //    //    Filtered = totalCount
+        //    //};
         //}
     }
 }

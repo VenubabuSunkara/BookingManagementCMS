@@ -10,5 +10,6 @@ namespace Booking.Domain.Interfaces
     public interface IPackageRepository
     {
         Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory();
+        Task<IEnumerable<TourPackageEntity>> GetPackages(int Skip, int Take, string searchKey = "",int CategoryId = 0);
     }
 }

@@ -85,7 +85,14 @@
     <Content Remove="wwwroot\images\verified.png" />
     <Content Remove="wwwroot\images\wifi.png" />
     <Content Remove="wwwroot\load.gif" />
+    <Content Remove="wwwroot\ValueObjects\Address.cs" />
+    <Content Remove="wwwroot\ValueObjects\ValueObject.cs" />
     <Content Remove="wwwroot\wecare_logo.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="wwwroot\ValueObjects\Address.cs" />
+    <Compile Include="wwwroot\ValueObjects\ValueObject.cs" />
   </ItemGroup>
 
   <ItemGroup>
