@@ -69,7 +69,6 @@ namespace Booking.Infrastructure.Repositories
             var bookings = await _context.BookingOrders
                                         .AsNoTracking()
                                         .Include(x => x.BookingDetails)
-                                        .Include(x => x.Package)
                                         .Include(x => x.Customer)
                                         .Select(mapping => new
                                         {

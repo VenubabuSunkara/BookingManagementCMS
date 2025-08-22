@@ -66,11 +66,11 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
-        function viewPackageDetails(packageId){
+        function editpackagecategory(categoryId){
                  $.ajax({
                          type: "GET",
-                         url: "/Packages/GetPackageDetails",
-                         data: { PackageId:packageId },
+                         url: "/Packages/EditPackageCategory",
+                         data: { CategoryId:categoryId },
                          dataType: "json",
                          success: function(result) {
                             console.log(result);
@@ -81,11 +81,11 @@
                     });
                 }
 
-        function deletePackage(packageId){
+        function deletePackage(categoryId){
              $.ajax({
                     type: "GET",
-                    url: "/Packages/Remove",
-                    data: { PackageId:packageId },
+                    url: "/Packages/DeletePackageCategory",
+                    data: { CategoryId:categoryId },
                     dataType: "json",
                     success: function(result) {
                     console.log("Sum is:", result);

@@ -1,5 +1,6 @@
-﻿using Booking.Application.DTOs;
+﻿using Booking.Application.DTOs.Tour;
 using Booking.Domain.Entities;
+using Booking.Domain.Entities.Tour;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Booking.Application.Interfaces
 {
     public interface IPackageService
     {
-        Task<PackageDataTableDto> SearchPackages(int pageIndex, int pageSize, string searchKey = "");
+        Task<IEnumerable<TourPackageCategoryDto>> GetTourPackageCategory();
+        //Task<PackageDataTableDto> SearchPackages(int pageIndex, int pageSize, string searchKey = "");
     }
 }

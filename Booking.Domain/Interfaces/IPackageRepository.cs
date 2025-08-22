@@ -1,4 +1,4 @@
-﻿using Booking.Domain.Entities;
+﻿using Booking.Domain.Entities.Tour;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,6 @@ namespace Booking.Domain.Interfaces
 {
     public interface IPackageRepository
     {
-        Task<PackageDTable> SearchPackage(int Skip, int Take, string searchKey = "");
+        Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory();
     }
 }

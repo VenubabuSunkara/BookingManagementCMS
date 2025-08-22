@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Booking.Web.Controllers
 {
-    public class AccountController : BaseController
+    public class AccountController(IAccountService accountService, ILogger<AccountController> logger,
+        UserManager<IdentityUser> userManager,
+        SignInManager<IdentityUser> signInManager) : BaseController
     {
-        private readonly IAccountService _accountService;
-        private readonly ILogger<AccountController> _logger;
-        public AccountController(IAccountService accountService, ILogger<AccountController> logger)
-        {
-            _accountService = accountService;
-            _logger = logger;
-        }
+        private readonly IAccountService _accountService = accountService;
+        private readonly ILogger<AccountController> _logger = logger;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly SignInManager<IdentityUser> _signInManager = signInManager;
+
         public async Task<IActionResult> Index()
         {
             return await Task.Run(() =>
