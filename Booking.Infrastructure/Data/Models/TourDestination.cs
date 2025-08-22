@@ -19,17 +19,11 @@ public partial class TourDestination
 
     public int? UpdatedBy { get; set; }
 
-    public string? ViaPlaces { get; set; }
+    public int? ItemOrder { get; set; }
 
-    public string? RouteFrom { get; set; }
+    public int? LocationId { get; set; }
 
-    public string? RouteTo { get; set; }
-
-    public string? Longitude { get; set; }
-
-    public string? Latitude { get; set; }
-
-    public string? Description { get; set; }
+    public virtual Location? Location { get; set; }
 
     public virtual TourPackage Package { get; set; } = null!;
 }

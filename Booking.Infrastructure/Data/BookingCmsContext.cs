@@ -58,7 +58,11 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
+    public virtual DbSet<Location> Locations { get; set; }
+
     public virtual DbSet<Module> Modules { get; set; }
+
+    public virtual DbSet<PackagePolicy> PackagePolicies { get; set; }
 
     public virtual DbSet<PageContent> PageContents { get; set; }
 
@@ -82,13 +86,23 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<TourGuideAssignment> TourGuideAssignments { get; set; }
 
-    public virtual DbSet<TourItinerary> TourItineraries { get; set; }
+    public virtual DbSet<TourItemAttribute> TourItemAttributes { get; set; }
 
-    public virtual DbSet<TourMediaGallery> TourMediaGalleries { get; set; }
+    public virtual DbSet<TourItemType> TourItemTypes { get; set; }
+
+    public virtual DbSet<TourItineraryDay> TourItineraryDays { get; set; }
 
     public virtual DbSet<TourPackage> TourPackages { get; set; }
 
     public virtual DbSet<TourPackageCategory> TourPackageCategories { get; set; }
+
+    public virtual DbSet<TourPackageItem> TourPackageItems { get; set; }
+
+    public virtual DbSet<TourPackageItemAttributeValue> TourPackageItemAttributeValues { get; set; }
+
+    public virtual DbSet<TourPackageMedium> TourPackageMedia { get; set; }
+
+    public virtual DbSet<TourPackagePolicy> TourPackagePolicies { get; set; }
 
     public virtual DbSet<TourReview> TourReviews { get; set; }
 
@@ -96,9 +110,9 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<VehicleMedium> VehicleMedia { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingCMS;Trusted_Connection=True;TrustServerCertificate=True;");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingCMS;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -528,6 +542,23 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<Location>(entity =>
+        {
+            entity.HasKey(e => e.LocationId).HasName("PK__Location__E7FEA497B0C70266");
+
+            entity.ToTable("Location");
+
+            entity.Property(e => e.City).HasMaxLength(100);
+            entity.Property(e => e.Country).HasMaxLength(100);
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.State).HasMaxLength(100);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Module>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Modules__3214EC07F24F5AFF");
@@ -544,6 +575,26 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<PackagePolicy>(entity =>
+        {
+            entity.HasKey(e => e.PolicyId).HasName("PK__PackageP__2E1339A46FD6602F");
+
+            entity.ToTable("PackagePolicy");
+
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.PolicyType).HasMaxLength(100);
+            entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+            entity.HasOne(d => d.Package).WithMany(p => p.PackagePolicies)
+                .HasForeignKey(d => d.PackageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PackagePo__Packa__7EC1CEDB");
         });
 
         modelBuilder.Entity<PageContent>(entity =>
@@ -693,13 +744,13 @@ public partial class BookingCmsContext : DbContext
 
             entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.Latitude).HasMaxLength(200);
-            entity.Property(e => e.Longitude).HasMaxLength(100);
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
             entity.Property(e => e.PackageId).HasColumnName("PackageID");
-            entity.Property(e => e.RouteFrom).HasMaxLength(200);
-            entity.Property(e => e.RouteTo).HasMaxLength(200);
             entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
-            entity.Property(e => e.ViaPlaces).HasMaxLength(4000);
+
+            entity.HasOne(d => d.Location).WithMany(p => p.TourDestinations)
+                .HasForeignKey(d => d.LocationId)
+                .HasConstraintName("FK_Tour_Destinations_Tour_Location");
 
             entity.HasOne(d => d.Package).WithMany(p => p.TourDestinations)
                 .HasForeignKey(d => d.PackageId)
@@ -746,11 +797,49 @@ public partial class BookingCmsContext : DbContext
                 .HasConstraintName("FK__TourGuide__Packa__50FB042B");
         });
 
-        modelBuilder.Entity<TourItinerary>(entity =>
+        modelBuilder.Entity<TourItemAttribute>(entity =>
+        {
+            entity.HasKey(e => e.AttributeId).HasName("PK__Tour_Ite__C189298A45C97758");
+
+            entity.ToTable("Tour_ItemAttribute");
+
+            entity.Property(e => e.AttributeId).HasColumnName("AttributeID");
+            entity.Property(e => e.AttributeName).HasMaxLength(100);
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.ItemTypeId).HasColumnName("ItemTypeID");
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+            entity.HasOne(d => d.ItemType).WithMany(p => p.TourItemAttributes)
+                .HasForeignKey(d => d.ItemTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Item__ItemT__30592A6F");
+        });
+
+        modelBuilder.Entity<TourItemType>(entity =>
+        {
+            entity.HasKey(e => e.ItemTypeId).HasName("PK__Tour_Ite__F51540DBC17B80E5");
+
+            entity.ToTable("Tour_ItemType");
+
+            entity.HasIndex(e => e.TypeName, "UQ__Tour_Ite__D4E7DFA8C458F2DF").IsUnique();
+
+            entity.Property(e => e.ItemTypeId).HasColumnName("ItemTypeID");
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.TypeName).HasMaxLength(100);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<TourItineraryDay>(entity =>
         {
             entity.HasKey(e => e.ItemId).HasName("PK__Tour_Iti__727E838BCC083096");
 
-            entity.ToTable("Tour_Itineraries");
+            entity.ToTable("Tour_ItineraryDay");
 
             entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.ImageUrl).HasMaxLength(500);
@@ -759,33 +848,10 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.Title).HasMaxLength(200);
             entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
 
-            entity.HasOne(d => d.Package).WithMany(p => p.TourItineraries)
+            entity.HasOne(d => d.Package).WithMany(p => p.TourItineraryDays)
                 .HasForeignKey(d => d.PackageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Tour_Itin__Packa__2AD55B43");
-        });
-
-        modelBuilder.Entity<TourMediaGallery>(entity =>
-        {
-            entity.HasKey(e => e.ItemId).HasName("PK__Tour_Med__727E838B6EA75215");
-
-            entity.ToTable("Tour_MediaGallery");
-
-            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
-            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.MediaType)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.MediaUrl)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.PackageId).HasColumnName("PackageID");
-            entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
-
-            entity.HasOne(d => d.Package).WithMany(p => p.TourMediaGalleries)
-                .HasForeignKey(d => d.PackageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Tour_Medi__Media__5A846E65");
         });
 
         modelBuilder.Entity<TourPackage>(entity =>
@@ -794,10 +860,11 @@ public partial class BookingCmsContext : DbContext
 
             entity.ToTable("Tour_Packages");
 
+            entity.Property(e => e.BannerImage).HasMaxLength(500);
+            entity.Property(e => e.BasePrice).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
             entity.Property(e => e.PackageName).HasMaxLength(200);
-            entity.Property(e => e.Price).HasColumnType("decimal(12, 2)");
             entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TourPackages)
@@ -815,8 +882,106 @@ public partial class BookingCmsContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedOn).HasColumnType("datetime");
-            entity.Property(e => e.ItemId).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
             entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<TourPackageItem>(entity =>
+        {
+            entity.HasKey(e => e.PackageItemId).HasName("PK__Tour_Pac__D45F719168D2774E");
+
+            entity.ToTable("Tour_PackageItem");
+
+            entity.Property(e => e.PackageItemId).HasColumnName("PackageItemID");
+            entity.Property(e => e.Cost).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemName).HasMaxLength(200);
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.ItemTypeId).HasColumnName("ItemTypeID");
+            entity.Property(e => e.PackageId).HasColumnName("PackageID");
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+            entity.HasOne(d => d.ItemType).WithMany(p => p.TourPackageItems)
+                .HasForeignKey(d => d.ItemTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Pack__ItemT__24E777C3");
+
+            entity.HasOne(d => d.Package).WithMany(p => p.TourPackageItems)
+                .HasForeignKey(d => d.PackageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Pack__Packa__23F3538A");
+        });
+
+        modelBuilder.Entity<TourPackageItemAttributeValue>(entity =>
+        {
+            entity.HasKey(e => new { e.PackageItemId, e.AttributeId }).HasName("PK__Tour_Pac__6847E3096E28C0A0");
+
+            entity.ToTable("Tour_PackageItemAttributeValue");
+
+            entity.Property(e => e.PackageItemId).HasColumnName("PackageItemID");
+            entity.Property(e => e.AttributeId).HasColumnName("AttributeID");
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+            entity.HasOne(d => d.Attribute).WithMany(p => p.TourPackageItemAttributeValues)
+                .HasForeignKey(d => d.AttributeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Pack__Attri__370627FE");
+
+            entity.HasOne(d => d.PackageItem).WithMany(p => p.TourPackageItemAttributeValues)
+                .HasForeignKey(d => d.PackageItemId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Pack__Packa__361203C5");
+        });
+
+        modelBuilder.Entity<TourPackageMedium>(entity =>
+        {
+            entity.HasKey(e => e.MediaId).HasName("PK__Tour_Pac__B2C2B5CF8389C051");
+
+            entity.ToTable("Tour_PackageMedia");
+
+            entity.Property(e => e.Caption).HasMaxLength(255);
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.MediaType).HasMaxLength(50);
+            entity.Property(e => e.MediaUrl).HasMaxLength(500);
+            entity.Property(e => e.SequenceOrder).HasDefaultValue(0);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+            entity.HasOne(d => d.Package).WithMany(p => p.TourPackageMedia)
+                .HasForeignKey(d => d.PackageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Pack__Packa__7167D3BD");
+        });
+
+        modelBuilder.Entity<TourPackagePolicy>(entity =>
+        {
+            entity.HasKey(e => e.PolicyId).HasName("PK__Tour_Pac__2E1339A423D24903");
+
+            entity.ToTable("Tour_PackagePolicy");
+
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.ItemOrder).HasDefaultValue(0);
+            entity.Property(e => e.PolicyType).HasMaxLength(100);
+            entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+
+            entity.HasOne(d => d.Package).WithMany(p => p.TourPackagePolicies)
+                .HasForeignKey(d => d.PackageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Pack__Packa__093F5D4E");
         });
 
         modelBuilder.Entity<TourReview>(entity =>
