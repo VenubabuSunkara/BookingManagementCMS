@@ -33,11 +33,12 @@
                             <table class="all-cars-table table table-striped w-100" id="tblpackages">
                                 <thead>
                                     <tr>
-                                        <th>Destinations Image</th>
+                                        <th>S.No</th>
+                                        <th>Banner Image</th>
                                         <th>Name</th>
-                                        <th>Source</th>
-                                        <th>Destinations</th>
-                                        <th>Duration</th>
+                                        <th>Short Description</th>
+                                        <th>Duration Days</th>
+                                        <th>Destination</th>
                                         <th>Price</th>
                                         <th>Actions</th>
                                     </tr>
@@ -103,7 +104,6 @@
                      const token = $('input[name="__RequestVerificationToken"]').val();
                      this.packagedt = $('#tblpackages').DataTable({
                      processing: true,
-                     //dom: 'Bfrtip',
                      serverSide: true,
                      stateSave: true,
                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
@@ -114,7 +114,7 @@
                     },
 
                      ajax: {
-                            url: '/Packages/SearchPackages',
+                            url: '/Packages/GetAllPackages',
                             type: 'POST',
                             contentType: 'application/json; charset=utf-8',
                             dataType: 'json',
@@ -128,25 +128,19 @@
                                 console.error("DataTable error: ", xhr.responseText);
                             }
                         },
-                     // layout: {
-                     //     bottomStart: {
-                     //                info: {
-                     //                    empty: 'No entries to show'
-                     //                }
-                     //            }
-                     // },
                      columns: [
-                             {
-                                data: 'packageImage',
+                            { data: 'id', autoWidth: true },
+                            {
+                                data: 'bannerImage',
                                 autoWidth: true,
                                 render: function (data, type, full, meta) {
-                                    return `<img src="${data}" alt="${full.driverId}" class="img-thumbnail" style="height:40px;" />`;
+                                    return `<img src="${data}" alt="${full.Id}" class="img-thumbnail" style="height:40px;" />`;
                                 }
                             },
                             { data: 'title', autoWidth: true },
-                            { data: 'source', autoWidth: true },
-                            { data: 'destination', autoWidth: true },
+                             { data:'shortDescription', autoWidth:true },
                             { data: 'durationDays', autoWidth: true },
+                            { data: 'destination', autoWidth: true },
                             { data: 'price', autoWidth: true },
                             {
                                 data: 'id',

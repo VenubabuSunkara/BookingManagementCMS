@@ -3,6 +3,7 @@ using Booking.Domain.Entities;
 using Booking.Domain.Entities.Tour;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
+using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Repositories
@@ -11,67 +12,44 @@ namespace Booking.Infrastructure.Repositories
     {
         private readonly BookingCmsContext _context = context;
 
-        public Task<IEnumerable<TourPackageEntity>> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0)
+        public async Task<TourPackageTable> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory()
-        {
-            return await _context.TourPackageCategories.Include(x => x.TourPackages).Select(x => new TourPackageCategoryEntity()
+            IQueryable<TourPackage> query = _context.TourPackages
+                .Include(x => x.TourDestinations)
+                .ThenInclude(x => x.Location);
+            if (CategoryId > 0)
             {
-                Id = x.Id,
-                CategoryName = x.CategoryName,
+                query = query.Where(x => x.CategoryId == CategoryId);
+            }
+            if (!string.IsNullOrEmpty(searchKey))
+            {
+                query = query.Where(x => x.PackageName.Contains(searchKey));
+            }
+            int total = query.Count();
+            var TourPackageList = await query.Select(x => new TourPackageEntity()
+            {
+                PackageName = x.PackageName,
+                DurationDays = x.DurationDays,
+                BasePrice = x.BasePrice,
+                BannerImage = x.BannerImage,
                 Description = x.Description,
-                NoOfPackages = x.TourPackages.Count()
+                ShortDescription = x.ShortDescription,
+                Location = x.TourDestinations.Select(
+                    y => new LocationEntity()
+                    {
+                        City = y.Location.City,
+                        Country = y.Location.Country,
+                        Name = y.Location.Name,
+                        State = y.Location.State,
+                        LocationId = y.Location.LocationId
+                    }).FirstOrDefault() ?? new LocationEntity()
             }).ToListAsync();
+            return new TourPackageTable()
+            {
+                Total = total,
+                Filtered = total,
+                PackageEntities = TourPackageList
+            };
         }
-
-        //public async Task<IEnumerable<TourPackageEntity>> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0)
-        //{
-        //    var totalCount = await _context.TourPackages.AsNoTracking().CountAsync();
-        //    //var packages = await _context.TourPackages
-        //    //    .Include(x=>x.TourDestinations)
-        //    //    .Include(x=>x.TourItineraries)
-        //    //    .Include(x=>x.TourReviews)
-        //    //    .Include(x=>x.TourMediaGalleries)
-        //    //                            .AsNoTracking()
-        //    //                            .Select(mapping => new
-        //    //                            {
-        //    //                                ItemId = mapping.ItemId,
-        //    //                                mapping.DurationDays,
-        //    //                                mapping.Price,
-        //    //                                mapping.PackageName,
-        //    //                                mapping.Description,
-        //    //                                mapping.CategoryId    
-        //    //                            }).Where(x => x.IsActive == true)
-        //    //                            .Skip(Skip)
-        //    //                            .Take(Take)
-        //    //                            .ToListAsync();
-
-        //    //return new PackageDTable
-        //    //{
-        //    //    Total = totalCount,
-        //    //    PackageEntities = [..packages.Select(x => new PackageEntity()
-        //    //    {
-        //    //        Id= x.Id,
-        //    //        Price = x.Price,
-        //    //        ShortDescription = x.ShortDescription,
-        //    //        Source = x.Source,
-        //    //        Destination = x.Destination,
-        //    //        FullDescription = x.FullDescription,
-        //    //        Title = x.Title,
-        //    //        TurmsandConditions=x.TurmsandConditions,
-        //    //        DurationDays = x.DurationDays,
-        //    //        PackageMedia =x.PackageMedia ==null?null:
-        //    //        new  PackageMediaEntity(){
-        //    //            MediaType=x.PackageMedia.MediaType,
-        //    //            MediaUrl=x.PackageMedia.MediaUrl,
-        //    //            ThumbnailImage=x.PackageMedia.ThumbnailImage
-        //    //        }
-        //    //    })],
-        //    //    Filtered = totalCount
-        //    //};
-        //}
     }
 }

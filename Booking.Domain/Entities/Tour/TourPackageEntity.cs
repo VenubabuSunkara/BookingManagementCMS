@@ -17,14 +17,17 @@ namespace Booking.Domain.Entities.Tour
         public string PackageName { get; set; } = null!;
 
         public string? Description { get; set; }
+        public string? ShortDescription { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal BasePrice { get; set; }
 
         public int? DurationDays { get; set; }
+        public string? BannerImage { get; set; }
 
         public int? CategoryId { get; set; }
 
-        public virtual TourPackageCategoryEntity? Category { get; set; }
+        public TourPackageCategoryEntity Category { get; set; } = new TourPackageCategoryEntity();
+        public LocationEntity Location { get; set; } = new LocationEntity();
 
         //public virtual ICollection<TourActivate> TourActivates { get; set; } = new List<TourActivate>();
 
@@ -40,7 +43,7 @@ namespace Booking.Domain.Entities.Tour
 
     }
 
-    public class PackageDTable
+    public class TourPackageTable
     {
         public int Total { get; set; }
         public int Filtered { get; set; }

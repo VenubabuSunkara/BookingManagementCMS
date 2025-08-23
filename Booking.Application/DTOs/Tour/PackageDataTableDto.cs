@@ -10,7 +10,7 @@ namespace Booking.Application.DTOs.Tour
     {
         public int TotalRecords { get; set; }
         public int FilterRecords { get; set; }
-        public IEnumerable<PackageDto> PackagesData { get; set; } = [];
+        public IEnumerable<TourPackageDto> PackagesData { get; set; } = [];
         public string NextLink { get; set; } = string.Empty;
         public string PrevLink { get; set; } = string.Empty;
     }

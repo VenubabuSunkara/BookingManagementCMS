@@ -3,16 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36301.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMS", "BookingManagementCMS\CMS.csproj", "{386D3F77-D89E-4B59-80FC-23263EA53BA1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{6A935223-07F4-4CDC-9F29-04E068BF0FFE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{7B80CA56-6856-4585-A3C5-8AB85A83C05B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Data\Service.csproj", "{6FF78019-1FEA-4347-8144-804EF1EAACA3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Utilities.csproj", "{A4F41BA4-9EFB-4B96-8D52-C1C756B14EEB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Htmlfiles", "Htmlfiles\Htmlfiles.csproj", "{AC2734F3-5AC8-443E-A0D8-24AA6BF77D09}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Domain", "Booking.Domain\Booking.Domain.csproj", "{561C8A15-319A-43C4-ABDA-7AA9AE520069}"
@@ -29,26 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{386D3F77-D89E-4B59-80FC-23263EA53BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{386D3F77-D89E-4B59-80FC-23263EA53BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{386D3F77-D89E-4B59-80FC-23263EA53BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{386D3F77-D89E-4B59-80FC-23263EA53BA1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A935223-07F4-4CDC-9F29-04E068BF0FFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A935223-07F4-4CDC-9F29-04E068BF0FFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A935223-07F4-4CDC-9F29-04E068BF0FFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A935223-07F4-4CDC-9F29-04E068BF0FFE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B80CA56-6856-4585-A3C5-8AB85A83C05B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B80CA56-6856-4585-A3C5-8AB85A83C05B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B80CA56-6856-4585-A3C5-8AB85A83C05B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B80CA56-6856-4585-A3C5-8AB85A83C05B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FF78019-1FEA-4347-8144-804EF1EAACA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FF78019-1FEA-4347-8144-804EF1EAACA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FF78019-1FEA-4347-8144-804EF1EAACA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FF78019-1FEA-4347-8144-804EF1EAACA3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A4F41BA4-9EFB-4B96-8D52-C1C756B14EEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A4F41BA4-9EFB-4B96-8D52-C1C756B14EEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A4F41BA4-9EFB-4B96-8D52-C1C756B14EEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A4F41BA4-9EFB-4B96-8D52-C1C756B14EEB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AC2734F3-5AC8-443E-A0D8-24AA6BF77D09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AC2734F3-5AC8-443E-A0D8-24AA6BF77D09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC2734F3-5AC8-443E-A0D8-24AA6BF77D09}.Release|Any CPU.ActiveCfg = Release|Any CPU
