@@ -11,10 +11,12 @@ namespace Booking.Web.Controllers
     {
         private readonly ILogger<PackagesController> _logger;
         private readonly IPackageService _packageService;
-        public PackagesController(ILogger<PackagesController> logger, IPackageService packageService)
+        private readonly IPackageCategoryService _packageCategoryService;
+        public PackagesController(ILogger<PackagesController> logger, IPackageService packageService, IPackageCategoryService packageCategoryService)
         {
             _logger = logger;
             _packageService = packageService;
+            _packageCategoryService = packageCategoryService;
         }
         public async Task<IActionResult> Index(CancellationToken token)
         {
@@ -34,7 +36,7 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAllPackageCategories([FromBody] DataTableAjaxPostModel request)
         {
-            var tourPackages = await _packageService.GetTourPackageCategory();
+            var tourPackages = await _packageCategoryService.GetTourPackageCategory();
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
@@ -53,26 +55,27 @@ namespace Booking.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SearchPackages([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllPackages([FromBody] DataTableAjaxPostModel request,
+        CancellationToken cancellationToken)
         {
-            return null;
-            //var result ; //await _packageService.SearchPackages(request.start, request.length);
-            //return Json(new
-            //{
-            //    draw = request.draw == 0 ? 1 : request.draw,
-            //    recordsFiltered = result.FilterRecords,
-            //    recordsTotal = result.TotalRecords,
-            //    data = result.PackagesData.Select(x => new
-            //    {
-            //        Id = x.Id,
-            //        Title = x.Title,
-            //        x.DurationDays,
-            //        x.Destination,
-            //        x.Source,
-            //        PackageImage = x.PackageMedia?.ThumbnailImage,
-            //        x.Price
-            //    }).ToArray()
-            //});
+            var result = await _packageService.GetPackages(request.start, request.length, "", 0);
+            return Json(new
+            {
+                draw = request.draw == 0 ? 1 : request.draw,
+                recordsFiltered = result.FilterRecords,
+                recordsTotal = result.TotalRecords,
+                data = result.PackagesData.Select(x => new
+                {
+                    x.Id,
+                    x.Title,
+                    x.DurationDays,
+                    x.Destination,
+                    x.ShortDescription,
+                    x.Source,
+                    x.BannerImage,
+                    x.Price,
+                }).ToArray()
+            });
         }
 
         public async Task<IActionResult> ViewPackage(int PackageId, CancellationToken token)

@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.Interfaces
 {
-    public interface IPackageService
+    public interface IPackageCategoryService
     {
-        Task<PackageDataTableDto> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0);
+        Task<IEnumerable<TourPackageCategoryDto>> GetTourPackageCategory();
     }
 }

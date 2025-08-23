@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Booking.Domain.Interfaces
 {
-    public interface IPackageRepository
+    public interface IPackageCategoryRepository
     {
-        Task<TourPackageTable> GetPackages(int Skip, int Take, string searchKey = "",int CategoryId = 0);
+        Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory();
     }
 }

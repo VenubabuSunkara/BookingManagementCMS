@@ -14,46 +14,27 @@ namespace Booking.Application.Services
     public class PackageService(IPackageRepository packageRepository) : IPackageService
     {
         private readonly IPackageRepository _packageRepository = packageRepository;
-
-        public async Task<IEnumerable<TourPackageCategoryDto>> GetTourPackageCategory()
+        public async Task<PackageDataTableDto> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0)
         {
-            var packagecategoryList = await _packageRepository.GetTourPackageCategory();
-            return packagecategoryList.Select(x => new TourPackageCategoryDto()
-            {
-                NoOfPackages = x.NoOfPackages,
-                CategoryName = x.CategoryName,
-                Description = x.Description,
-                Id = x.Id
-            });
-        }
 
-        //public async Task<PackageDataTableDto> SearchPackages(int Skip, int Take, string searchKey = "")
-        //{
-        //    var packages = await _packageRepository.SearchPackage(Skip, Take, searchKey);
-        //    return new PackageDataTableDto()
-        //    {
-        //        TotalRecords = packages.Total,
-        //        FilterRecords = packages.Filtered,
-        //        PackagesData = [.. packages.PackageEntities.Select(x => new PackageDto()
-        //        {
-        //            Price = x.Price,
-        //            Destination = x.Destination,
-        //            FullDescription = x.FullDescription,
-        //            ShortDescription = x.ShortDescription,
-        //            DurationDays = x.DurationDays,
-        //            Source = x.Source,
-        //            TurmsandConditions = x.TurmsandConditions,
-        //            Title = x.Title,
-        //            CreatedBy = x.CreatedBy,
-        //            PackageMedia=x.PackageMedia==null?null:
-        //                new PackageMediaDto(){
-        //                    MediaType=x.PackageMedia.MediaType,
-        //                    ThumbnailImage=x.PackageMedia.ThumbnailImage,
-        //                    IsDefault=x.PackageMedia.IsDefault,
-        //                    MediaUrl=x.PackageMedia.MediaUrl
-        //                }
-        //        })]
-        //    };
-        //}
+            var TourPackageList = await _packageRepository.GetPackages(Skip, Take, searchKey, CategoryId);
+            return new PackageDataTableDto()
+            {
+                TotalRecords = TourPackageList.Total,
+                FilterRecords = TourPackageList.Filtered,
+                PackagesData = TourPackageList.PackageEntities.Select(x => new TourPackageDto()
+                {
+                    Price = x.BasePrice,
+                    DurationDays = x.DurationDays,
+                    FullDescription = x.Description,
+                    ShortDescription = x.ShortDescription,
+                    Id = x.ItemId,
+                    Title = x.PackageName,
+                    Destination = x.Location.Destination,
+                    BannerImage=x.BannerImage,
+                    
+                })
+            };
+        }
     }
 }
