@@ -1,87 +1,219 @@
-﻿@{
-    ViewData["Title"] = "AddVehicle";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<!-- Container-fluid starts-->
+﻿@model Booking.Application.DTOs.DriverVehicleInfoDto
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <h5>Driver Vehicle Details</h5>
-        </div>
-        <div class="card-body">
-            <form class="theme-form mega-form" id="frmDrivervehicleinfo" method="post">
-                @Html.AntiForgeryToken()
-                <div class="personal-info">
-                    <div class="personal-info__img">
-                        <img src="@Model.DriverPhoto" alt="@(Model.DriverFirstName + " " + Model.DriverLastName)" />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2 package-card">
+                    <div>
+                        <h5>Vechile's Details</h5>
                     </div>
+                    <form class="d-inline-flex">
+                        <button class="btn align-items-center btn-theme me-3">
+                            <i class="fa fa-pencil-square-o me-2"></i>Edit
+                        </button>
+                        <button class="btn align-items-center d-flex btn-outline">
+                            <i class="fa fa-trash-o me-2"></i>Delete
+                        </button>
+                    </form>
                 </div>
-
-                <div class="row">
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.DriverFirstName</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.DriverFirstName</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.DriverEmail</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.DriverContact</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.DriverLicenceNumber</label>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <p class="form-label-title mt-3">@Html.Raw(Model.Description)</p>
-                    </div>
+                <div class="driver-body">
+                    <!-- section start -->
+                    <section class="single-section small-section bg-inner">
+                        <div class="row">
+                            <h2 class="cars-title mb-2 mt-2">Driver Name</h2>
+                            <div class="col-12">
+                                <div class="image_section">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="responsive arrow-dark zoom-gallery ratio2_3">
+                                                <div>
+                                                    <a href="@Model.Driver.Photo">
+                                                        <img src="@Model.Driver.Photo"
+                                                             class="img-fluid blur-up lazyload bg-img w-100"
+                                                             alt="@Model.Driver.FullName" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <ul>
+                                                    <li>
+                                                        Total Trips
+                                                    </li>
+                                                    <li>
+                                                        Rating
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cab-single-detail">
+                                        <div class="title-car">
+                                            <h5>About  Driver</h5>
+                                            <!-- <h6>fare/km : <span>$24</span></h6> -->
+                                        </div>
+                                        <p class="description">
+                                            @Html.Raw(Model.Driver.AboutOn)
+                                        </p>
+                                        <div class="overview">
+                                            <h6>Driver Details</h6>
+                                            <ul>
+                                                <li>
+                                                    @Model.Driver.FullName
+                                                </li>
+                                                <li>
+                                                    @Model.Driver.LicenseNumber
+                                                </li>
+                                            </ul>
+                                            <ul>
+                                                <li>
+                                                    @Model.Driver.Email
+                                                </li>
+                                                <li>
+                                                    @Model.Driver.PhoneNumber
+                                                </li>
+                                            </ul>
+                                            <ul>
+                                                <li>
+                                                    @Model.Driver.Address
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="details g-4 row">
+                                            <div class="col-sm-6">
+                                                <div class="overview">
+                                                    <h6>include in this price:</h6>
+                                                    <ul>
+                                                        <li>cancellation</li>
+                                                        <li>theft protection</li>
+                                                        <li>local taxes</li>
+                                                        <li>
+                                                            Prices are inclusive of all the taxes
+                                                        </li>
+                                                        <li>fuel charges</li>
+                                                        <li>driver allowance</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="overview">
+                                                    <h6>exclude in this price:</h6>
+                                                    <ul>
+                                                        <li>late return charges</li>
+                                                        <li>Night Allowance</li>
+                                                        <li>Parking</li>
+                                                        <li>toll / state tax</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </section>
+                    <!-- section end -->
                 </div>
-
-                <div class="personal-info">
-                    <div class="personal-info__img">
-                        <img src="@(Model.DriverVehicleMedia.FirstOrDefault()?.MediaValue)" alt="@(Model.VehicleName)" />
-                    </div>
+                <div class="card-body">
+                    <!-- section start -->
+                    <section class="single-section small-section bg-inner">
+                        <div class="row">
+                            <h2 class="cars-title mb-2 mt-2">Car Name</h2>
+                            <div class="col-12">
+                                <div class="image_section">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="responsive arrow-dark zoom-gallery ratio2_3">
+                                                <div>
+                                                    <a href="javascript:void(0)" onclick="ViewMediaGallary('@Model.Vehicle.Id')">
+                                                        <img src="@Model.VehicleMedia.MediaUrl"
+                                                             class="img-fluid blur-up lazyload bg-img w-100"
+                                                             alt="@Model.Vehicle.VehicleName" />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cab-single-detail">
+                                        <div class="title-car">
+                                            <h5>@Model.Vehicle.VehicleName</h5>
+                                            <!-- <h6>fare/km : <span>$24</span></h6> -->
+                                        </div>
+                                        <p class="description">
+                                          @Html.Raw(Model.Vehicle.Description)
+                                        </p>
+                                        <div class="overview">
+                                            <h6>car overview</h6>
+                                            <ul>
+                                                <li>
+                                                    <img src="images/seat.png"
+                                                         class="img-fluid blur-up lazyload"
+                                                         alt="" />
+                                                    @Model.Vehicle.SeatingCapacity
+                                                </li>
+                                                <li>
+                                                    <img src="images/luggage.png"
+                                                         class="img-fluid blur-up lazyload"
+                                                         alt="" />
+                                                    2 luggage
+                                                </li>
+                                            </ul>
+                                            <ul>
+                                                <li>
+                                                    <img src="images/snowflake.png"
+                                                         class="img-fluid blur-up lazyload"
+                                                         alt="" />
+                                                    AC
+                                                </li>
+                                                <li>
+                                                    <img src="images/settings.png"
+                                                         class="img-fluid blur-up lazyload"
+                                                         alt="" />
+                                                    automatic
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="details g-4 row">
+                                            <div class="col-sm-6">
+                                                <div class="overview">
+                                                    <h6>include in this price:</h6>
+                                                    <ul>
+                                                        <li>cancellation</li>
+                                                        <li>theft protection</li>
+                                                        <li>local taxes</li>
+                                                        <li>
+                                                            Prices are inclusive of all the taxes
+                                                        </li>
+                                                        <li>fuel charges</li>
+                                                        <li>driver allowance</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="overview">
+                                                    <h6>exclude in this price:</h6>
+                                                    <ul>
+                                                        <li>late return charges</li>
+                                                        <li>Night Allowance</li>
+                                                        <li>Parking</li>
+                                                        <li>toll / state tax</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </section>
+                    <!-- section end -->
                 </div>
-
-                <div class="row">
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.VehicleName</label>
-                    </div>
-                    <div class="col-sm-3">
-                        <p class="form-label-title mt-3">@Model.AboutOnVehicle</p>
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.VehicleNumber</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.VehicleType</label>
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label-title mt-3">(@Model.Capacity)</label>
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Features</label>
-                    </div>
-                </div>`
-
-                <input type="submit" id="btnSubmit" value="Approve" />
-                <input type="reset" id="btnReject" value="Reject" />
-            </form>
+            </div>
         </div>
     </div>
-    <
-</div>
-<!-- Container-fluid Ends-->
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    <script type="text/javascript">
+        function ViewMediaGallary(vehicleId){
+
+        }
+    </script>
+}

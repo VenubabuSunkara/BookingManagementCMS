@@ -178,7 +178,7 @@
                                  render: function (data, type, full, meta) {
                                     let actions = full.approveDriver === '1'
                                     ? `<a href="javascript:void(0)" onclick="approveDriver(${data})"><i class="fa fa-check"></i></a>`
-                                    : `<a href="javascript:void(0)" onclick="ViewDriver(${data})"><i class="fa fa-eye"></i></a> |
+                                    : `<a title="preview" href="/Driver/Preview/${data}"><i class="fa fa-eye"></i></a> |
                                        <a href="javascript:void(0)" onclick="EditDriver(${data})"><i class="fa fa-pencil-square-o"></i></a>`;
                                   actions += ` | <a href="javascript:void(0)" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
                                   return actions;

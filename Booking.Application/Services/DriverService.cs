@@ -77,7 +77,7 @@ namespace Booking.Application.Services
 
         public async Task<IEnumerable<DriverVehicleExportDto>> ExportAllAsync()
         {
-            var driverVehicleExportData=await _driverRepository.ExportAllAsync();
+            var driverVehicleExportData = await _driverRepository.ExportAllAsync();
             return driverVehicleExportData.Select(x => new DriverVehicleExportDto()
             {
                 FirstName = x.FirstName,
@@ -99,6 +99,54 @@ namespace Booking.Application.Services
                 Features = x.Features,
                 Model = x.Model,
             });
+        }
+
+        public async Task<DriverVehicleInfoDto?> GetDriverVehicle(int DriverVehileId)
+        {
+            var dvInfo = await _driverRepository.GetDriverVehicle(DriverVehileId);
+            if (dvInfo == null) return null;
+            return new DriverVehicleInfoDto()
+            {
+                Driver = dvInfo.Driver == null ? null :
+                        new DriverDto()
+                        {
+                            FirstName = dvInfo.Driver.FirstName,
+                            LastName = dvInfo.Driver.LastName,
+                            LicenseNumber = dvInfo.Driver.LicenseNumber,
+                            Address = dvInfo.Driver.Address,
+                            AboutOn = dvInfo.Driver.AboutOn,
+                            Photo = dvInfo.Driver.Photo,
+                            Email = dvInfo.Driver.Email,
+                            AvailabilityStatus = dvInfo.Driver.AvailabilityStatus,
+                            PhoneNumber = dvInfo.Driver.PhoneNumber,
+                            VehicleType = dvInfo.Driver.VehicleType,
+                            Id = dvInfo.Driver.Id,
+                        },
+                Vehicle = dvInfo.Vehicle == null ? null :
+                        new VehicleDto()
+                        {
+                            VehicleName = dvInfo.Vehicle.VehicleName,
+                            Features = dvInfo.Vehicle.Features,
+                            Description = dvInfo.Vehicle.Description,
+                            AboutOnVehicle = dvInfo.Vehicle.AboutOnVehicle,
+                            Color = dvInfo.Vehicle.Color,
+                            Make = dvInfo.Vehicle.Make,
+                            Model = dvInfo.Vehicle.Model,
+                            SeatingCapacity = dvInfo.Vehicle.SeatingCapacity,
+                            VehicleNumber = dvInfo.Vehicle.VehicleNumber,
+                            VehicleTypeId = dvInfo.Vehicle.VehicleTypeId,
+                            Id = dvInfo.Vehicle.Id,
+                        },
+                VehicleMedia = dvInfo.VehicleMedia == null ? null :
+                                new VehicleMediaDto()
+                                {
+                                    MediaName = dvInfo.VehicleMedia.MediaName,
+                                    MediaType = dvInfo.VehicleMedia.MediaType,
+                                    MediaUrl = dvInfo.VehicleMedia.MediaUrl,
+                                    ThumbnailUrl = dvInfo.VehicleMedia.ThumbnailUrl,
+                                    Id = dvInfo.VehicleMedia.Id,
+                                }
+            };
         }
     }
 }

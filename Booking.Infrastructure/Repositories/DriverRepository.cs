@@ -254,5 +254,98 @@ namespace Booking.Infrastructure.Repositories
                 Id = x.Id
             }).AsParallel().ToList();
         }
+
+        public async Task<DriverVehicle?> GetDriverVehicle(int DriverVehileId)
+        {
+            var driverVehicle = await _context.DriverVehicleMappings
+                  .AsNoTracking()
+                  .Where(mapping => mapping.Id == DriverVehileId)
+                  .Select(mapping => new
+                  {
+                      Driver = new
+                      {
+                          mapping.Driver.Id,
+                          mapping.Driver.FirstName,
+                          mapping.Driver.LastName,
+                          mapping.Driver.Email,
+                          mapping.Driver.PhoneNumber,
+                          mapping.Driver.Photo,
+                          mapping.Driver.Address,
+                          mapping.Driver.LicenseNumber,
+                          mapping.Driver.AboutOn,
+                          mapping.Driver.AvailabilityStatus,
+                          mapping.Driver.ApproveDriver,
+                          CreatedAt = mapping.Driver.CreatedAt
+                      },
+                      Vehicle = new
+                      {
+                          mapping.Vehicle.Id,
+                          mapping.Vehicle.VehicleName,
+                          mapping.Vehicle.Color,
+                          mapping.Vehicle.Description,
+                          mapping.Vehicle.AboutOnVehicle,
+                          mapping.Vehicle.Features,
+                          mapping.Vehicle.Make,
+                          mapping.Vehicle.VehicleNumber,
+                          mapping.Vehicle.SeatingCapacity,
+                          mapping.Vehicle.Model,
+                          mapping.Vehicle.VehicleTypeId,
+                          DefaultMedia = mapping.Vehicle.VehicleMedia
+                              .Where(m => m.IsDefault == true)
+                              .Select(m => new
+                              {
+                                  m.MediaName,
+                                  m.MediaType,
+                                  m.MediaUrl,
+                                  m.ThumbnailUrl
+                              }).FirstOrDefault()
+                      }
+                  }).FirstOrDefaultAsync();
+
+            // Final transformation to your actual models
+            return driverVehicle == null ? null :
+                 new DriverVehicle
+                 {
+                     Driver = driverVehicle.Driver == null ? null :
+                             new Driver
+                             {
+                                 Id = driverVehicle.Driver.Id,
+                                 FirstName = driverVehicle.Driver.FirstName,
+                                 LastName = driverVehicle.Driver.LastName,
+                                 Email = driverVehicle.Driver.Email,
+                                 PhoneNumber = driverVehicle.Driver.PhoneNumber,
+                                 Photo = driverVehicle.Driver.Photo,
+                                 Address = driverVehicle.Driver.Address,
+                                 LicenseNumber = driverVehicle.Driver.LicenseNumber,
+                                 AboutOn = driverVehicle.Driver.AboutOn,
+                                 AvailabilityStatus = driverVehicle.Driver.AvailabilityStatus,
+                                 Created = driverVehicle.Driver.CreatedAt,
+                                 IsApproved = driverVehicle.Driver.ApproveDriver
+                             },
+                     Vehicle = driverVehicle.Vehicle == null ? null :
+                     new Vehicle
+                     {
+                         Id = driverVehicle.Vehicle.Id,
+                         VehicleName = driverVehicle.Vehicle.VehicleName,
+                         Color = driverVehicle.Vehicle.Color,
+                         Description = driverVehicle.Vehicle.Description,
+                         AboutOnVehicle = driverVehicle.Vehicle.AboutOnVehicle,
+                         Features = driverVehicle.Vehicle.Features,
+                         Make = driverVehicle.Vehicle.Make,
+                         VehicleNumber = driverVehicle.Vehicle.VehicleNumber,
+                         SeatingCapacity = driverVehicle.Vehicle.SeatingCapacity,
+                         Model = driverVehicle.Vehicle.Model,
+                         VehicleTypeId = driverVehicle.Vehicle.VehicleTypeId
+                     },
+                     VehicleMedia = driverVehicle.Vehicle == null ? null :
+                     new VehicleMedia
+                     {
+                         MediaName = driverVehicle.Vehicle.DefaultMedia?.MediaName ?? string.Empty,
+                         MediaType = driverVehicle.Vehicle.DefaultMedia?.MediaType ?? string.Empty,
+                         MediaUrl = driverVehicle.Vehicle.DefaultMedia?.MediaUrl ?? string.Empty,
+                         ThumbnailUrl = driverVehicle.Vehicle.DefaultMedia?.ThumbnailUrl ?? string.Empty
+                     }
+                 };
+        }
     }
 }

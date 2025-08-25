@@ -77,6 +77,15 @@ namespace Booking.Web.Controllers
                         "DriversList.xlsx");
         }
         [HttpGet]
+        public async Task<IActionResult> Preview(int DriverVehicleId)
+        {
+            if (DriverVehicleId == 0)
+                throw new ArgumentException();
+
+            var driverInfo = await _driverService.GetDriverVehicle(DriverVehicleId);
+            return View("Preview", driverInfo);
+        }
+        [HttpGet]
         public async Task<IActionResult> Approve(int DriverVehicleId)
         {
             if (DriverVehicleId == 0)

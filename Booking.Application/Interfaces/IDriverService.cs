@@ -31,6 +31,7 @@ namespace Booking.Application.Interfaces
         Task<IEnumerable<VehicleMediaDto>> GetVehicleMediaList(int vehicleId);
         Task<int> ApproveDriverAsync(int DriverId);
         Task<int> RejectDriverAsync(int DriverId);
+        Task<DriverVehicleInfoDto?> GetDriverVehicle(int DriverVehileId);
         Task<IEnumerable<DriverVehicleExportDto>> ExportAllAsync();
     }
 }
