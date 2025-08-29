@@ -1,4 +1,6 @@
-﻿using Booking.Application.Interfaces;
+﻿using Amazon.Runtime.Internal.UserAgent;
+using Booking.Application.DTOs;
+using Booking.Application.Interfaces;
 using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using System;
@@ -17,14 +19,27 @@ namespace Booking.Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> Login(string username, string password)
+        public async Task<UserDto?> Login(LoginEntity loginEntity)
         {
-            return await _accountRepository.Login(username, password);
+            var user = await _accountRepository.Login(loginEntity);
+            if (user == null) return null;
+            return new UserDto()
+            {
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
+                Email = user.Email,
+                Id = user.Id,
+                RoleId = user.RoleId,
+                Contact = user.Contact,
+                Roles = user.Roles
+            };
         }
 
-        public async Task<UserEntity> Register(UserEntity userEntity)
+        public async Task Register(UserEntity userEntity)
         {
-            return await accountRepository.Register(userEntity);
+            await accountRepository.Register(userEntity);
         }
     }
 }

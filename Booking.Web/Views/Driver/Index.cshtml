@@ -78,13 +78,17 @@
                           data: { DriverVehicleId:driverid },
                           dataType: "json",
                           success: function(result) {
-                             console.log(result);
+                            driverListVM.refresh();
                           },
                           error: function(req, status, error) {
                              console.error(error);
                           }
                      });
                  }
+        function Preview(e, url) {
+          e.preventDefault();
+          location.href = url;
+        }
 
          function rejectDriver(driverid){
               $.ajax({
@@ -93,7 +97,7 @@
                      data: { DriverVehicleId:driverid },
                      dataType: "json",
                      success: function(result) {
-                     console.log("Sum is:", result);
+                        driverListVM.refresh();
                      },
                      error: function(req, status, error) {
                      console.error(error);
@@ -174,11 +178,12 @@
                              { data: 'driverName', autoWidth: true },
                              { data: 'contact', autoWidth: true },
                              { data: 'createdDate', autoWidth: true },
-                             { data: 'driverId',
+                             { data: 'driverVehicleId',
                                  render: function (data, type, full, meta) {
-                                    let actions = full.approveDriver === '1'
+                                     debugger;
+                                    let actions = !full.approveDriver
                                     ? `<a href="javascript:void(0)" onclick="approveDriver(${data})"><i class="fa fa-check"></i></a>`
-                                    : `<a title="preview" href="/Driver/Preview/${data}"><i class="fa fa-eye"></i></a> |
+                                    : `<a title="preview" href="javascript:void(0)" onclick="Preview(event, '/Driver/Preview/${data}')"><i class="fa fa-eye"></i></a> |
                                        <a href="javascript:void(0)" onclick="EditDriver(${data})"><i class="fa fa-pencil-square-o"></i></a>`;
                                   actions += ` | <a href="javascript:void(0)" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
                                   return actions;

@@ -1,6 +1,7 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +11,15 @@ using System.Xml.Linq;
 
 namespace Booking.Application.Services
 {
-    public class RoleService(IRolesRepository rolesRepository) : IRoleService
+    public class RoleService(IRolesRepository rolesRepository, UserManager<IdentityUser> userManager) : IRoleService
     {
         private readonly IRolesRepository _rolesRepository = rolesRepository;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
         public async Task<int> CreateAsync(RoleDto req)
         {
             return await _rolesRepository.CreateAsync(new Domain.Entities.RoleEntity()
             {
-                Name = req.Name,
-                Notes = req.Notes,
-                CreatedBy = req.CreatedBy,
-                UpdatedBy = req.UpdatedBy,
-                CreatedOn = req.CreatedOn,
-                UpdatedOn = req.UpdatedOn,
+                Name = req.Name
             });
         }
 
@@ -42,13 +39,7 @@ namespace Booking.Application.Services
             return roles.Select(x => new RoleDto()
             {
                 Name = x.Name,
-                Notes = x.Notes,
-                CreatedBy = x.CreatedBy,
-                UpdatedBy = x.UpdatedBy,
-                CreatedOn = x.CreatedOn,
-                UpdatedOn = x.UpdatedOn,
                 Id = x.Id
-
             });
         }
 
@@ -59,11 +50,6 @@ namespace Booking.Application.Services
             return new RoleDto()
             {
                 Name = role.Name,
-                Notes = role.Notes,
-                CreatedBy = role.CreatedBy,
-                UpdatedBy = role.UpdatedBy,
-                CreatedOn = role.CreatedOn,
-                UpdatedOn = role.UpdatedOn,
                 Id = role.Id
             };
         }
@@ -73,9 +59,6 @@ namespace Booking.Application.Services
             await _rolesRepository.UpdateAsync(new Domain.Entities.RoleEntity()
             {
                 Name = role.Name,
-                Notes = role.Notes,
-                UpdatedBy = role.UpdatedBy,
-                UpdatedOn = role.UpdatedOn,
                 Id = role.Id
             });
         }

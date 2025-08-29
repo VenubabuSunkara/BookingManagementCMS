@@ -27,6 +27,7 @@ namespace Booking.Domain.Entities
 
     public class DriverVehicle
     {
+        public int DrivervehicleId { get; set; }
         public Driver? Driver { get; set; }
         public Vehicle? Vehicle { get; set; }
         public VehicleMedia? VehicleMedia { get; set; }

@@ -13,8 +13,6 @@ public partial class TourPackage
 
     public string? Description { get; set; }
 
-    public string? ShortDescription { get; set; }
-
     public decimal BasePrice { get; set; }
 
     public int? DurationDays { get; set; }
@@ -30,6 +28,8 @@ public partial class TourPackage
     public int? CategoryId { get; set; }
 
     public string? BannerImage { get; set; }
+
+    public string? ShortDescription { get; set; }
 
     public virtual TourPackageCategory? Category { get; set; }
 

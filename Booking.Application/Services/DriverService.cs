@@ -44,17 +44,17 @@ namespace Booking.Application.Services
                 FilterRecords = driverData.Filtered,
                 DriverInfo = driverData.DriverVehicle.Select(d => new DriverVehicleDto
                 {
-                    DriverId = d.Driver.Id,
-                    VehicleId = d.Vehicle.Id,
+                    DriverId = d.Driver?.Id ?? 0,
+                    VehicleId = d.Vehicle?.Id ?? 0,
                     DriverName = d.Driver.GetFullName(),
                     DriverContact = d.Driver.PhoneNumber ?? string.Empty,
                     VehicleName = d.Vehicle.VehicleName ?? "Unknown",
                     SeatingCapacity = d.Vehicle.SeatingCapacity ?? 2,
-                    VehicleThumbnail = d.VehicleMedia.ThumbnailUrl ?? "Unknown",
+                    VehicleThumbnail = d.VehicleMedia?.ThumbnailUrl ?? "Unknown",
                     VehicleType = d.Vehicle.VehicleTypeId.ToString() ?? "Unknown",
                     Created = d.Driver.Created ?? DateTime.Now,
-                    isApproved = d.Driver.IsApproved
-
+                    isApproved = d.Driver.IsApproved,
+                    DriverVehicleId=d.DrivervehicleId
                 }).AsParallel()
             };
 

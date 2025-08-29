@@ -1,23 +1,17 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Domain.Entities;
-using Booking.Infrastructure.Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Booking.Web.Controllers
 {
-    public class AccountController(IAccountService accountService, ILogger<AccountController> logger,
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager) : BaseController
+    public class AccountController(IAccountService accountService, IRoleService roleService,
+        ILogger<AccountController> logger) : BaseController
     {
         private readonly IAccountService _accountService = accountService;
+        private readonly IRoleService _roleService = roleService;
         private readonly ILogger<AccountController> _logger = logger;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
-        private readonly SignInManager<IdentityUser> _signInManager = signInManager;
 
         public async Task<IActionResult> Index()
         {
@@ -30,44 +24,46 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(LoginDto loginDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            bool isValidUser = await _accountService.Login(loginDto.LoginUser, loginDto.Password);
-            if (!isValidUser)
+            if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Invalid login attempt.");
                 return View(loginDto);
             }
+            var UserData = await _accountService.Login(new LoginEntity()
+            {
+                Email = loginDto.LoginUser,
+                Password = loginDto.Password,
+                RememberMe = loginDto.RememberMe
+            });
+            if (UserData == null)
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(loginDto);
+            }
+            // base.UserDto=UserData;
             return RedirectToAction("Index", "Home");
-            //var user = await _userManager.FindByNameAsync(loginDto.LoginUser);
-            //if (user == null)
-            //{
-            //    ModelState.AddModelError("", "Invalid login attempt.");
-            //    return View(loginDto);
-            //}
-            //var result = await _signInManager.PasswordSignInAsync(
-            //    user, loginDto.Password, loginDto.RememberMe, lockoutOnFailure: false);
-
-            //if (result.Succeeded)
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //else
-            //{
-            //    ModelState.AddModelError("", "Invalid login attempt.");
-            //    return View(loginDto);
-            //}
         }
         public async Task<IActionResult> Register()
         {
-            return await Task.Run(() =>
+            RegisterDto registerDto = new();
+            var roles = await _roleService.GetAllRoles();
+            registerDto.Roles = roles.Select(x => new SelectListItem()
             {
-                return View();
+                Text = x.Name,
+                Value = x.Name,
             });
+            return View(registerDto);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterDto model)
         {
+            var roles = await _roleService.GetAllRoles();
+            model.Roles = roles.Select(x => new SelectListItem()
+            {
+                Text = x.Name,
+                Value = x.Name,
+            });
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -82,10 +78,9 @@ namespace Booking.Web.Controllers
                 Username = model.Email,
                 Address = string.Empty,
                 TenantId = Guid.NewGuid(),
-                IsActive = true               
+                IsActive = true,
+                RoleId = model.SelectedRoleId,
             });
-            // Process registration (e.g., create account)
-
             return RedirectToAction("Index");
         }
     }

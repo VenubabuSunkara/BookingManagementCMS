@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booking.Domain.Entities
+namespace Booking.Application.DTOs
 {
-    public class UserEntity
+    public class UserDto
     {
         public Guid TenantId { get; set; }
         public string FirstName { get; set; } = string.Empty;
@@ -22,7 +22,6 @@ namespace Booking.Domain.Entities
         public string RoleId { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = [];
         public string ProfilePhoto { get; set; } = string.Empty;
-
-        public string FullName => $"{FirstName} {LastName}";
+        public string FullName { get; set; } = string.Empty;
     }
 }

@@ -16,16 +16,9 @@ namespace Booking.Infrastructure.Repositories
         private readonly BookingCmsContext _context = context;
         public async Task<int> CreateAsync(RoleEntity req)
         {
-            req.CreatedOn = DateTime.UtcNow;
-            req.UpdatedOn = DateTime.UtcNow;
             _context.Roles.Add(new Data.Models.Role()
             {
-                Name = req.Name,
-                Notes = req.Notes,
-                UpdatedBy = req.UpdatedBy,
-                CreatedOn = req.CreatedOn,
-                UpdatedOn = req.UpdatedOn,
-                CreatedBy = req.CreatedBy
+                Name = req.Name
             });
             return await _context.SaveChangesAsync();
         }
@@ -48,44 +41,32 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<IEnumerable<RoleEntity>> GetAllRoles()
         {
-            return await _context.Roles.Select(role => new RoleEntity()
-            {
-                Name = role.Name,
-                Id = role.Id,
-                CreatedBy = role.CreatedBy,
-                UpdatedBy = role.UpdatedBy,
-                Notes = role.Notes,
-                CreatedOn = role.CreatedOn,
-                UpdatedOn = role.UpdatedOn
-            }).ToListAsync();
+            return await _context.AspNetRoles
+                .Select(role => new RoleEntity()
+                {
+                    Name = role.Name,
+                    Id = role.Id,
+                }).ToListAsync();
         }
 
         public async Task<RoleEntity?> GetByIdAsync(int id)
         {
-            var role = await _context.Roles.FindAsync(id);
+            var role = await _context.AspNetRoles.FindAsync(id);
             if (role == null) return null;
             return new RoleEntity()
             {
                 Name = role.Name,
-                Id = role.Id,
-                CreatedBy = role.CreatedBy,
-                UpdatedBy = role.UpdatedBy,
-                Notes = role.Notes,
-                CreatedOn = role.CreatedOn,
-                UpdatedOn = role.UpdatedOn
+                Id = role.Id
 
             };
         }
 
         public async Task UpdateAsync(RoleEntity role)
         {
-            var existing = await _context.Roles.FindAsync(role.Id);
+            var existing = await _context.AspNetRoles.FindAsync(role.Id);
             if (existing != null)
             {
                 existing.Name = role.Name;
-                existing.Notes = role.Notes;
-                existing.UpdatedOn = DateTime.UtcNow;
-                existing.UpdatedBy = role.UpdatedBy;
                 await _context.SaveChangesAsync();
             }
         }

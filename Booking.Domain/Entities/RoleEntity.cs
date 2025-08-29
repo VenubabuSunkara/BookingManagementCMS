@@ -9,11 +9,6 @@ namespace Booking.Domain.Entities
     public class RoleEntity
     {
         public string Name { get; set; } = null!;
-        public string? Notes { get; set; }
-        public int Id { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
-        public int? CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
+        public string Id { get; set; } = null!;
     }
 }

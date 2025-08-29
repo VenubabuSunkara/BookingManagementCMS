@@ -19,10 +19,11 @@ namespace Booking.Infrastructure.Repositories
         public async Task<int> ApproveDriverAsync(int DriverId)
         {
             var affected = await _context.Drivers
-                              .Where(d => d.Id == DriverId)
-                              .ExecuteUpdateAsync(setters => setters
-                                  .SetProperty(d => d.ApproveDriver, true)
-                              );
+                             .Where(d => _context.DriverVehicleMappings
+                                 .Where(m => m.Id == DriverId)
+                                 .Select(m => m.DriverId)
+                                 .Contains(d.Id))
+                             .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.ApproveDriver, true));
             return affected;
         }
         public async Task<int> RejectDriverAsync(int DriverId)
@@ -138,6 +139,7 @@ namespace Booking.Infrastructure.Repositories
                     .AsNoTracking()
                     .Select(mapping => new
                     {
+                        id = mapping.Id,
                         Driver = new
                         {
                             mapping.Driver.Id,
@@ -185,6 +187,7 @@ namespace Booking.Infrastructure.Repositories
                 // Final transformation to your actual models
                 var resultList = driverVehicleList.Select(x => new DriverVehicle
                 {
+                    DrivervehicleId = x.id,
                     Driver = new Driver
                     {
                         Id = x.Driver.Id,
@@ -199,7 +202,6 @@ namespace Booking.Infrastructure.Repositories
                         AvailabilityStatus = x.Driver.AvailabilityStatus,
                         Created = x.Driver.CreatedAt,
                         IsApproved = x.Driver.ApproveDriver
-
                     },
                     Vehicle = new Vehicle
                     {

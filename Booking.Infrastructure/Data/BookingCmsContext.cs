@@ -38,8 +38,6 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<CompanyUser> CompanyUsers { get; set; }
 
-    public virtual DbSet<CompanyUserRoleMapping> CompanyUserRoleMappings { get; set; }
-
     public virtual DbSet<Configuration> Configurations { get; set; }
 
     public virtual DbSet<Country> Countries { get; set; }
@@ -110,9 +108,11 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<VehicleMedium> VehicleMedia { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingCMS;Trusted_Connection=True;TrustServerCertificate=True;");
+    public virtual DbSet<VehicleType> VehicleTypes { get; set; }
+
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=DESKTOP-1HQFJ50;Database=BookingCMS;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -283,19 +283,13 @@ public partial class BookingCmsContext : DbContext
 
         modelBuilder.Entity<CompanyUser>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CompanyU__3214EC07A8955C18");
+            entity.HasKey(e => e.Id).HasName("PK__CompanyU__3214EC07CD77A537");
 
             entity.ToTable("CompanyUser");
 
-            entity.Property(e => e.Contact)
-                .HasMaxLength(50)
-                .IsUnicode(false);
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Email)
-                .HasMaxLength(200)
-                .IsUnicode(false);
             entity.Property(e => e.FirstName)
                 .HasMaxLength(200)
                 .IsUnicode(false);
@@ -303,35 +297,14 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.LastName)
                 .HasMaxLength(200)
                 .IsUnicode(false);
-            entity.Property(e => e.PasswordHashText).IsUnicode(false);
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.UserName)
-                .HasMaxLength(200)
-                .IsUnicode(false);
-        });
+            entity.Property(e => e.UserId).HasMaxLength(450);
 
-        modelBuilder.Entity<CompanyUserRoleMapping>(entity =>
-        {
-            entity.ToTable("CompanyUserRoleMapping");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
-            entity.Property(e => e.Notes)
-                .HasMaxLength(200)
-                .IsUnicode(false);
-            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Admin).WithMany(p => p.CompanyUserRoleMappings)
-                .HasForeignKey(d => d.AdminId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CompanyUserRoleMapping_AdminId");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.CompanyUserRoleMappings)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CompanyUserRoleMapping_RoleId");
+            entity.HasOne(d => d.User).WithMany(p => p.CompanyUsers)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_CompanyUser_ASPNetUser");
         });
 
         modelBuilder.Entity<Configuration>(entity =>
@@ -865,6 +838,7 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
             entity.Property(e => e.PackageName).HasMaxLength(200);
+            entity.Property(e => e.ShortDescription).HasMaxLength(4000);
             entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TourPackages)
@@ -1028,6 +1002,10 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.VehicleNumber)
                 .HasMaxLength(200)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.VehicleType).WithMany(p => p.Vehicles)
+                .HasForeignKey(d => d.VehicleTypeId)
+                .HasConstraintName("FK_Vehicle_VehicleType");
         });
 
         modelBuilder.Entity<VehicleMedium>(entity =>
@@ -1045,6 +1023,29 @@ public partial class BookingCmsContext : DbContext
                 .HasForeignKey(d => d.VehicleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VehicleMedia_VehicleId");
+        });
+
+        modelBuilder.Entity<VehicleType>(entity =>
+        {
+            entity.HasKey(e => e.ItemId).HasName("PK__VehicleT__727E838BF3ABFC14");
+
+            entity.ToTable("VehicleType");
+
+            entity.HasIndex(e => e.ItemGuid, "UQ_VehicleType_Guid").IsUnique();
+
+            entity.HasIndex(e => e.TypeName, "UQ__VehicleT__D4E7DFA8C42B608D").IsUnique();
+
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(128)
+                .HasDefaultValueSql("(original_login())");
+            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.TypeName).HasMaxLength(100);
+            entity.Property(e => e.UpdatedBy)
+                .HasMaxLength(128)
+                .HasDefaultValueSql("(original_login())");
+            entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
         });
 
         OnModelCreatingPartial(modelBuilder);

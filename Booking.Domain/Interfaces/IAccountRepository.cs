@@ -9,8 +9,8 @@ namespace Booking.Domain.Interfaces
 {
     public interface IAccountRepository
     {
-        Task<bool> Login(string username, string password);
-        Task<UserEntity> Register(UserEntity userEntity);
+        Task<UserEntity> Login(LoginEntity loginEntity);
+        Task Register(UserEntity userEntity);
         Task<UserEntity> GetUserDetails(UserEntity user);
     }
 }

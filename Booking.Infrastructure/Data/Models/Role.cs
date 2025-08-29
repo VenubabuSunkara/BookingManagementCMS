@@ -19,7 +19,5 @@ public partial class Role
 
     public DateTime? UpdatedOn { get; set; }
 
-    public virtual ICollection<CompanyUserRoleMapping> CompanyUserRoleMappings { get; set; } = new List<CompanyUserRoleMapping>();
-
     public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

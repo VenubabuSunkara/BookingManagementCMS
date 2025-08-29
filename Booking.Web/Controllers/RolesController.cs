@@ -28,11 +28,7 @@ namespace Booking.Web.Controllers
                 data = roles.Select(x => new
                 {
                     x.Name,
-                    x.Notes,
-                    CreatedOn = x.CreatedOn.HasValue ? x.CreatedOn.Value.ToShortDateString() : "N/A",
-                    x.Id,
-                    UpdatedOn = x.UpdatedOn.HasValue ? x.UpdatedOn.Value.ToShortDateString() : "N/A",
-
+                    x.Id
                 }).ToArray()
             });
         }
@@ -100,29 +96,26 @@ namespace Booking.Web.Controllers
                 }, token);
             if (!ModelState.IsValid)
                 return View("Form", role);
-            bool exists = await _roleService.ExistsByNameAsync(role.Name, role.Id);
+            bool exists = await _roleService.ExistsByNameAsync(role.Name);
             if (exists)
             {
                 ModelState.AddModelError("Name", "This role name already exists.");
                 return View("Form", role);
             }
-            if (role.Id > 0)
-            {
-                var existingRole = await _roleService.GetByIdAsync(role.Id);
-                if (existingRole == null)
-                    return NotFound();
-                existingRole.Name = role.Name;
-                existingRole.Notes = role.Notes;
-
-                await _roleService.UpdateAsync(existingRole);
-                TempData["SuccessMessage"] = "Role updated successfully!";
-            }
-            else
-            {
-                role.CreatedOn = DateTime.UtcNow;
-                await _roleService.CreateAsync(role);
-                TempData["SuccessMessage"] = "Role created successfully!";
-            }
+            //if (role.Id != "")
+            //{
+            //    var existingRole = await _roleService.GetByIdAsync(role.Id);
+            //    if (existingRole == null)
+            //        return NotFound();
+            //    existingRole.Name = role.Name;
+            //    await _roleService.UpdateAsync(existingRole);
+            //    TempData["SuccessMessage"] = "Role updated successfully!";
+            //}
+            //else
+            //{
+            //    await _roleService.CreateAsync(role);
+            //    TempData["SuccessMessage"] = "Role created successfully!";
+            //}
             return RedirectToAction("Index");
         }
         /// <summary>

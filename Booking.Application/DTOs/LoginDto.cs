@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,7 +20,7 @@ namespace Booking.Application.DTOs
         public required string Password { get; set; }
 
         [Display(Name = "Remember me?")]
-        public string RememberMe { get; set; } = string.Empty;
+        public bool RememberMe { get; set; } = false;
     }
 
     public class RegisterDto
@@ -43,5 +45,9 @@ namespace Booking.Application.DTOs
 
         [Required]
         public bool AcceptPrivacyPolicy { get; set; }
+
+        public string SelectedRoleId { get; set; } = string.Empty;
+
+        public IEnumerable<SelectListItem> Roles { get; set; } = [];
     }
 }

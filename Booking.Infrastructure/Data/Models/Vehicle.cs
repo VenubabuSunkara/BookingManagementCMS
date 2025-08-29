@@ -40,4 +40,6 @@ public partial class Vehicle
     public virtual ICollection<DriverVehicleMapping> DriverVehicleMappings { get; set; } = new List<DriverVehicleMapping>();
 
     public virtual ICollection<VehicleMedium> VehicleMedia { get; set; } = new List<VehicleMedium>();
+
+    public virtual VehicleType? VehicleType { get; set; }
 }

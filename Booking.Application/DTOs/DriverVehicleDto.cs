@@ -31,6 +31,7 @@ namespace Booking.Application.DTOs
         public int VehicleId { get; set; }
         public DateTime Created { get; set; }
         public bool? isApproved { get; set; }
+        public int DriverVehicleId { get; set; }
     }
     public class DriverDataTableDto
     {

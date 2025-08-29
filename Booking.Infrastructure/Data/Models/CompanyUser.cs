@@ -13,12 +13,6 @@ public partial class CompanyUser
 
     public string? LastName { get; set; }
 
-    public string UserName { get; set; } = null!;
-
-    public string Email { get; set; } = null!;
-
-    public string Contact { get; set; } = null!;
-
     public int? CreatedBy { get; set; }
 
     public DateTime? CreatedOn { get; set; }
@@ -31,7 +25,7 @@ public partial class CompanyUser
 
     public string? Address { get; set; }
 
-    public string? PasswordHashText { get; set; }
+    public string? UserId { get; set; }
 
-    public virtual ICollection<CompanyUserRoleMapping> CompanyUserRoleMappings { get; set; } = new List<CompanyUserRoleMapping>();
+    public virtual AspNetUser? User { get; set; }
 }

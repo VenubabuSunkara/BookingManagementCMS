@@ -57,7 +57,9 @@ namespace Booking.Web.Controllers
                     Contact = x.DriverContact,
                     CreatedDate = x.Created.ToShortDateString(),
                     DriverId = x.DriverId,
-                    ApproveDriver = x.isApproved
+                    ApproveDriver = x.isApproved,
+                    DriverVehicleId = x.DriverVehicleId
+
                 }).ToArray()
             });
         }
@@ -76,13 +78,12 @@ namespace Booking.Web.Controllers
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         "DriversList.xlsx");
         }
-        [HttpGet]
-        public async Task<IActionResult> Preview(int DriverVehicleId)
-        {
-            if (DriverVehicleId == 0)
-                throw new ArgumentException();
 
-            var driverInfo = await _driverService.GetDriverVehicle(DriverVehicleId);
+        public async Task<IActionResult> Preview(int id)
+        {
+
+            if (id == 0) return View();
+            var driverInfo = await _driverService.GetDriverVehicle(id);
             return View("Preview", driverInfo);
         }
         [HttpGet]
