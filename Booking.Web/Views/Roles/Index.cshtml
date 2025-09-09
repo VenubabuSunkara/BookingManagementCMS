@@ -39,10 +39,8 @@
                         <table id="dtRoles" class="all-cars-table table table-striped w-100">
                             <thead>
                                 <tr>
-                                    <th>Role</th>
-                                    <th>Notes</th>
-                                    <th>Created Date</th>
-                                    <th>Modified Date</th>
+                                    <th>Id</th>
+                                    <th>Name</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
@@ -119,10 +117,8 @@
                             }
                         },
            columns: [
+                    { data: 'id', autoWidth: true },
                     { data: 'name', autoWidth: true },
-                    { data: 'notes', autoWidth: true },
-                    { data: 'createdOn',autoWidth: true},
-                    { data: 'updatedOn',autoWidth: true },
                     {
                      data: 'id',
                         render: function (data, type, row) {

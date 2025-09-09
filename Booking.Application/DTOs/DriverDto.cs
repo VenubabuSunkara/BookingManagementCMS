@@ -22,7 +22,6 @@ namespace Booking.Application.DTOs
 
         public string? Address { get; set; }
 
-        public string? VehicleType { get; set; }
 
         public bool? AvailabilityStatus { get; set; }
 
@@ -32,7 +31,14 @@ namespace Booking.Application.DTOs
         public DateTime? Created { get; set; } = DateTime.Now;
 
         public string? Photo { get; set; }
-        public string FullName { get; set; }
-        public bool isDriverAvailable { get; set; }
+        public string GetFullName() => $"{FirstName} {LastName}";
+        public bool IsDriverAvailable() => AvailabilityStatus == true;
+        public bool? IsApproved { get; set; }
+
+        public int NoTripsDone { get; set; }
+        public int AvgRating { get; set; }
+        public VehicleDto? Vehicle { get; set; }
+        public List<VehicleMediaDto> VehicleMedias { get; set; } = [];
+        public List<FeatureDto> VehicleFeatures { get; set; } = [];
     }
 }

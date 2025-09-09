@@ -15,7 +15,7 @@
                 @Html.AntiForgeryToken()
                 <div class="personal-info">
                     <div class="personal-info__img">
-                        <img src="@Model.Driver.Photo" alt="@(Model.Driver.FullName)" />
+                        <img src="@Model.Driver.Photo" alt="@(Model.Driver.GetFullName())" />
                     </div>
                 </div>
 
@@ -47,13 +47,13 @@
 
                 <div class="personal-info">
                     <div class="personal-info__img">
-                        <img src="@(Model.VehicleMedia.ThumbnailUrl)" alt="@(Model.Vehicle.VehicleName)" />
+                        <img src="@(Model.VehicleMedia.ThumbnailUrl)" alt="@(Model.Vehicle.ModelName)" />
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Vehicle.VehicleName</label>
+                        <label class="form-label-title mt-3">@Model.Vehicle.ModelName</label>
                     </div>
                     <div class="col-sm-3">
                         <p class="form-label-title mt-3">@Model.Vehicle.AboutOnVehicle</p>
@@ -62,7 +62,7 @@
                         <label class="form-label-title mt-3">@Model.Vehicle.VehicleNumber</label>
                     </div>
 
-                    <div class="col-sm-3">
+                  @*   <div class="col-sm-3">
                         <label class="form-label-title mt-3">@Model.Vehicle.VehicleTypeId</label>
                     </div>
                     <div class="col-sm-6">
@@ -70,7 +70,7 @@
                     </div>
                     <div class="col-sm-3">
                         <label class="form-label-title mt-3">@Model.Vehicle.Features</label>
-                    </div>
+                    </div> *@
                 </div>`
 
                 <input type="submit" id="btnSubmit" value="Approve" />

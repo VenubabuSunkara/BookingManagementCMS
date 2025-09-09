@@ -1,78 +1,88 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Domain.Entities;
-using Booking.Infrastructure.Data.Models;
-using Microsoft.AspNetCore.Authorization;
+using Booking.Web.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Common;
+using System.Security.Claims;
 
 namespace Booking.Web.Controllers
 {
-    public class AccountController(IAccountService accountService, ILogger<AccountController> logger,
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager) : BaseController
+    public class AccountController(IAccountService accountService, IRoleService roleService,
+        ILogger<AccountController> logger, IEmailService emailService) : BaseController
     {
         private readonly IAccountService _accountService = accountService;
+        private readonly IRoleService _roleService = roleService;
         private readonly ILogger<AccountController> _logger = logger;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
-        private readonly SignInManager<IdentityUser> _signInManager = signInManager;
+        private readonly IEmailService _emailService = emailService;
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Login(CancellationToken token)
         {
             return await Task.Run(() =>
             {
                 return View();
-            });
+            }, token);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(LoginDto loginDto)
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            bool isValidUser = await _accountService.Login(loginDto.LoginUser, loginDto.Password);
-            if (!isValidUser)
+            if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Invalid login attempt.");
                 return View(loginDto);
             }
-            return RedirectToAction("Index", "Home");
-            //var user = await _userManager.FindByNameAsync(loginDto.LoginUser);
-            //if (user == null)
-            //{
-            //    ModelState.AddModelError("", "Invalid login attempt.");
-            //    return View(loginDto);
-            //}
-            //var result = await _signInManager.PasswordSignInAsync(
-            //    user, loginDto.Password, loginDto.RememberMe, lockoutOnFailure: false);
-
-            //if (result.Succeeded)
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
-            //else
-            //{
-            //    ModelState.AddModelError("", "Invalid login attempt.");
-            //    return View(loginDto);
-            //}
-        }
-        public async Task<IActionResult> Register()
-        {
-            return await Task.Run(() =>
+            var UserData = await _accountService.Login(new LoginEntity()
             {
-                return View();
+                Email = loginDto.LoginUser,
+                Password = loginDto.Password,
+                RememberMe = loginDto.RememberMe
             });
+            if (UserData == null)
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(loginDto);
+            }
+            // base.UserDto=UserData;
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> LogOut()
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _accountService.LogOut(userId);
+            return RedirectToAction("Login");
+        }
+        public async Task<IActionResult> Register(CancellationToken token)
+        {
+            RegisterDto registerDto = new();
+            var roles = await _roleService.GetAllRoles(token);
+            registerDto.Roles = roles.Select(x => new SelectListItem()
+            {
+                Text = x.Name,
+                Value = x.Name,
+            });
+            return View(registerDto);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterDto model)
+        public async Task<IActionResult> Register(RegisterDto model, CancellationToken token)
         {
+            var roles = await _roleService.GetAllRoles(token);
+            model.Roles = roles.Select(x => new SelectListItem()
+            {
+                Text = x.Name,
+                Value = x.Name,
+            });
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
-            await _accountService.Register(new UserEntity()
+            var userdto = await _accountService.Register(new UserEntity()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -82,11 +92,107 @@ namespace Booking.Web.Controllers
                 Username = model.Email,
                 Address = string.Empty,
                 TenantId = Guid.NewGuid(),
-                IsActive = true               
+                IsActive = true,
+                RoleId = model.SelectedRoleId,
             });
-            // Process registration (e.g., create account)
-
+            var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = userdto.Id, userdto.RegistrationToken }, Request.Scheme);
+            var msg = new IEmailService.EmailMessage(model.Email, "Confirm your email", "", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
+            await _emailService.SendEmailAsync(msg);
             return RedirectToAction("Index");
         }
+        public async Task<IActionResult> Index(CancellationToken token)
+        {
+            UserDto account = new();
+            var roles = await _roleService.GetAllRoles(token);
+            account.Roles = [.. roles.Select(x => x.Name)];
+            return await Task.Run(() =>
+            {
+                return View(account);
+            }, token);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token, CancellationToken cancellation)
+        {
+            var result = await _accountService.ConfirmEmailAsync(userId, token, cancellation);
+            return View(result ? "ConfirmEmailSuccess" : "Error");
+        }
+
+        public async Task<IActionResult> GetUsers([FromBody] DataTableAjaxPostModel request, CancellationToken token,
+            string RoleName = "All")
+        {
+            string search = "";
+            if (!String.IsNullOrEmpty(request.search?.value))
+                search = request.search?.value ?? string.Empty;
+            var users = await _accountService.GetUsers(search, request.length, request.start, RoleName, token);
+            return Json(new
+            {
+                draw = request.draw == 0 ? 1 : request.draw,
+                recordsFiltered = users.FilterRecords,
+                recordsTotal = users.TotalRecords,
+                data = users.UsersDto.ToArray()
+            });
+        }
+
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model, CancellationToken cancellation)
+        {
+            if (!ModelState.IsValid) return View(model);
+            var res = await _accountService.ForgotPassword(model, cancellation);
+            if (res == null)
+                return RedirectToAction("ForgotPasswordConfirmation");
+            var resetLink = Url.Action("ResetPassword", "Account", new { res.Token, email = model.Email }, Request.Scheme);
+            await _emailService.SendEmailAsync(new IEmailService.EmailMessage(model.Email, "Reset Password", "", $"Reset your password by <a href='{resetLink}'>clicking here</a>."));
+            return RedirectToAction("ForgotPasswordConfirmation");
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ForgotPasswordDto model, CancellationToken cancellation)
+        {
+            if (!ModelState.IsValid) return View(model);
+            bool isReset = await _accountService.ResetPassword(model, cancellation);
+            if (isReset) return RedirectToAction("ResetPasswordConfirmation");
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto model, CancellationToken cancellation)
+        {
+            if (!ModelState.IsValid) return View(model);
+            bool isChange = await _accountService.ChangePassword(model, cancellation);
+            if (isChange) return RedirectToAction("ChangePasswordConfirmation");
+            return View(model);
+        }
+        // GET: /Account/ForgotPasswordConfirmation
+        [HttpGet]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        // GET: /Account/ResetPasswordConfirmation
+        [HttpGet]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+        // GET: /Account/ChangePasswordConfirmation
+        [HttpGet]
+        public IActionResult ChangePasswordConfirmation()
+        {
+            return View();
+        }
+
+        // GET: /Account/ConfirmEmailSuccess
+        [HttpGet]
+        public IActionResult ConfirmEmailSuccess()
+        {
+            return View();
+        }
+
+        // GET: /Account/Error
+        [HttpGet]
+        public IActionResult Error()
+        {
+            return View();
+        }
+
     }
 }

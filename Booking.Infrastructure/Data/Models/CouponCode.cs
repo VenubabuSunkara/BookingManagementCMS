@@ -30,6 +30,4 @@ public partial class CouponCode
     public int? UpdatedBy { get; set; }
 
     public string? MediaUrl { get; set; }
-
-    public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 }

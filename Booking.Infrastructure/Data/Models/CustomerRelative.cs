@@ -27,7 +27,5 @@ public partial class CustomerRelative
 
     public DateTime? UpdatedOn { get; set; }
 
-    public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
-
     public virtual Customer Customer { get; set; } = null!;
 }

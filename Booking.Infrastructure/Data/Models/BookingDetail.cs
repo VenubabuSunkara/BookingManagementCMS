@@ -5,27 +5,21 @@ namespace Booking.Infrastructure.Data.Models;
 
 public partial class BookingDetail
 {
-    public int Id { get; set; }
+    public int BookingDetailId { get; set; }
 
-    public int BookingId { get; set; }
+    public int BookingOrderId { get; set; }
 
-    public int? RelativeId { get; set; }
+    public string? StopLocation { get; set; }
 
-    public string? PassengerName { get; set; }
+    public decimal? DistanceInKm { get; set; }
 
-    public int? PassengerAge { get; set; }
+    public int? DurationInMin { get; set; }
 
-    public string? PassengerGender { get; set; }
+    public decimal? ExtraCharges { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string? Notes { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public int? UpdatedBy { get; set; }
-
-    public DateTime? UpdatedOn { get; set; }
-
-    public virtual BookingOrder Booking { get; set; } = null!;
-
-    public virtual CustomerRelative? Relative { get; set; }
+    public virtual BookingOrder BookingOrder { get; set; } = null!;
 }

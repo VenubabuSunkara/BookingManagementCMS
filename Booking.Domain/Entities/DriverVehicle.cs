@@ -24,16 +24,18 @@ namespace Booking.Domain.Entities
         public IEnumerable<DriverVehicle> DriverVehicle { get; set; } = [];
 
     }
+
     public class DriverVehicle
+    {
+        public int DrivervehicleId { get; set; }
+        public DriverEntity? Driver { get; set; }
+        public VehicleEntity? Vehicle { get; set; }
+        public VehicleMedia? VehicleMedia { get; set; }
+        public DriverVehicle()
         {
-            public Driver Driver { get; set; }
-            public Vehicle Vehicle { get; set; }
-            public VehicleMedia VehicleMedia { get; set; }
-            public DriverVehicle()
-            {
-                Driver = new Driver();
-                Vehicle = new Vehicle();
-                VehicleMedia = new VehicleMedia();
-            }
+            Driver = new DriverEntity();
+            Vehicle = new VehicleEntity();
+            VehicleMedia = new VehicleMedia();
+        }
     }
 }

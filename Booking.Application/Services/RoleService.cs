@@ -1,83 +1,60 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Application.Services
 {
-    public class RoleService(IRolesRepository rolesRepository) : IRoleService
+    public class RoleService(IRolesRepository rolesRepository, UserManager<IdentityUser> userManager) : IRoleService
     {
         private readonly IRolesRepository _rolesRepository = rolesRepository;
-        public async Task<int> CreateAsync(RoleDto req)
+        private readonly UserManager<IdentityUser> _userManager = userManager;
+        public async Task<int> CreateAsync(RoleDto req, CancellationToken token)
         {
             return await _rolesRepository.CreateAsync(new Domain.Entities.RoleEntity()
             {
-                Name = req.Name,
-                Notes = req.Notes,
-                CreatedBy = req.CreatedBy,
-                UpdatedBy = req.UpdatedBy,
-                CreatedOn = req.CreatedOn,
-                UpdatedOn = req.UpdatedOn,
-            });
+                Name = req.Name
+            }, token);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id, CancellationToken token)
         {
-            await _rolesRepository.DeleteAsync(id);
+            await _rolesRepository.DeleteAsync(id, token);
         }
 
-        public async Task<bool> ExistsByNameAsync(string name, int excludeId = 0)
+        public async Task<bool> ExistsByNameAsync(string name, CancellationToken token, int excludeId = 0)
         {
-            return await _rolesRepository.ExistsByNameAsync(name, excludeId);
+            return await _rolesRepository.ExistsByNameAsync(name, token, excludeId);
         }
 
-        public async Task<IEnumerable<RoleDto>> GetAllRoles()
+        public async Task<IEnumerable<RoleDto>> GetAllRoles(CancellationToken token)
         {
-            var roles = await _rolesRepository.GetAllRoles();
+            var roles = await _rolesRepository.GetAllRoles(token);
             return roles.Select(x => new RoleDto()
             {
                 Name = x.Name,
-                Notes = x.Notes,
-                CreatedBy = x.CreatedBy,
-                UpdatedBy = x.UpdatedBy,
-                CreatedOn = x.CreatedOn,
-                UpdatedOn = x.UpdatedOn,
                 Id = x.Id
-
             });
         }
 
-        public async Task<RoleDto?> GetByIdAsync(int id)
+        public async Task<RoleDto?> GetByIdAsync(string id, CancellationToken token)
         {
-            var role = await _rolesRepository.GetByIdAsync(id);
+            var role = await _rolesRepository.GetByIdAsync(id, token);
             if (role == null) return null;
             return new RoleDto()
             {
                 Name = role.Name,
-                Notes = role.Notes,
-                CreatedBy = role.CreatedBy,
-                UpdatedBy = role.UpdatedBy,
-                CreatedOn = role.CreatedOn,
-                UpdatedOn = role.UpdatedOn,
                 Id = role.Id
             };
         }
 
-        public async Task UpdateAsync(RoleDto role)
+        public async Task UpdateAsync(RoleDto role, CancellationToken token)
         {
             await _rolesRepository.UpdateAsync(new Domain.Entities.RoleEntity()
             {
                 Name = role.Name,
-                Notes = role.Notes,
-                UpdatedBy = role.UpdatedBy,
-                UpdatedOn = role.UpdatedOn,
                 Id = role.Id
-            });
+            }, token);
         }
     }
 }

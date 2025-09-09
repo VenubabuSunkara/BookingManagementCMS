@@ -21,20 +21,19 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
         {
-            var roles = await _settingService.GetAllSettings();
+            var settings = await _settingService.GetAllSettings();
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
-                recordsFiltered = roles.Count(),
-                recordsTotal = roles.Count(),
-                data = roles.Select(x => new
+                recordsFiltered = settings.Count(),
+                recordsTotal = settings.Count(),
+                data = settings.Select(x => new
                 {
                     x.Name,
                     x.Value,
                     CreatedOn = x.CreatedOn.HasValue ? x.CreatedOn.Value.ToShortDateString() : "N/A",
                     x.Id,
                     UpdatedOn = x.UpdatedOn.HasValue ? x.UpdatedOn.Value.ToShortDateString() : "N/A",
-
                 }).ToArray()
             });
         }

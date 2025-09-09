@@ -10,4 +10,8 @@
     <None Include="Entities\RoleEntity.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DomainServices\" />
+  </ItemGroup>
+
 </Project>

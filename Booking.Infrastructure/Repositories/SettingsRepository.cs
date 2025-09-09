@@ -1,7 +1,7 @@
 ﻿using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Infrastructure.Repositories
 {

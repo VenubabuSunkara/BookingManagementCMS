@@ -10,16 +10,16 @@ namespace Booking.Infrastructure.Mappings
 {
     public class DriverMapping
     {
-        public static DriverDto ToDomain(Booking.Domain.Entities.Driver entity) =>
+        public static DriverDto ToDomain(Booking.Domain.Entities.DriverEntity entity) =>
         new Booking.Application.DTOs.DriverDto
         {
             Id = entity.Id
         };
 
-        public static Booking.Domain.Entities.Driver ToEntity(Booking.Infrastructure.Data.Models.Driver domain) =>
-        new Booking.Domain.Entities.Driver
+        public static Booking.Domain.Entities.DriverEntity ToEntity(Booking.Infrastructure.Data.Models.Driver domain) =>
+        new Booking.Domain.Entities.DriverEntity
         {
-            Id = domain.Id
+            Id = domain.DriverId
         };
     }
 }

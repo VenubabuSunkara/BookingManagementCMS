@@ -2,7 +2,7 @@
 @{
     Layout = "_LoginLayout";
 }
-<div asp-validation-summary="All" class="text-danger"></div>
+
 <div class="login-card">
     <div>
         <div>
@@ -12,6 +12,7 @@
             </a>
         </div>
         <div class="login-main">
+            <div asp-validation-summary="All" class="text-danger"></div>
             <form class="theme-form" method="post" asp-action="Register" asp-controller="Account" enctype="application/x-www-form-urlencoded">
                 @Html.AntiForgeryToken()
                 <h4>Create your account</h4>
@@ -50,6 +51,19 @@
                         <input class="form-control" type="password" asp-for="ConfirmPassword" required="" placeholder="*********" />
                         <span asp-validation-for="ConfirmPassword"></span>
                     </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.SelectedRoleId, "Roles")
+                    @if (Model.Roles.Any())
+                    {
+                        @Html.DropDownListFor(m => m.SelectedRoleId, Model.Roles, "-- Select Role --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.SelectedRoleId)
+                    }
+                    else
+                    {
+                        <input class="form-control" type="text" asp-for="SelectedRoleId" value="Admin" readonly="readonly" />
+                        <span asp-validation-for="SelectedRoleId"></span>
+                    }
                 </div>
                 <div class="form-group mb-0">
                     <div class="checkbox p-0">

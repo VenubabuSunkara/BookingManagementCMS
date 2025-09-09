@@ -1,78 +1,331 @@
-﻿@model Booking.Application.DTOs.LoginDto
+﻿@model Booking.Application.DTOs.UserDto
 @{
-    Layout = "_LoginLayout";
+    ViewData["Title"] = "Users List";
+
 }
-<div>
-    <div>
-        <a class="logo" href="index.html">
-            <img class="img-fluid for-light"
-                 src="/wecare_logo.svg"
-                 width="100px"
-                 alt="looginpage" />
-            <img class="img-fluid for-dark"
-                 src="/wecare_logo.svg"
-                 alt="looginpage" />
-        </a>
-    </div>
-    <div class="login-main">
-        <form class="theme-form" asp-action="Index" asp-controller="Account" method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <h4>Sign in to account</h4>
-            <p>Enter your email &amp; password to login</p>
-            <div class="form-group">
-                <label class="col-form-label form-label-title">UserName/Email/Phone</label>
-                <input class="form-control"
-                       type="text"
-                       required="required"
-                       name="LoginUser"
-                       placeholder="username/email/phone" />
-            </div>
-            <div class="form-group">
-                <label class="col-form-label form-label-title">Password</label>
-                <div class="form-input position-relative">
-                    <input class="form-control"
-                           type="password"
-                           name="Password"
-                           required="required"
-                           placeholder="*********" />
-                    <div class="show-hide"><span class="show"> </span></div>
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Users</h5>
+                    </div>
+                    <form class="d-inline-flex">
+                        <div class="d-flex gap-2">
+                            <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
+                                <i data-feather="plus-square"></i>Add New
+                            </a>
+
+                            <a href="@Url.ActionLink("Import", "Account")" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Import
+                            </a>
+
+                            <a href="@Url.ActionLink("Export", "Account")" class="btn btn-theme">
+                                <i data-feather="file-plus"></i>Export
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.RoleId, "Roles")
+                        @if (Model.Roles.Any())
+                        {
+                            @Html.DropDownListFor(m => m.RoleId, Model.Roles.Select(x => new SelectListItem()
+                            {
+                                Text = x,
+                                Value = x
+                            }), "-- Select Role --", new { @class = "form-control",@id="ddlRoles" })
+                            @Html.ValidationMessageFor(m => m.RoleId)
+                        }
+                        else
+                        {
+                            <input class="form-control" type="text" asp-for="RoleId" value="Admin" readonly="readonly" />
+                            <span asp-validation-for="RoleId"></span>
+                        }
+                    </div>
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblusers">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Profile Photo</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Phone Number</th>
+                                        <th>Actions</th>
+                                        <th>AssignRole</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div class="pagination-box">
+                                <nav aria-label="Table navigation">
+                                    <ul id="customPaginate" class="pagination pagination-primary justify-content-center"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="form-group mb-0">
-                <div class="checkbox p-0">
-                    <input id="chkRemember" name="RememberMe" type="checkbox" />
-                    <label class="text-muted" for="chkRemember">Remember password</label>
-                </div>
-                <a class="link" href="forget-password.html">Forgot password?</a>
-                <div class="text-end mt-3">
-                    <button class="btn btn-primary btn-block w-100"
-                            type="submit">
-                        Sign in
-                    </button>
-                </div>
-            </div>
-            <h6 class="text-muted mt-4 or">Or Sign in with</h6>
-            <div class="social mt-4">
-                <div class="btn-showcase">
-                    <a class="btn btn-light"
-                       href="https://www.linkedin.com/login"
-                       target="_blank">
-                        <i class="txt-linkedin" data-feather="linkedin"></i>
-                        LinkedIn
-                    </a><a class="btn btn-light"
-                           href="https://twitter.com/login?lang=en"
-                           target="_blank">
-                        <i class="txt-twitter" data-feather="twitter"></i>twitter
-                    </a><a class="btn btn-light"
-                           href="https://www.facebook.com/"
-                           target="_blank">
-                        <i class="txt-fb" data-feather="facebook"></i>facebook
-                    </a>
-                </div>
-            </div>
-            <p class="mt-4 mb-0 text-center">
-                Don't have account?<a class="ms-2" asp-action="Register" asp-controller="Account">Create Account</a>
-            </p>
-        </form>
+        </div>
     </div>
 </div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript">
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        var deleteId = null;
+
+                // Edit
+        $(document).on("click", ".edit-link", function (e) {
+            e.preventDefault();
+            let url = $(this).attr("href");
+            window.location.href = url;   // or AJAX load form
+        });
+         function rejectUser(userId){
+             userId=userId;
+             $("#hdnParam").val(userId);
+             $('#deleteConfirmModal').modal('show');
+         }
+         function DeleteConfirm(){
+             if (deleteId) {
+                $.ajax({
+                     type: "POST",
+                     url: "/Account/RejectUser",
+                     data: { UserId:deleteId },
+                     dataType: "json",
+                     headers: {
+                       'RequestVerificationToken': token
+                     },
+                     success: function(result) {
+                        usersListVM.refresh();
+                     },
+                     error: function(req, status, error) {
+                     console.error(error);
+                     }
+                 });
+              }
+         }
+         var  usersListVM = {
+                 Usersdt: null,
+                 init: function () {
+                      const token = $('input[name="__RequestVerificationToken"]').val();
+                      this.Usersdt = $('#tblusers').DataTable({
+                      processing: true,
+                      serverSide: true,
+                      info: false,
+                      stateSave: true,
+                      paging: true,
+                      pagingType: 'custom',
+                      pageLength: 10,
+                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                      layout: {
+                      topStart: {
+                      buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/Driver/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                     },
+
+                     ajax: {
+                             url: '/Account/GetUsers',
+                             type: 'POST',
+                             contentType: 'application/json; charset=utf-8',
+                             dataType: 'json',
+                             data: function (d) {
+                                  d.roleId = $("#ddlRoles").val();
+                                 return JSON.stringify(d); // Send as JSON string
+                             },
+                             headers: {
+                                 'RequestVerificationToken': token
+                             },
+                             error: function (xhr, error, thrown) {
+                                 console.error("DataTable error: ", xhr.responseText);
+                             }
+                     },
+                     columns: [
+                             {data:'id'},
+                             { data: 'profilePhoto',
+                                 autoWidth: true,
+                                 render: function (data, type, full, meta) {
+                                     return `<img src="${data}" alt="${full.firstName} ${full.lastName}" class="img-thumbnail" style="height:40px;" />`;
+                                 }
+                             },
+                             { data: 'firstName', autoWidth: true },
+                             { data: 'lastName', autoWidth: true },
+                             { data: 'email', autoWidth: true },
+                             { data: 'contact', autoWidth: true },
+                             {
+                                 data: 'id',
+                                 render: function (data, type, full, meta) {
+                                    let actions = !full.isActive
+                                     ?  `<a class="preview-link" title="Preview user for approval" href="@Url.Action("Preview", "Account")?userId=${data}"><i class="fa fa-eye"></i></a>`
+                                    :  `<a class="edit-link" title="Edit User"  href="@Url.Action("Edit", "Account")?userId=${data}"><i class="fa fa-pencil-square-o"></i></a>`;
+                                  actions += ` | <a href="javascript:void(0)" title="Delete User" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
+                                  return actions;
+                                 }
+                             },
+                             {
+                                 data: 'id',
+                                 render: function (data, type, full, meta) {
+                                    return `<a href="javascript:void(0)" onclick="AssignRole(${data})"><i class="fa fa-users"></i></a>`
+                                 }
+                             }
+                         ],
+                           language: {
+                                 emptyTable: "No entries to show"
+                             },
+                             drawCallback: () => this.renderPagination()
+                     });
+                 },
+                 renderPagination: function() {
+                          const info = this.Usersdt.page.info();
+                          const total = info.pages;
+                          const current = info.page + 1;
+
+                          const $ul = $('#customPaginate').empty();
+
+                          // Previous button
+                          $ul.append(
+                            `<li class="page-item ${current === 1 ? 'disabled' : ''}">
+                               <button class="page-link" >Previous</button>
+                             </li>`
+                          );
+
+                          // Page numbers
+                          for (let i = 1; i <= total; i++) {
+                            $ul.append(
+                              `<li class="page-item ${i === current ? 'active' : ''}">
+                                 <button  class="page-link" >${i}${i===current ? ' <span class="sr-only">(current)</span>' : ''}</button >
+                               </li>`
+                            );
+                          }
+
+                          // Next button
+                          $ul.append(
+                            `<li class="page-item ${current === total ? 'disabled' : ''}">
+                               <button  class="page-link" >Next</button>
+                             </li>`
+                          );
+
+                          // Click behaviors
+                          $ul.find('li.page-item').each((idx, li) => {
+                            const $li = $(li);
+                            const $a = $li.find('button');
+
+                            if ($li.hasClass('disabled') || $li.hasClass('active')) return;
+
+                            $a.on('click', (e) => {
+                              e.preventDefault();
+                              if (idx === 0) this.Usersdt.page('previous').draw(false);
+                              else if (idx === total + 1) this.Usersdt.page('next').draw(false);
+                              else this.Usersdt.page(idx - 1).draw(false);
+                            });
+                          });
+                        },
+                 refresh: function () {
+                     if (this.Usersdt) {
+                         this.Usersdt.ajax.reload();
+                     }
+                 },
+                 draw:function(){
+                     if (this.Usersdt) {
+                        this.Usersdt.on('draw', renderPagination(this.Usersdt));
+                     }
+                 }
+
+             };
+             $(document).ready(function () {
+                 usersListVM.init();
+         });
+
+
+        function renderPagination(table) {
+           var info = table.page.info();
+           var totalPages = info.pages;
+           var currentPage = info.page + 1;
+
+           var $pag = $('#customPaginate').empty();
+
+           // Previous button
+           $pag.append(
+             `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === 1 ? '-1' : '0'}">Previous</a>
+             </li>`
+           );
+
+           // Page number buttons
+           for (var i = 1; i <= totalPages; i++) {
+             $pag.append(
+               `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                 <a class="page-link" href="javascript:void(0)">${i}${i === currentPage ? ' <span class="sr-only">(current)</span>' : ''}</a>
+               </li>`
+             );
+           }
+
+           // Next button
+           $pag.append(
+             `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === totalPages ? '-1' : '0'}">Next</a>
+             </li>`
+           );
+
+           // Bind click events
+           $pag.find('li.page-item').each(function(index, item) {
+             if ($(item).hasClass('disabled') || $(item).hasClass('active')) return;
+             $(item).find('a').on('click', function() {
+                $pag.find('li.page-item').removeClass('active');
+                $(item).parent().addClass('active');
+               if (index === 0) table.page('previous').draw(false);              // Previous
+               else if (index === totalPages + 1) table.page('next').draw(false); // Next
+               else table.page(index - 1).draw(false);                           // Specific page
+             });
+           });
+         }
+
+    </script>
+}
