@@ -2,197 +2,153 @@
 using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
+using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq.Expressions;
 
 namespace Booking.Infrastructure.Repositories
 {
     public class BookingRepository(BookingCmsContext context) : IBookingRepository
     {
         private readonly BookingCmsContext _context = context;
-        public async Task<IEnumerable<BookingOrder>> GetAllBookings(int VehicleId)
+
+        public async Task<BookingOrderTableEntity> GetCustomerBookings(string CustomerId, int Skip, int Take, CancellationToken token)
         {
-            var bookings = await _context.BookingOrders.Include(x => x.BookingDetails)
-                                         .Where(x => x.VehicleId.Equals(VehicleId))
-                                         .ToListAsync();
-            return bookings.Select(x => new BookingOrder
+            var q = _context.BookingOrders.AsNoTracking();
+            var total = await q.CountAsync(token);
+            if (!string.IsNullOrEmpty(CustomerId))
+                q = q.Where(x => x.CustomerId.Equals(CustomerId));
+            q = q.OrderByDescending(d => d.CreatedAt);
+            var filtered = await q.CountAsync(token);
+            var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
+            return new BookingOrderTableEntity
             {
-                BookingDate = x.BookingDate,
-                TravelDate = x.TravelDate,
-                CouponCodeId = x.CouponCodeId,
-                CustomerId = x.CustomerId,
-                Id = x.Id,
-                PackageId = x.PackageId,
-                Status = x.Status,
-                TotalAmount = x.TotalAmount,
-                VehicleId = x.VehicleId,
-                BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
+                TotalRecords = total,
+                FilterRecords = filtered,
+                BookingOrderEntities = [.. page.Select(d => new BookingOrderEntity
                 {
-                    BookingId = y.BookingId,
-                    Id = y.Id,
-                    PassengerName = y.PassengerName,
-                    PassengerAge = y.PassengerAge,
-                    PassengerGender = y.PassengerGender,
-                    RelativeId = y.RelativeId,
+                  BookingOrderId=d.BookingOrderId,
+                  BookingDate=d.BookingDate,
+                  EstimatedFare=d.EstimatedFare,
+                  CustomerId=d.CustomerId,
+                  VehicleId=d.VehicleId,
+                  DriverId=d.DriverId,
+                  PickupLocation=d.PickupLocation,
+                  DropLocation=d.DropLocation,
+                  ScheduledDropTime=d.ScheduledDropTime,
+                  ActualFare=d.ActualFare,
+                  BookingNumber=d.BookingNumber,
+                  PaymentStatus=d.PaymentStatus,
+                  ScheduledPickupTime=d.ScheduledPickupTime,
+                  TripType=d.TripType,
+                  Status=d.Status,
+                  CreatedAt=d.CreatedAt,
                 })]
-            }).AsParallel();
+            };
         }
-        public async Task<IEnumerable<BookingOrder>> GetAllBookings(int VehicleId, int Year)
+
+        public async Task<BookingOrderTableEntity> GetVehicleBookings(int VehicleId, int Skip, int Take, CancellationToken token)
         {
-            var bookings = await _context.BookingOrders.Include(x => x.BookingDetails)
-                                         .Where(x => x.VehicleId.Equals(VehicleId) && (x.CreatedOn.HasValue && x.CreatedOn.Value.Year == Year))
-                                         .ToListAsync();
-            return bookings.Select(x => new BookingOrder
+            var q = _context.BookingOrders.AsNoTracking();
+            var total = await q.CountAsync(token);
+            if (VehicleId != 0)
+                q = q.Where(x => x.VehicleId.Equals(VehicleId));
+            q = q.OrderByDescending(d => d.CreatedAt);
+            var filtered = await q.CountAsync(token);
+            var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
+            return new BookingOrderTableEntity
             {
-                BookingDate = x.BookingDate,
-                TravelDate = x.TravelDate,
-                CouponCodeId = x.CouponCodeId,
-                CustomerId = x.CustomerId,
-                Id = x.Id,
-                PackageId = x.PackageId,
-                Status = x.Status,
-                TotalAmount = x.TotalAmount,
-                VehicleId = x.VehicleId,
-                BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
+                TotalRecords = total,
+                FilterRecords = filtered,
+                BookingOrderEntities = [.. page.Select(d => new BookingOrderEntity
                 {
-                    BookingId = y.BookingId,
-                    Id = y.Id,
-                    PassengerName = y.PassengerName,
-                    PassengerAge = y.PassengerAge,
-                    PassengerGender = y.PassengerGender,
-                    RelativeId = y.RelativeId,
+                  BookingOrderId=d.BookingOrderId,
+                  BookingDate=d.BookingDate,
+                  EstimatedFare=d.EstimatedFare,
+                  CustomerId=d.CustomerId,
+                  VehicleId=d.VehicleId,
+                  DriverId=d.DriverId,
+                  PickupLocation=d.PickupLocation,
+                  DropLocation=d.DropLocation,
+                  ScheduledDropTime=d.ScheduledDropTime,
+                  ActualFare=d.ActualFare,
+                  BookingNumber=d.BookingNumber,
+                  PaymentStatus=d.PaymentStatus,
+                  ScheduledPickupTime=d.ScheduledPickupTime,
+                  TripType=d.TripType,
+                  Status=d.Status,
+                  CreatedAt=d.CreatedAt,
                 })]
-            }).AsParallel();
+            };
         }
-        public async Task<BookingsDTable> GetAllBookings(int Skip, int Take, string searchKey = "")
+        public async Task<BookingOrderTableEntity> GetDriverBookings(int DriverId, int Skip, int Take, CancellationToken token)
         {
-            var totalCount = await _context.BookingOrders.AsNoTracking().CountAsync();
-            var bookings = await _context.BookingOrders
-                                        .AsNoTracking()
-                                        .Include(x => x.BookingDetails)
-                                        .Include(x => x.Customer)
-                                        .Select(mapping => new
-                                        {
-                                            Id = mapping.Id,
-                                            mapping.BookingDate,
-                                            mapping.TravelDate,
-                                            mapping.TotalAmount,
-                                            mapping.VehicleId,
-                                            mapping.CustomerId,
-                                            mapping.CouponCodeId,
-                                            mapping.PackageId,
-                                            mapping.Status,
-
-                                            Driver = mapping.Driver == null ? null : new
-                                            {
-                                                mapping.Driver.Id,
-                                                mapping.Driver.FirstName,
-                                                mapping.Driver.LastName,
-                                                mapping.Driver.Email,
-                                                mapping.Driver.PhoneNumber,
-                                                mapping.Driver.Photo,
-                                                mapping.Driver.Address,
-                                                mapping.Driver.LicenseNumber,
-                                                mapping.Driver.AboutOn,
-                                                mapping.Driver.AvailabilityStatus,
-                                                mapping.Driver.ApproveDriver,
-                                                mapping.Driver.CreatedAt
-                                            },
-
-                                            Vehicle = mapping.Vehicle == null ? null : new
-                                            {
-                                                mapping.Vehicle.Id,
-                                                mapping.Vehicle.VehicleName,
-                                                mapping.Vehicle.Color,
-                                                mapping.Vehicle.Description,
-                                                mapping.Vehicle.AboutOnVehicle,
-                                                mapping.Vehicle.Features,
-                                                mapping.Vehicle.Make,
-                                                mapping.Vehicle.VehicleNumber,
-                                                mapping.Vehicle.SeatingCapacity,
-                                                mapping.Vehicle.Model,
-                                                mapping.Vehicle.VehicleTypeId,
-
-                                                DefaultMedia = mapping.Vehicle.VehicleMedia
-                                                    .Where(m => m.IsDefault)
-                                                    .Select(m => new
-                                                    {
-                                                        m.MediaName,
-                                                        m.MediaType,
-                                                        m.MediaUrl,
-                                                        m.ThumbnailUrl
-                                                    })
-                                                    .FirstOrDefault()
-                                            },
-
-                                            BookingDetails = mapping.BookingDetails == null ? null :
-                                                mapping.BookingDetails
-                                                .Select(y => new
-                                                {
-                                                    y.BookingId,
-                                                    y.Id,
-                                                    y.PassengerName,
-                                                    y.PassengerAge,
-                                                    y.PassengerGender,
-                                                    y.RelativeId
-                                                })
-                                                .ToList()
-                                        })
-                                        .Skip(Skip)
-                                        .Take(Take)
-                                        .ToListAsync();
-
-            return new BookingsDTable
+            var q = _context.BookingOrders.AsNoTracking();
+            var total = await q.CountAsync(token);
+            if (DriverId != 0)
+                q = q.Where(x => x.DriverId.Equals(DriverId));
+            q = q.OrderByDescending(d => d.CreatedAt);
+            var filtered = await q.CountAsync(token);
+            var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
+            return new BookingOrderTableEntity
             {
-                Total = totalCount,
-                BookingOrders = [..bookings.Select(x => new BookingOrder()
+                TotalRecords = total,
+                FilterRecords = filtered,
+                BookingOrderEntities = [.. page.Select(d => new BookingOrderEntity
                 {
-                    BookingDate = x.BookingDate,
-                    TravelDate = x.TravelDate,
-                    CouponCodeId = x.CouponCodeId,
-                    CustomerId = x.CustomerId,
-                    Id = x.Id,
-                    PackageId = x.PackageId,
-                    Status = x.Status,
-                    TotalAmount = x.TotalAmount,
-                    VehicleId = x.VehicleId,
+                  BookingOrderId=d.BookingOrderId,
+                  BookingDate=d.BookingDate,
+                  EstimatedFare=d.EstimatedFare,
+                  CustomerId=d.CustomerId,
+                  VehicleId=d.VehicleId,
+                  DriverId=d.DriverId,
+                  PickupLocation=d.PickupLocation,
+                  DropLocation=d.DropLocation,
+                  ScheduledDropTime=d.ScheduledDropTime,
+                  ActualFare=d.ActualFare,
+                  BookingNumber=d.BookingNumber,
+                  PaymentStatus=d.PaymentStatus,
+                  ScheduledPickupTime=d.ScheduledPickupTime,
+                  TripType=d.TripType,
+                  Status=d.Status,
+                  CreatedAt=d.CreatedAt,
+                })]
+            };
+        }
 
-                    Vehicle= x.Vehicle== null ? null :
-                                new Vehicle(){
-                                    VehicleName=x.Vehicle.VehicleName,
-                                    VehicleNumber=x.Vehicle.VehicleNumber,
-                                    Color=x.Vehicle.Color,
-                                    Features=x.Vehicle.Features,
-                                    AboutOnVehicle= x.Vehicle.AboutOnVehicle,
-                                    Make=x.Vehicle.Make,
-                                    Model=x.Vehicle.Model,
-                                    SeatingCapacity=x.Vehicle.SeatingCapacity,
-                                    Description=x.Vehicle.Description,
-                                    Id=x.Vehicle.Id
-                                },
-                    Driver=x.Driver== null ? null :
-                            new Driver (){
-                                AboutOn =x.Driver?.AboutOn,
-                                Address=x.Driver?.Address,
-                                AvailabilityStatus=x.Driver?.AvailabilityStatus,
-                                Email=x.Driver ?.Email,
-                                FirstName=x.Driver ?.FirstName,
-                                LastName=x.Driver ?.LastName,
-                                IsApproved=x.Driver ?.ApproveDriver,
-                                LicenseNumber=x.Driver ?.LicenseNumber,
-                                PhoneNumber=x.Driver?.PhoneNumber,
-                            },
-                    BookingDetails =x.BookingDetails.Count==0?null:
-                        [.. x.BookingDetails.Select(y => new BookingDetailsEntity()
-                        {
-                            BookingId = y.BookingId,
-                            Id = y.Id,
-                            PassengerName = y.PassengerName,
-                            PassengerAge = y.PassengerAge,
-                            PassengerGender = y.PassengerGender,
-                            RelativeId = y.RelativeId
-                        })]
-                })],
-                Filtered = totalCount
+        public async Task<BookingOrderTableEntity> GetAllBookings(int Skip, int Take, CancellationToken token, string searchKey = "")
+        {
+            var q = _context.BookingOrders.AsNoTracking();
+            var total = await q.CountAsync(token);
+            if (string.IsNullOrEmpty(searchKey))
+                q = q.Where(x => x.BookingNumber.Equals(searchKey));
+            q = q.OrderByDescending(d => d.CreatedAt);
+            var filtered = await q.CountAsync(token);
+            var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
+            return new BookingOrderTableEntity
+            {
+                TotalRecords = total,
+                FilterRecords = filtered,
+                BookingOrderEntities = [.. page.Select(d => new BookingOrderEntity
+                {
+                  BookingOrderId=d.BookingOrderId,
+                  BookingDate=d.BookingDate,
+                  EstimatedFare=d.EstimatedFare,
+                  CustomerId=d.CustomerId,
+                  VehicleId=d.VehicleId,
+                  DriverId=d.DriverId,
+                  PickupLocation=d.PickupLocation,
+                  DropLocation=d.DropLocation,
+                  ScheduledDropTime=d.ScheduledDropTime,
+                  ActualFare=d.ActualFare,
+                  BookingNumber=d.BookingNumber,
+                  PaymentStatus=d.PaymentStatus,
+                  ScheduledPickupTime=d.ScheduledPickupTime,
+                  TripType=d.TripType,
+                  Status=d.Status,
+                  CreatedAt=d.CreatedAt,
+                })]
             };
         }
     }

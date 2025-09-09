@@ -34,8 +34,6 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<BookingOrder> BookingOrders { get; set; }
 
-    public virtual DbSet<CmsCompany> CmsCompanies { get; set; }
-
     public virtual DbSet<CompanyUser> CompanyUsers { get; set; }
 
     public virtual DbSet<Configuration> Configurations { get; set; }
@@ -52,11 +50,19 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<Driver> Drivers { get; set; }
 
-    public virtual DbSet<DriverVehicleMapping> DriverVehicleMappings { get; set; }
+    public virtual DbSet<DriverMediaMapping> DriverMediaMappings { get; set; }
+
+    public virtual DbSet<DriverRating> DriverRatings { get; set; }
+
+    public virtual DbSet<DriverVehicle> DriverVehicles { get; set; }
+
+    public virtual DbSet<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; }
 
     public virtual DbSet<EmailTemplate> EmailTemplates { get; set; }
 
     public virtual DbSet<Location> Locations { get; set; }
+
+    public virtual DbSet<Medium> Media { get; set; }
 
     public virtual DbSet<Module> Modules { get; set; }
 
@@ -70,9 +76,9 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<ReviewComment> ReviewComments { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<SeasonalPricing> SeasonalPricings { get; set; }
 
-    public virtual DbSet<RolePermission> RolePermissions { get; set; }
+    public virtual DbSet<Site> Sites { get; set; }
 
     public virtual DbSet<Taxis> Taxes { get; set; }
 
@@ -106,9 +112,15 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<Vehicle> Vehicles { get; set; }
 
-    public virtual DbSet<VehicleMedium> VehicleMedia { get; set; }
+    public virtual DbSet<VehicleFeature> VehicleFeatures { get; set; }
 
-    public virtual DbSet<VehicleType> VehicleTypes { get; set; }
+    public virtual DbSet<VehicleFeatureMapping> VehicleFeatureMappings { get; set; }
+
+    public virtual DbSet<VehicleMediaMapping> VehicleMediaMappings { get; set; }
+
+    public virtual DbSet<VehicleRating> VehicleRatings { get; set; }
+
+    public virtual DbSet<ViewAllBooking> ViewAllBookings { get; set; }
 
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -207,49 +219,49 @@ public partial class BookingCmsContext : DbContext
 
         modelBuilder.Entity<BookingDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__BookingD__3214EC0736513067");
+            entity.HasKey(e => e.BookingDetailId).HasName("PK__BookingD__8136D45A32E6C295");
 
-            entity.Property(e => e.BookingId).HasColumnName("BookingID");
-            entity.Property(e => e.CreatedOn)
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.PassengerGender).HasMaxLength(10);
-            entity.Property(e => e.PassengerName).HasMaxLength(100);
-            entity.Property(e => e.RelativeId).HasColumnName("RelativeID");
-            entity.Property(e => e.UpdatedOn)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+            entity.Property(e => e.DistanceInKm).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.ExtraCharges)
+                .HasDefaultValue(0m)
+                .HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Notes).HasMaxLength(250);
+            entity.Property(e => e.StopLocation).HasMaxLength(250);
 
-            entity.HasOne(d => d.Booking).WithMany(p => p.BookingDetails)
-                .HasForeignKey(d => d.BookingId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BookingDetails_BookingOrder");
-
-            entity.HasOne(d => d.Relative).WithMany(p => p.BookingDetails)
-                .HasForeignKey(d => d.RelativeId)
-                .HasConstraintName("FK_BookingDetails_UserRelatives");
+            entity.HasOne(d => d.BookingOrder).WithMany(p => p.BookingDetails)
+                .HasForeignKey(d => d.BookingOrderId)
+                .HasConstraintName("FK_BookingDetails_BookingOrders");
         });
 
         modelBuilder.Entity<BookingOrder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__BookingO__3214EC07D1F3E653");
+            entity.HasKey(e => e.BookingOrderId).HasName("PK__BookingO__72C389191003F68F");
 
-            entity.Property(e => e.BookingDate).HasColumnType("datetime");
-            entity.Property(e => e.CreatedOn)
+            entity.HasIndex(e => e.BookingNumber, "UQ__BookingO__AAC320BF2C8D3609").IsUnique();
+
+            entity.Property(e => e.ActualFare).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.BookingDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.BookingNumber).HasMaxLength(50);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DropLocation).HasMaxLength(250);
+            entity.Property(e => e.EstimatedFare).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PaymentStatus)
+                .HasMaxLength(20)
+                .HasDefaultValue("Unpaid");
+            entity.Property(e => e.PickupLocation).HasMaxLength(250);
+            entity.Property(e => e.ScheduledDropTime).HasColumnType("datetime");
+            entity.Property(e => e.ScheduledPickupTime).HasColumnType("datetime");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValue("Pending");
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.TravelDate).HasColumnType("datetime");
-            entity.Property(e => e.UpdatedOn)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.CouponCode).WithMany(p => p.BookingOrders)
-                .HasForeignKey(d => d.CouponCodeId)
-                .HasConstraintName("FK_BookingOrders_CouponCodes");
+            entity.Property(e => e.TripType).HasMaxLength(50);
 
             entity.HasOne(d => d.Customer).WithMany(p => p.BookingOrders)
                 .HasForeignKey(d => d.CustomerId)
@@ -262,23 +274,7 @@ public partial class BookingCmsContext : DbContext
 
             entity.HasOne(d => d.Vehicle).WithMany(p => p.BookingOrders)
                 .HasForeignKey(d => d.VehicleId)
-                .HasConstraintName("FK_BookingOrders_Vehicle");
-        });
-
-        modelBuilder.Entity<CmsCompany>(entity =>
-        {
-            entity.ToTable("CMS_Company");
-
-            entity.Property(e => e.Address).HasMaxLength(1000);
-            entity.Property(e => e.Contact).HasMaxLength(50);
-            entity.Property(e => e.CreatedOn)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Email).HasMaxLength(50);
-            entity.Property(e => e.Name).HasMaxLength(50);
-            entity.Property(e => e.UpdatedOn)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasConstraintName("FK_BookingOrders_Vehicles");
         });
 
         modelBuilder.Entity<CompanyUser>(entity =>
@@ -286,6 +282,8 @@ public partial class BookingCmsContext : DbContext
             entity.HasKey(e => e.Id).HasName("PK__CompanyU__3214EC07CD77A537");
 
             entity.ToTable("CompanyUser");
+
+            entity.HasIndex(e => e.UserId, "UQ_CompanyUser_AspNetUser").IsUnique();
 
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
@@ -300,10 +298,9 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasMaxLength(450);
 
-            entity.HasOne(d => d.User).WithMany(p => p.CompanyUsers)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.User).WithOne(p => p.CompanyUser)
+                .HasForeignKey<CompanyUser>(d => d.UserId)
                 .HasConstraintName("FK_CompanyUser_ASPNetUser");
         });
 
@@ -461,23 +458,26 @@ public partial class BookingCmsContext : DbContext
 
         modelBuilder.Entity<Driver>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Drivers__3214EC0758E8E7B0");
+            entity.HasKey(e => e.DriverId).HasName("PK__Drivers__F1B1CD2412374892");
 
+            entity.ToTable("Driver");
+
+            entity.Property(e => e.DriverId).HasColumnName("DriverID");
             entity.Property(e => e.ApproveDriver).HasDefaultValue(false);
             entity.Property(e => e.AvailabilityStatus).HasDefaultValue(true);
-            entity.Property(e => e.CreatedAt)
+            entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.LicenseNumber).HasMaxLength(50);
-            entity.Property(e => e.PasswordHash).HasMaxLength(64);
+            entity.Property(e => e.PasswordHash).HasMaxLength(128);
             entity.Property(e => e.PhoneNumber).HasMaxLength(15);
-            entity.Property(e => e.Photo)
-                .HasMaxLength(500)
-                .IsUnicode(false);
-            entity.Property(e => e.UpdatedAt)
+            entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.UserName)
@@ -485,20 +485,122 @@ public partial class BookingCmsContext : DbContext
                 .IsUnicode(false);
         });
 
-        modelBuilder.Entity<DriverVehicleMapping>(entity =>
+        modelBuilder.Entity<DriverMediaMapping>(entity =>
         {
-            entity.ToTable("DriverVehicleMapping");
+            entity.ToTable("DriverMediaMapping");
 
-            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
-            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+            entity.Property(e => e.DriverMediaMappingId).HasColumnName("DriverMediaMappingID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DriverId).HasColumnName("DriverID");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.MediaId).HasColumnName("MediaID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Driver).WithMany(p => p.DriverVehicleMappings)
+            entity.HasOne(d => d.Driver).WithMany(p => p.DriverMediaMappings)
                 .HasForeignKey(d => d.DriverId)
-                .HasConstraintName("FK_DriverVehicleMapping_DriverId");
+                .HasConstraintName("FK__DriverMed__Drive__21D600EE");
 
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.DriverVehicleMappings)
+            entity.HasOne(d => d.Media).WithMany(p => p.DriverMediaMappings)
+                .HasForeignKey(d => d.MediaId)
+                .HasConstraintName("FK__DriverMed__Media__20E1DCB5");
+        });
+
+        modelBuilder.Entity<DriverRating>(entity =>
+        {
+            entity.HasKey(e => e.RatingId).HasName("PK__DriverRa__FCCDF85C63409CB2");
+
+            entity.ToTable("DriverRating");
+
+            entity.Property(e => e.RatingId).HasColumnName("RatingID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DriverId).HasColumnName("DriverID");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.PassengerId).HasColumnName("PassengerID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Driver).WithMany(p => p.DriverRatings)
+                .HasForeignKey(d => d.DriverId)
+                .HasConstraintName("FK__DriverRat__Drive__77DFC722");
+
+            entity.HasOne(d => d.Passenger).WithMany(p => p.DriverRatings)
+                .HasForeignKey(d => d.PassengerId)
+                .HasConstraintName("FK__DriverRat__Passe__78D3EB5B");
+        });
+
+        modelBuilder.Entity<DriverVehicle>(entity =>
+        {
+            entity.HasKey(e => new { e.DriverId, e.VehicleId }).HasName("PK__DriverVe__C5C7786FE1B7386D");
+
+            entity.ToTable("DriverVehicle");
+
+            entity.HasIndex(e => e.VehicleId, "UQ__DriverVe__476B54B38B90903A").IsUnique();
+
+            entity.HasIndex(e => e.DriverId, "UQ__DriverVe__F1B1CD252DBA8347").IsUnique();
+
+            entity.Property(e => e.DriverId).HasColumnName("DriverID");
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Driver).WithOne(p => p.DriverVehicle)
+                .HasForeignKey<DriverVehicle>(d => d.DriverId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__DriverVeh__Drive__65C116E7");
+
+            entity.HasOne(d => d.Vehicle).WithOne(p => p.DriverVehicle)
+                .HasForeignKey<DriverVehicle>(d => d.VehicleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__DriverVeh__Vehic__66B53B20");
+        });
+
+        modelBuilder.Entity<DriverVehicleAvailability>(entity =>
+        {
+            entity.HasKey(e => e.AvailabilityId).HasName("PK__DriverVe__DA397991675936AC");
+
+            entity.ToTable("DriverVehicleAvailability");
+
+            entity.HasIndex(e => new { e.VehicleId, e.DriverId, e.AvailableDate, e.SlotStart, e.SlotEnd }, "UQ_Availability").IsUnique();
+
+            entity.Property(e => e.AvailabilityId).HasColumnName("AvailabilityID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DriverId).HasColumnName("DriverID");
+            entity.Property(e => e.IsAvailable).HasDefaultValue(true);
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+
+            entity.HasOne(d => d.Driver).WithMany(p => p.DriverVehicleAvailabilities)
+                .HasForeignKey(d => d.DriverId)
+                .HasConstraintName("FK__DriverVeh__Drive__08162EEB");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.DriverVehicleAvailabilities)
                 .HasForeignKey(d => d.VehicleId)
-                .HasConstraintName("FK_DriverVehicleMapping_VehicleId");
+                .HasConstraintName("FK__DriverVeh__Vehic__090A5324");
         });
 
         modelBuilder.Entity<EmailTemplate>(entity =>
@@ -530,6 +632,28 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.State).HasMaxLength(100);
             entity.Property(e => e.UpdatedBy).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<Medium>(entity =>
+        {
+            entity.HasKey(e => e.MediaId);
+
+            entity.Property(e => e.MediaId).HasColumnName("MediaID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.MediaName)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.MediaType)
+                .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Module>(entity =>
@@ -590,27 +714,19 @@ public partial class BookingCmsContext : DbContext
 
         modelBuilder.Entity<Payment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Payments__3214EC07293E2D2D");
+            entity.HasKey(e => e.PaymentId).HasName("PK__Payments__9B556A38EF28EBAF");
 
-            entity.Property(e => e.AmountPaid).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.BookingId).HasColumnName("BookingID");
-            entity.Property(e => e.CreatedOn)
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.PaymentDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
-            entity.Property(e => e.PaymentMode).HasMaxLength(20);
-            entity.Property(e => e.PaymentStatus)
+            entity.Property(e => e.PaymentMode).HasMaxLength(50);
+            entity.Property(e => e.Status)
                 .HasMaxLength(20)
-                .HasDefaultValue("Pending");
-            entity.Property(e => e.RemainingAmount).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.TaxAmount).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.UpdatedOn)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
+                .HasDefaultValue("Success");
 
-            entity.HasOne(d => d.Booking).WithMany(p => p.Payments)
-                .HasForeignKey(d => d.BookingId)
+            entity.HasOne(d => d.BookingOrder).WithMany(p => p.Payments)
+                .HasForeignKey(d => d.BookingOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Payments_BookingOrders");
         });
@@ -639,43 +755,52 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<Role>(entity =>
+        modelBuilder.Entity<SeasonalPricing>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Roles__3214EC072D104A2C");
+            entity.HasKey(e => e.PricingId).HasName("PK__Seasonal__EC306B72938CFE06");
 
+            entity.ToTable("SeasonalPricing");
+
+            entity.Property(e => e.PricingId).HasColumnName("PricingID");
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Name)
-                .HasMaxLength(100)
-                .IsUnicode(false);
+            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.Multiplier).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.SeasonalPricings)
+                .HasForeignKey(d => d.VehicleId)
+                .HasConstraintName("FK__SeasonalP__Vehic__0FB750B3");
         });
 
-        modelBuilder.Entity<RolePermission>(entity =>
+        modelBuilder.Entity<Site>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__RolePerm__3214EC0742CD588F");
+            entity.HasKey(e => e.SiteId).HasName("PK__Site__B9DCB903CED0C8B7");
 
+            entity.ToTable("Site");
+
+            entity.Property(e => e.SiteId).HasColumnName("SiteID");
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.PermissionId).HasColumnName("PermissionID");
-            entity.Property(e => e.RoleId).HasColumnName("RoleID");
+            entity.Property(e => e.Isactive)
+                .HasDefaultValue(false)
+                .HasColumnName("ISActive");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.SiteName).HasMaxLength(100);
+            entity.Property(e => e.TenantId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-
-            entity.HasOne(d => d.Permission).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.PermissionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RolePermissions_Permissions");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_RolePermissions_Roles");
         });
 
         modelBuilder.Entity<Taxis>(entity =>
@@ -980,72 +1105,161 @@ public partial class BookingCmsContext : DbContext
         {
             entity.ToTable("Vehicle");
 
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+            entity.Property(e => e.BasePrice).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.Color)
                 .HasMaxLength(10)
                 .IsUnicode(false);
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.FuelType)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
             entity.Property(e => e.Make)
                 .HasMaxLength(20)
                 .IsUnicode(false);
-            entity.Property(e => e.Model)
+            entity.Property(e => e.ModelName)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.TaxRate).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.VehicleName)
-                .HasMaxLength(200)
-                .IsUnicode(false);
             entity.Property(e => e.VehicleNumber)
                 .HasMaxLength(200)
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.VehicleType).WithMany(p => p.Vehicles)
-                .HasForeignKey(d => d.VehicleTypeId)
-                .HasConstraintName("FK_Vehicle_VehicleType");
         });
 
-        modelBuilder.Entity<VehicleMedium>(entity =>
+        modelBuilder.Entity<VehicleFeature>(entity =>
         {
-            entity.Property(e => e.CreatedOn).HasColumnType("datetime");
-            entity.Property(e => e.MediaName)
-                .HasMaxLength(500)
-                .IsUnicode(false);
-            entity.Property(e => e.MediaType)
-                .HasMaxLength(10)
-                .IsUnicode(false);
-            entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
+            entity.HasKey(e => e.FeatureId).HasName("PK__VehicleF__82230A294B4D26C3");
 
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleMedia)
+            entity.ToTable("VehicleFeature");
+
+            entity.Property(e => e.FeatureId).HasColumnName("FeatureID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.FeatureName).HasMaxLength(100);
+            entity.Property(e => e.FeatureType).HasMaxLength(50);
+            entity.Property(e => e.FeatureValue).HasMaxLength(100);
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<VehicleFeatureMapping>(entity =>
+        {
+            entity.HasKey(e => new { e.VehicleId, e.FeatureId }).HasName("PK__VehicleF__CF496410182BC7F5");
+
+            entity.ToTable("VehicleFeatureMapping");
+
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+            entity.Property(e => e.FeatureId).HasColumnName("FeatureID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Feature).WithMany(p => p.VehicleFeatureMappings)
+                .HasForeignKey(d => d.FeatureId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__VehicleFe__Featu__7226EDCC");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleFeatureMappings)
                 .HasForeignKey(d => d.VehicleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_VehicleMedia_VehicleId");
+                .HasConstraintName("FK__VehicleFe__Vehic__7132C993");
         });
 
-        modelBuilder.Entity<VehicleType>(entity =>
+        modelBuilder.Entity<VehicleMediaMapping>(entity =>
         {
-            entity.HasKey(e => e.ItemId).HasName("PK__VehicleT__727E838BF3ABFC14");
+            entity.ToTable("VehicleMediaMapping");
 
-            entity.ToTable("VehicleType");
+            entity.Property(e => e.VehicleMediaMappingId).HasColumnName("VehicleMediaMappingID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.MediaId).HasColumnName("MediaID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
 
-            entity.HasIndex(e => e.ItemGuid, "UQ_VehicleType_Guid").IsUnique();
+            entity.HasOne(d => d.Media).WithMany(p => p.VehicleMediaMappings)
+                .HasForeignKey(d => d.MediaId)
+                .HasConstraintName("FK__VehicleMe__Media__1A34DF26");
 
-            entity.HasIndex(e => e.TypeName, "UQ__VehicleT__D4E7DFA8C42B608D").IsUnique();
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleMediaMappings)
+                .HasForeignKey(d => d.VehicleId)
+                .HasConstraintName("FK__VehicleMe__Vehic__1B29035F");
+        });
 
-            entity.Property(e => e.CreatedBy)
-                .HasMaxLength(128)
-                .HasDefaultValueSql("(original_login())");
-            entity.Property(e => e.CreatedOn).HasDefaultValueSql("(sysutcdatetime())");
-            entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.TypeName).HasMaxLength(100);
-            entity.Property(e => e.UpdatedBy)
-                .HasMaxLength(128)
-                .HasDefaultValueSql("(original_login())");
-            entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(sysutcdatetime())");
+        modelBuilder.Entity<VehicleRating>(entity =>
+        {
+            entity.HasKey(e => e.RatingId).HasName("PK__VehicleR__FCCDF85CDA96E2F4");
+
+            entity.ToTable("VehicleRating");
+
+            entity.Property(e => e.RatingId).HasColumnName("RatingID");
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ItemGuid)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ItemGUID");
+            entity.Property(e => e.PassengerId).HasColumnName("PassengerID");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
+
+            entity.HasOne(d => d.Passenger).WithMany(p => p.VehicleRatings)
+                .HasForeignKey(d => d.PassengerId)
+                .HasConstraintName("FK__VehicleRa__Passe__00750D23");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.VehicleRatings)
+                .HasForeignKey(d => d.VehicleId)
+                .HasConstraintName("FK__VehicleRa__Vehic__7F80E8EA");
+        });
+
+        modelBuilder.Entity<ViewAllBooking>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("View_AllBookings");
+
+            entity.Property(e => e.ActualFare).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.BookingNumber).HasMaxLength(50);
+            entity.Property(e => e.CustomerName)
+                .HasMaxLength(102)
+                .IsUnicode(false);
+            entity.Property(e => e.DriverName).HasMaxLength(202);
+            entity.Property(e => e.DropLocation).HasMaxLength(250);
+            entity.Property(e => e.EstimatedFare).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ModelName)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.PickupLocation).HasMaxLength(250);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.VehicleNumber)
+                .HasMaxLength(200)
+                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);

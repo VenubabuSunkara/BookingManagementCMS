@@ -23,5 +23,6 @@ namespace Booking.Application.DTOs
         public List<string> Roles { get; set; } = [];
         public string ProfilePhoto { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
+        public string RegistrationToken { get; set; } = string.Empty;
     }
 }

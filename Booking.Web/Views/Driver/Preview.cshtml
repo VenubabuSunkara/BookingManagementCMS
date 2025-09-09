@@ -1,9 +1,5 @@
-﻿@model Booking.Application.DTOs.DriverVehicleInfoDto
-@{
-    var Driver = Model.Driver;
-    var Vehicle = Model.Vehicle;
-    var VehicleMedia = Model.VehicleMedia;
-}
+﻿@model Booking.Application.DTOs.DriverDto
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
@@ -12,40 +8,47 @@
                     <div>
                         <h5>Driver Vehicle Details</h5>
                     </div>
-                    <form class="d-inline-flex">
-                        <button class="btn align-items-center btn-theme me-3">
-                            <i class="fa fa-pencil-square-o me-2"></i>Edit
-                        </button>
-                        <button class="btn align-items-center d-flex btn-outline">
-                            <i class="fa fa-trash-o me-2"></i>Delete
-                        </button>
+                    <form asp-action="ProcessDriver" asp-controller="Driver" method="post" class="d-inline-flex">
+                        <div class="d-flex gap-2">
+                            <input type="hidden" name="DriverId" value="@Model.Id" />
+
+                            <button type="submit" name="actionType" value="Approve"
+                                    class="btn align-items-center btn-theme me-3">
+                                <i class="fa fa-check-circle-o me-2"></i>Approve
+                            </button>
+
+                            <button type="submit" name="actionType" value="Reject"
+                                    class="btn align-items-center d-flex btn-outline">
+                                <i class="fa fa-trash-o me-2"></i>Reject
+                            </button>
+                        </div>
                     </form>
                 </div>
-                <div class="driver-body">
+                <div class="card-body">
                     <!-- section start -->
                     <section class="single-section small-section bg-inner">
                         <div class="row">
-                            <h2 class="cars-title mb-2 mt-2">@Driver?.FullName</h2>
+                            <h2 class="cars-title mb-2 mt-2">@Model.GetFullName()</h2>
                             <div class="col-12">
                                 <div class="image_section">
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="responsive arrow-dark zoom-gallery ratio2_3">
                                                 <div>
-                                                    <a href="@Driver?.Photo">
-                                                        <img src="@Driver?.Photo"
+                                                    <a href="@Model.Photo">
+                                                        <img src="@Model.Photo"
                                                              class="img-fluid blur-up lazyload bg-img w-100"
-                                                             alt="@Driver?.FullName" />
+                                                             alt="@Model.GetFullName()" />
                                                     </a>
                                                 </div>
                                             </div>
                                             <div>
                                                 <ul>
                                                     <li>
-                                                        Total Trips
+                                                        {{Total Trips}}
                                                     </li>
                                                     <li>
-                                                        Rating
+                                                        {{Rating}}
                                                     </li>
                                                 </ul>
                                             </div>
@@ -57,29 +60,29 @@
                                             <!-- <h6>fare/km : <span>$24</span></h6> -->
                                         </div>
                                         <p class="description">
-                                            @Html.Raw(Driver?.AboutOn)
+                                            @Html.Raw(Model.AboutOn)
                                         </p>
                                         <div class="overview">
                                             <h6>Driver Details</h6>
                                             <ul>
                                                 <li>
-                                                    @Driver?.FullName
+                                                    @Model.GetFullName()
                                                 </li>
                                                 <li>
-                                                    @Driver?.LicenseNumber
-                                                </li>
-                                            </ul>
-                                            <ul>
-                                                <li>
-                                                    @Driver?.Email
-                                                </li>
-                                                <li>
-                                                    @Driver?.PhoneNumber
+                                                    @Model.LicenseNumber
                                                 </li>
                                             </ul>
                                             <ul>
                                                 <li>
-                                                    @Html.Raw(Driver?.Address)
+                                                    @Model?.Email
+                                                </li>
+                                                <li>
+                                                    @Model.PhoneNumber
+                                                </li>
+                                            </ul>
+                                            <ul>
+                                                <li>
+                                                    @Html.Raw(Model.Address)
                                                 </li>
                                             </ul>
                                         </div>
@@ -117,99 +120,108 @@
                     </section>
                     <!-- section end -->
                 </div>
-                <div class="card-body">
-                    <!-- section start -->
-                    <section class="single-section small-section bg-inner">
-                        <div class="row">
-                            <h2 class="cars-title mb-2 mt-2">Car Name</h2>
-                            <div class="col-12">
-                                <div class="image_section">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="responsive arrow-dark zoom-gallery ratio2_3">
-                                                <div>
-                                                    <a href="javascript:void(0)" onclick="ViewMediaGallary('@Vehicle.Id')">
-                                                        <img src="@VehicleMedia?.MediaUrl"
-                                                             class="img-fluid blur-up lazyload bg-img w-100"
-                                                             alt="@Vehicle?.VehicleName" />
-                                                    </a>
+                @if (Model.Vehicle != null)
+                {
+                    <div class="card-body">
+                        <!-- section start -->
+                        <section class="single-section small-section bg-inner">
+                            <div class="row">
+                                <h2 class="cars-title mb-2 mt-2">Car Name</h2>
+                                <div class="col-12">
+                                    <div class="image_section">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="responsive arrow-dark zoom-gallery ratio2_3">
+                                                    <div>
+                                                        <a href="javascript:void(0)" onclick="ViewMediaGallary('@Model.Vehicle.Id')">
+                                                            <img src="@Model.Vehicle.DefaultImage"
+                                                                 class="img-fluid blur-up lazyload bg-img w-100"
+                                                                 alt="@Model.Vehicle.ModelName" />
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="cab-single-detail">
-                                        <div class="title-car">
-                                            <h5>@Vehicle?.VehicleName</h5>
-                                            <!-- <h6>fare/km : <span>$24</span></h6> -->
-                                        </div>
-                                        <p class="description">
-                                          @Html.Raw(Vehicle?.Description)
-                                        </p>
-                                        <div class="overview">
-                                            <h6>car overview</h6>
-                                            <ul>
-                                                <li>
-                                                    <img src="images/seat.png"
-                                                         class="img-fluid blur-up lazyload"
-                                                         alt="" />
-                                                    @Vehicle?.SeatingCapacity
-                                                </li>
-                                                <li>
-                                                    <img src="images/luggage.png"
-                                                         class="img-fluid blur-up lazyload"
-                                                         alt="" />
-                                                    2 luggage
-                                                </li>
-                                            </ul>
-                                            <ul>
-                                                <li>
-                                                    <img src="images/snowflake.png"
-                                                         class="img-fluid blur-up lazyload"
-                                                         alt="" />
-                                                    AC
-                                                </li>
-                                                <li>
-                                                    <img src="images/settings.png"
-                                                         class="img-fluid blur-up lazyload"
-                                                         alt="" />
-                                                    automatic
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="details g-4 row">
-                                            <div class="col-sm-6">
-                                                <div class="overview">
-                                                    <h6>include in this price:</h6>
-                                                    <ul>
-                                                        <li>cancellation</li>
-                                                        <li>theft protection</li>
-                                                        <li>local taxes</li>
-                                                        <li>
-                                                            Prices are inclusive of all the taxes
-                                                        </li>
-                                                        <li>fuel charges</li>
-                                                        <li>driver allowance</li>
-                                                    </ul>
-                                                </div>
+                                        <div class="cab-single-detail">
+                                            <div class="title-car">
+                                                <h5>@Model.Vehicle.ModelName</h5>
+                                                <!-- <h6>fare/km : <span>$24</span></h6> -->
                                             </div>
-                                            <div class="col-sm-6">
-                                                <div class="overview">
-                                                    <h6>exclude in this price:</h6>
-                                                    <ul>
-                                                        <li>late return charges</li>
-                                                        <li>Night Allowance</li>
-                                                        <li>Parking</li>
-                                                        <li>toll / state tax</li>
-                                                    </ul>
+                                            <p class="description">
+                                                @Html.Raw(Model.Vehicle.OtherInfromation)
+                                            </p>
+                                            @await Component.InvokeAsync("DriverTable", new { VehicleId = Model.Vehicle.Id })
+                                            <div class="overview">
+                                                <h6>car overview</h6>
+                                                @*  @if (Model.VehicleFeatures.Count > 0)
+                                                {
+                                                    var chenks = Model.VehicleFeatures.Chunk(2);
+
+                                                } *@
+                                                <ul>
+                                                    <li>
+                                                        <img src="images/seat.png"
+                                                             class="img-fluid blur-up lazyload"
+                                                             alt="" />
+                                                        @Model.Vehicle.Color
+                                                    </li>
+                                                    <li>
+                                                        <img src="images/luggage.png"
+                                                             class="img-fluid blur-up lazyload"
+                                                             alt="" />
+                                                        2 luggage
+                                                    </li>
+                                                </ul>
+                                                <ul>
+                                                    <li>
+                                                        <img src="images/snowflake.png"
+                                                             class="img-fluid blur-up lazyload"
+                                                             alt="" />
+                                                        AC
+                                                    </li>
+                                                    <li>
+                                                        <img src="images/settings.png"
+                                                             class="img-fluid blur-up lazyload"
+                                                             alt="" />
+                                                        automatic
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="details g-4 row">
+                                                <div class="col-sm-6">
+                                                    <div class="overview">
+                                                        <h6>include in this price:</h6>
+                                                        <ul>
+                                                            <li>cancellation</li>
+                                                            <li>theft protection</li>
+                                                            <li>local taxes</li>
+                                                            <li>
+                                                                Prices are inclusive of all the taxes
+                                                            </li>
+                                                            <li>fuel charges</li>
+                                                            <li>driver allowance</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="overview">
+                                                        <h6>exclude in this price:</h6>
+                                                        <ul>
+                                                            <li>late return charges</li>
+                                                            <li>Night Allowance</li>
+                                                            <li>Parking</li>
+                                                            <li>toll / state tax</li>
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                    </section>
-                    <!-- section end -->
-                </div>
+                        </section>
+                        <!-- section end -->
+                    </div>
+                }
             </div>
         </div>
     </div>

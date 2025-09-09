@@ -7,35 +7,38 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.DTOs
 {
-    public class BookingsDataTableDto
-    {
-        public int TotalRecords { get; set; }
-        public int FilterRecords { get; set; }
-        public IEnumerable<BookingOrderDto> BookingsInfo { get; set; } = [];
-        public string NextLink { get; set; } = string.Empty;
-        public string PrevLink { get; set; } = string.Empty;
-    }
     public class BookingOrderDto
     {
-        public int Id { get; set; }
+        public int BookingOrderId { get; set; }
+
+        public string BookingNumber { get; set; } = null!;
 
         public int CustomerId { get; set; }
 
-        public int PackageId { get; set; }
-
-        public int? CouponCodeId { get; set; }
+        public int? DriverId { get; set; }
 
         public int? VehicleId { get; set; }
 
-        public DateTime? BookingDate { get; set; }
+        public DateTime BookingDate { get; set; }
 
-        public DateTime? TravelDate { get; set; }
+        public string PickupLocation { get; set; } = null!;
 
-        public string? Status { get; set; }
+        public string DropLocation { get; set; } = null!;
 
-        public decimal? TotalAmount { get; set; }
-        public DriverDto Driver { get; set; } = new DriverDto();
-        public VehicleDto Vehicle { get; set; } = new VehicleDto();
-        public ICollection<BookingDetailsDto> BookingDetails { get; set; } = [];
+        public string TripType { get; set; } = null!;
+
+        public string Status { get; set; } = null!;
+
+        public decimal? EstimatedFare { get; set; }
+
+        public decimal? ActualFare { get; set; }
+
+        public string PaymentStatus { get; set; } = null!;
+
+        public DateTime? ScheduledPickupTime { get; set; }
+
+        public DateTime? ScheduledDropTime { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
     }
 }

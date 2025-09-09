@@ -5,41 +5,51 @@ namespace Booking.Infrastructure.Data.Models;
 
 public partial class Vehicle
 {
-    public int Id { get; set; }
+    public int VehicleId { get; set; }
 
-    public string? Description { get; set; }
-
-    public string? VehicleName { get; set; }
-
-    public string? VehicleNumber { get; set; }
-
-    public int? VehicleTypeId { get; set; }
-
-    public string? Features { get; set; }
+    public string VehicleNumber { get; set; } = null!;
 
     public string? AboutOnVehicle { get; set; }
 
-    public int? SeatingCapacity { get; set; }
+    public string Color { get; set; } = null!;
+
+    public string Make { get; set; } = null!;
+
+    public string ModelName { get; set; } = null!;
+
+    public string FuelType { get; set; } = null!;
+
+    public decimal BasePrice { get; set; }
+
+    public decimal TaxRate { get; set; }
+
+    public string? OtherInformation { get; set; }
 
     public int? CreatedBy { get; set; }
 
     public int? UpdatedBy { get; set; }
 
-    public DateTime CreatedOn { get; set; }
+    public DateTime? CreatedOn { get; set; }
 
     public DateTime? UpdatedOn { get; set; }
 
-    public string? Color { get; set; }
+    public string? DefaultImage { get; set; }
 
-    public string? Make { get; set; }
+    public Guid? ItemGuid { get; set; }
 
-    public string? Model { get; set; }
+    public bool? IsActive { get; set; }
 
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 
-    public virtual ICollection<DriverVehicleMapping> DriverVehicleMappings { get; set; } = new List<DriverVehicleMapping>();
+    public virtual DriverVehicle? DriverVehicle { get; set; }
 
-    public virtual ICollection<VehicleMedium> VehicleMedia { get; set; } = new List<VehicleMedium>();
+    public virtual ICollection<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; } = new List<DriverVehicleAvailability>();
 
-    public virtual VehicleType? VehicleType { get; set; }
+    public virtual ICollection<SeasonalPricing> SeasonalPricings { get; set; } = new List<SeasonalPricing>();
+
+    public virtual ICollection<VehicleFeatureMapping> VehicleFeatureMappings { get; set; } = new List<VehicleFeatureMapping>();
+
+    public virtual ICollection<VehicleMediaMapping> VehicleMediaMappings { get; set; } = new List<VehicleMediaMapping>();
+
+    public virtual ICollection<VehicleRating> VehicleRatings { get; set; } = new List<VehicleRating>();
 }

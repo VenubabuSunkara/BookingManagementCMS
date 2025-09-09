@@ -2,12 +2,6 @@
 using Booking.Application.Interfaces;
 using Booking.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Booking.Application.Services
 {
@@ -15,27 +9,27 @@ namespace Booking.Application.Services
     {
         private readonly IRolesRepository _rolesRepository = rolesRepository;
         private readonly UserManager<IdentityUser> _userManager = userManager;
-        public async Task<int> CreateAsync(RoleDto req)
+        public async Task<int> CreateAsync(RoleDto req, CancellationToken token)
         {
             return await _rolesRepository.CreateAsync(new Domain.Entities.RoleEntity()
             {
                 Name = req.Name
-            });
+            }, token);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id, CancellationToken token)
         {
-            await _rolesRepository.DeleteAsync(id);
+            await _rolesRepository.DeleteAsync(id, token);
         }
 
-        public async Task<bool> ExistsByNameAsync(string name, int excludeId = 0)
+        public async Task<bool> ExistsByNameAsync(string name, CancellationToken token, int excludeId = 0)
         {
-            return await _rolesRepository.ExistsByNameAsync(name, excludeId);
+            return await _rolesRepository.ExistsByNameAsync(name, token, excludeId);
         }
 
-        public async Task<IEnumerable<RoleDto>> GetAllRoles()
+        public async Task<IEnumerable<RoleDto>> GetAllRoles(CancellationToken token)
         {
-            var roles = await _rolesRepository.GetAllRoles();
+            var roles = await _rolesRepository.GetAllRoles(token);
             return roles.Select(x => new RoleDto()
             {
                 Name = x.Name,
@@ -43,9 +37,9 @@ namespace Booking.Application.Services
             });
         }
 
-        public async Task<RoleDto?> GetByIdAsync(int id)
+        public async Task<RoleDto?> GetByIdAsync(string id, CancellationToken token)
         {
-            var role = await _rolesRepository.GetByIdAsync(id);
+            var role = await _rolesRepository.GetByIdAsync(id, token);
             if (role == null) return null;
             return new RoleDto()
             {
@@ -54,13 +48,13 @@ namespace Booking.Application.Services
             };
         }
 
-        public async Task UpdateAsync(RoleDto role)
+        public async Task UpdateAsync(RoleDto role, CancellationToken token)
         {
             await _rolesRepository.UpdateAsync(new Domain.Entities.RoleEntity()
             {
                 Name = role.Name,
                 Id = role.Id
-            });
+            }, token);
         }
     }
 }

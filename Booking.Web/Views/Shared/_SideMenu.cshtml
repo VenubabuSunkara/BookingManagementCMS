@@ -18,7 +18,10 @@
         <a asp-controller="CouponCode" asp-action="Index"
            class="sidebar-link sidebar-title link-nav"><i data-feather="home"> </i><span>Promotions</span></a>
     </li>
-
+    <li class="sidebar-list">
+        <a asp-controller="Media" asp-action="Index"
+           class="sidebar-link sidebar-title link-nav"><i data-feather="home"> </i><span>Media</span></a>
+    </li>
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Packages</span></a>
         <ul class="sidebar-submenu">
@@ -30,7 +33,7 @@
             <li>
                 <a href="@Url.Action("AddPackage", "Packages")">Add Destinations</a>
             </li>
-           @*  <li>
+            @*  <li>
                 <a href="all-package-categories.html">All Destination Categories</a>
             </li>
             <li>
@@ -40,8 +43,14 @@
         </ul>
     </li>
 
-    <li class="">
-        <a class="sidebar-link sidebar-title" asp-action="Index" asp-controller="Driver"><i data-feather="navigation"></i><span>Drivers And Vehicles</span></a>
+    <li class="sidebar-list">
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Driver Vehicles</span></a>
+        <ul class="sidebar-submenu">
+            <li><a asp-controller="Driver" asp-action="Index">All Driver Vehicle</a></li>
+            <li><a asp-controller="Driver" asp-action="DriversList">All Drivers</a></li>
+            <li><a asp-controller="Vehicle" asp-action="VehicleList">All Vehicles</a></li>
+            <li><a asp-controller="Feature" asp-action="Index">All Features</a></li>
+        </ul>
     </li>
 
     <li class="sidebar-list">
@@ -82,24 +91,23 @@
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="users"></i><span>Users Management</span></a>
         <ul class="sidebar-submenu">
-            <li><a href="@Url.Action("Index", "Users")">All users</a></li>
+            <li><a href="@Url.Action("Index", "Account")">All users</a></li>
             <li><a href="@Url.Action("AddUser", "Users")">Add new user</a></li>
             <li><a href="@Url.Action("Index", "Roles")">Roles</a></li>
         </ul>
     </li>
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title link-nav"
-           href="setting.html"><i data-feather="settings"> </i><span>Setting</span></a>
+           href="@Url.Action("Index", "Settings")"><i data-feather="settings"> </i><span>Setting</span></a>
     </li>
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title link-nav"
-           href="@Url.Action("Login", "Account")"><i data-feather="log-in"> </i><span>Log In</span></a>
+           href="@Url.Action("LogOut", "Account")"><i data-feather="log-out"> </i><span>Log Out</span></a>
     </li>
-
-    <li class="sidebar-list">
+    @* <li class="sidebar-list">
         <a class="sidebar-link sidebar-title link-nav"
            href="sign-up.html">
             <i data-feather="plus-circle"> </i><span>Register</span>
         </a>
-    </li>
+    </li> *@
 </ul>

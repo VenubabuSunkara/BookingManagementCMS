@@ -2,10 +2,10 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
-using Booking.Domain.DomainServices.DataTableLoader;
 using Booking.Infrastructure;
 using Booking.Infrastructure.Data.Models;
 using Booking.Infrastructure.Identity.Data;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,25 +22,26 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
-
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddResponseCaching();
 builder.Services.AddOutputCache();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IPasswordHasher<CompanyUser>, PasswordHasher<CompanyUser>>();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(
+    CookieAuthenticationDefaults.AuthenticationScheme);
 builder.Services.ConfigureApplicationCookie(options =>
 {
+    options.SessionStore = builder.Services.BuildServiceProvider()
+                                       .GetRequiredService<ITicketStore>();
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
     options.SlidingExpiration = true;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
-    options.LoginPath = "/Account/Index";
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
 });
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<ICouponCodeService, CouponCodeService>();
-builder.Services.AddScoped<IDataTableService, DataTableService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IBookingDetailsService, BookingDetailsService>();
 builder.Services.AddScoped<IPackageService, PackageService>();
@@ -48,6 +49,7 @@ builder.Services.AddScoped<IPackageCategoryService, PackageCategoryService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
 
 builder.Services.AddSendGrid(options =>
 {
@@ -108,8 +110,8 @@ else
 }
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.Add("X-Frame-Options", "DENY");
-    context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     // Add CSP, etc.
     await next();
 });
@@ -129,7 +131,7 @@ app.UseOutputCache();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Index}/{id?}")
+    pattern: "{controller=Account}/{action=Login}/{id?}")
     .WithStaticAssets();
 
 app.Run();

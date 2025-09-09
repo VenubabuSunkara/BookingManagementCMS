@@ -10,8 +10,9 @@ namespace Booking.Application.Interfaces
 {
     public interface IBookingService
     {
-        Task<IEnumerable<BookingOrderDto>> GetAllBookings(int VehicleId);
-        Task<IEnumerable<BookingOrderDto>> GetAllBookings(int VehicleId, int Year);
-        Task<BookingsDataTableDto> GetAllBookings(int Skip, int Take, string searchKey = "");
+        Task<BookingOrderTableDto> GetCustomerBookings(string CustomerId, int Skip, int Take, CancellationToken token);
+        Task<BookingOrderTableDto> GetVehicleBookings(int VehicleId, int Skip, int Take, CancellationToken token);
+        Task<BookingOrderTableDto> GetDriverBookings(int DriverId, int Skip, int Take, CancellationToken token);
+        Task<BookingOrderTableDto> GetAllBookings(int Skip, int Take, CancellationToken token, string searchKey = "");
     }
 }

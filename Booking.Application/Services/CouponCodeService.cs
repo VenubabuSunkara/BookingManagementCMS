@@ -1,17 +1,13 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
-using Booking.Domain.DomainServices.DataTableLoader;
-using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using System.Runtime.InteropServices;
 
 namespace Booking.Application.Services;
 
-public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository,
-                                       IDataTableService dataTableService) : ICouponCodeService
+public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository) : ICouponCodeService
 {
     private readonly ICouponCodeRepository _couponCodeRepository = couponCodeRepository;
-    private readonly IDataTableService _dataTableService = dataTableService;
     /// <summary>
     /// Create new CouponCode
     /// </summary>

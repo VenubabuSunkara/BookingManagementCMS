@@ -22,6 +22,4 @@ public partial class Permission
     public DateTime? UpdatedOn { get; set; }
 
     public virtual Module Module { get; set; } = null!;
-
-    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

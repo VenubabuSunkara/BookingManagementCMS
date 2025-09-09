@@ -24,5 +24,6 @@ namespace Booking.Domain.Entities
         public string ProfilePhoto { get; set; } = string.Empty;
 
         public string FullName => $"{FirstName} {LastName}";
+        public string RegistrationToken { get; set; } = string.Empty;
     }
 }

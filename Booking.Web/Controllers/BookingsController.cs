@@ -7,16 +7,11 @@ namespace Booking.Web.Controllers
     public class BookingsController : BaseController
     {
         private readonly ILogger<BookingsController> _logger;
-        private readonly IDriverService _driverService;
         private readonly IBookingService _bookingService;
-        private readonly IBookingDetailsService _bookingDetailsService;
-        public BookingsController(ILogger<BookingsController> logger, IDriverService driverService,
-          IBookingService bookingService, IBookingDetailsService bookingDetailsService)
+        public BookingsController(ILogger<BookingsController> logger, IBookingService bookingService)
         {
             _logger = logger;
-            _driverService = driverService;
             _bookingService = bookingService;
-            _bookingDetailsService = bookingDetailsService;
         }
         public async Task<IActionResult> Index()
         {
@@ -27,24 +22,19 @@ namespace Booking.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetAllBookings([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllBookings([FromBody] DataTableAjaxPostModel request,
+            CancellationToken cancellationToken)
         {
-            var result = await _bookingService.GetAllBookings(request.start, request.length, "");
+            string search = "";
+            if (!String.IsNullOrEmpty(request.search?.value))
+                search = request.search?.value ?? string.Empty;
+            var result = await _bookingService.GetAllBookings(request.start, request.length, cancellationToken, search);
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
                 recordsFiltered = result.FilterRecords,
                 recordsTotal = result.TotalRecords,
-                data = result.BookingsInfo.Select(x => new
-                {
-                    VehicleName = x.Vehicle?.VehicleName,
-                    DriverName = x.Driver?.FullName,
-                    BookingDate = x.BookingDate?.ToShortDateString(),
-                    TravelDate = x.TravelDate?.ToShortDateString(),
-                    Amount = x.TotalAmount,
-                    PackageName = x.PackageId,
-                    Id = x.Id
-                }).ToArray()
+                data = result.BookingOrders
             });
         }
     }

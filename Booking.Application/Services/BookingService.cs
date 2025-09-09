@@ -1,136 +1,126 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
-using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
     public class BookingService(IBookingRepository bookingRepository) : IBookingService
     {
         private readonly IBookingRepository _bookingRepository = bookingRepository;
-
-        public async Task<IEnumerable<BookingOrderDto>> GetAllBookings(int VehicleId)
+        public async Task<BookingOrderTableDto> GetAllBookings(int Skip, int Take, CancellationToken token, string searchKey = "")
         {
-            var bookings = await _bookingRepository.GetAllBookings(VehicleId);
-            return bookings.Select(x => new BookingOrderDto()
+            var BookingOrders = await _bookingRepository.GetAllBookings(Skip, Take, token, searchKey);
+            return new BookingOrderTableDto()
             {
-                VehicleId = x.VehicleId,
-                BookingDate = x.BookingDate,
-                Status = x.Status,
-                CouponCodeId = x.CouponCodeId,
-                PackageId = x.PackageId,
-                CustomerId = x.CustomerId,
-                TotalAmount = x.TotalAmount,
-                TravelDate = x.TravelDate,
-                Id = x.Id,
-                Vehicle = new VehicleDto()
+                TotalRecords = BookingOrders.TotalRecords,
+                FilterRecords = BookingOrders.FilterRecords,
+                BookingOrders = BookingOrders.BookingOrderEntities.
+                Select(x => new BookingOrderDto()
                 {
-                    VehicleName = x.Vehicle.VehicleNumber,
-                    Id = x.Vehicle.Id,
-                    VehicleNumber = x.Vehicle.VehicleNumber,
-                    Description = x.Vehicle.Description,
-                    AboutOnVehicle = x.Vehicle.AboutOnVehicle,
-                    Color = x.Vehicle.Color,
-                    Make = x.Vehicle.Make,
-                    Model = x.Vehicle.Model,
-                    SeatingCapacity = x.Vehicle.SeatingCapacity,
-                    Features = x.Vehicle.Features,
-                    VehicleTypeId = x.Vehicle.VehicleTypeId
-                },
-                BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsDto()
-                {
-                    Id = y.Id,
-                    PassengerAge = y.PassengerAge,
-                    PassengerGender = y.PassengerGender,
-                    PassengerName = y.PassengerName,
-                    BookingId = y.BookingId,
-                    RelativeId = y.RelativeId,
-                })]
-            }).AsParallel();
-        }
-
-        public async Task<IEnumerable<BookingOrderDto>> GetAllBookings(int VehicleId, int Year)
-        {
-            var bookings = await _bookingRepository.GetAllBookings(VehicleId, Year);
-            return bookings.Select(x => new BookingOrderDto()
-            {
-                VehicleId = x.VehicleId,
-                BookingDate = x.BookingDate,
-                Status = x.Status,
-                CouponCodeId = x.CouponCodeId,
-                PackageId = x.PackageId,
-                CustomerId = x.CustomerId,
-                TotalAmount = x.TotalAmount,
-                TravelDate = x.TravelDate,
-                Id = x.Id,
-                BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsDto()
-                {
-                    Id = y.Id,
-                    PassengerAge = y.PassengerAge,
-                    PassengerGender = y.PassengerGender,
-                    PassengerName = y.PassengerName,
-                    BookingId = y.BookingId,
-                    RelativeId = y.RelativeId,
-                })]
-            }).AsParallel();
-        }
-
-        public async Task<BookingsDataTableDto> GetAllBookings(int Skip, int Take, string searchKey = "")
-        {
-            var bookings = await _bookingRepository.GetAllBookings(Skip, Take, searchKey);
-            return new BookingsDataTableDto()
-            {
-                TotalRecords = bookings.Total,
-                FilterRecords = bookings.Filtered,
-                BookingsInfo = [.. bookings.BookingOrders.Select(x => new BookingOrderDto()
-                {
-                    VehicleId = x.VehicleId,
+                    BookingOrderId = x.BookingOrderId,
+                    DriverId = x.DriverId,
+                    DropLocation = x.DropLocation,
                     BookingDate = x.BookingDate,
-                    Status = x.Status,
-                    CouponCodeId = x.CouponCodeId,
-                    PackageId = x.PackageId,
+                    ScheduledDropTime = x.ScheduledDropTime,
+                    ActualFare = x.ActualFare,
+                    BookingNumber = x.BookingNumber,
                     CustomerId = x.CustomerId,
-                    TotalAmount = x.TotalAmount,
-                    TravelDate = x.TravelDate,
-                    Id = x.Id,
-                    Vehicle = x.Vehicle==null?null:new VehicleDto()
-                    {
-                        VehicleName = x.Vehicle.VehicleName,
-                        Id = x.Vehicle.Id,
-                        VehicleNumber = x.Vehicle.VehicleNumber,
-                        Description = x.Vehicle.Description,
-                        AboutOnVehicle = x.Vehicle.AboutOnVehicle,
-                        Color = x.Vehicle.Color,
-                        Make = x.Vehicle.Make,
-                        Model = x.Vehicle.Model,
-                        SeatingCapacity = x.Vehicle.SeatingCapacity,
-                        Features = x.Vehicle.Features,
-                        VehicleTypeId = x.Vehicle.VehicleTypeId
-                    },
-                    Driver=x.Driver==null?null:new DriverDto (){
-                        FullName=x.Driver.GetFullName(),
-                        LicenseNumber  = x.Driver.LicenseNumber,
-                        Email=x.Driver.Email,
-                        PhoneNumber=x.Driver.PhoneNumber,
-                        AboutOn=x.Driver.AboutOn,
-                        Address=x.Driver.Address,
-                        AvailabilityStatus=x.Driver.IsDriverAvailable(),
-                    },
-                    BookingDetails = [.. x.BookingDetails.Select(y => new BookingDetailsDto()
-                        {
-                            Id = y.Id,
-                            PassengerAge = y.PassengerAge,
-                            PassengerGender = y.PassengerGender,
-                            PassengerName = y.PassengerName,
-                            BookingId = y.BookingId,
-                            RelativeId = y.RelativeId,
-                        })]
-                })]
+                    EstimatedFare = x.EstimatedFare,
+                    PaymentStatus = x.PaymentStatus,
+                    PickupLocation = x.PickupLocation,
+                    ScheduledPickupTime = x.ScheduledPickupTime,
+                    TripType = x.TripType,
+                    VehicleId = x.VehicleId,
+                    CreatedAt = x.CreatedAt,
+                    Status = x.Status,
+                })
+            };
+        }
+        public async Task<BookingOrderTableDto> GetCustomerBookings(string CustomerId, int Skip, int Take, CancellationToken token)
+        {
+            var BookingOrders = await _bookingRepository.GetCustomerBookings(CustomerId, Skip, Take, token);
+            return new BookingOrderTableDto()
+            {
+                TotalRecords = BookingOrders.TotalRecords,
+                FilterRecords = BookingOrders.FilterRecords,
+                BookingOrders = BookingOrders.BookingOrderEntities.
+                Select(x => new BookingOrderDto()
+                {
+                    BookingOrderId = x.BookingOrderId,
+                    DriverId = x.DriverId,
+                    DropLocation = x.DropLocation,
+                    BookingDate = x.BookingDate,
+                    ScheduledDropTime = x.ScheduledDropTime,
+                    ActualFare = x.ActualFare,
+                    BookingNumber = x.BookingNumber,
+                    CustomerId = x.CustomerId,
+                    EstimatedFare = x.EstimatedFare,
+                    PaymentStatus = x.PaymentStatus,
+                    PickupLocation = x.PickupLocation,
+                    ScheduledPickupTime = x.ScheduledPickupTime,
+                    TripType = x.TripType,
+                    VehicleId = x.VehicleId,
+                    CreatedAt = x.CreatedAt,
+                    Status = x.Status,
+                })
+            };
+        }
+        public async Task<BookingOrderTableDto> GetDriverBookings(int DriverId, int Skip, int Take, CancellationToken token)
+        {
+            var BookingOrders = await _bookingRepository.GetDriverBookings(DriverId, Skip, Take, token);
+            return new BookingOrderTableDto()
+            {
+                TotalRecords = BookingOrders.TotalRecords,
+                FilterRecords = BookingOrders.FilterRecords,
+                BookingOrders = BookingOrders.BookingOrderEntities.
+                Select(x => new BookingOrderDto()
+                {
+                    BookingOrderId = x.BookingOrderId,
+                    DriverId = x.DriverId,
+                    DropLocation = x.DropLocation,
+                    BookingDate = x.BookingDate,
+                    ScheduledDropTime = x.ScheduledDropTime,
+                    ActualFare = x.ActualFare,
+                    BookingNumber = x.BookingNumber,
+                    CustomerId = x.CustomerId,
+                    EstimatedFare = x.EstimatedFare,
+                    PaymentStatus = x.PaymentStatus,
+                    PickupLocation = x.PickupLocation,
+                    ScheduledPickupTime = x.ScheduledPickupTime,
+                    TripType = x.TripType,
+                    VehicleId = x.VehicleId,
+                    CreatedAt = x.CreatedAt,
+                    Status = x.Status,
+                })
+            };
+        }
+        public async Task<BookingOrderTableDto> GetVehicleBookings(int VehicleId, int Skip, int Take, CancellationToken token)
+        {
+            var BookingOrders = await _bookingRepository.GetVehicleBookings(VehicleId, Skip, Take, token);
+            return new BookingOrderTableDto()
+            {
+                TotalRecords = BookingOrders.TotalRecords,
+                FilterRecords = BookingOrders.FilterRecords,
+                BookingOrders = BookingOrders.BookingOrderEntities.
+                Select(x => new BookingOrderDto()
+                {
+                    BookingOrderId = x.BookingOrderId,
+                    DriverId = x.DriverId,
+                    DropLocation = x.DropLocation,
+                    BookingDate = x.BookingDate,
+                    ScheduledDropTime = x.ScheduledDropTime,
+                    ActualFare = x.ActualFare,
+                    BookingNumber = x.BookingNumber,
+                    CustomerId = x.CustomerId,
+                    EstimatedFare = x.EstimatedFare,
+                    PaymentStatus = x.PaymentStatus,
+                    PickupLocation = x.PickupLocation,
+                    ScheduledPickupTime = x.ScheduledPickupTime,
+                    TripType = x.TripType,
+                    VehicleId = x.VehicleId,
+                    CreatedAt = x.CreatedAt,
+                    Status = x.Status,
+                })
             };
         }
     }

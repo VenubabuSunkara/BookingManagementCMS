@@ -5,33 +5,17 @@ namespace Booking.Infrastructure.Data.Models;
 
 public partial class Payment
 {
-    public int Id { get; set; }
+    public int PaymentId { get; set; }
 
-    public int BookingId { get; set; }
+    public int BookingOrderId { get; set; }
+
+    public decimal Amount { get; set; }
+
+    public string PaymentMode { get; set; } = null!;
 
     public DateTime? PaymentDate { get; set; }
 
-    public decimal? AmountPaid { get; set; }
+    public string Status { get; set; } = null!;
 
-    public decimal? TaxAmount { get; set; }
-
-    public decimal? TotalAmount { get; set; }
-
-    public decimal? RemainingAmount { get; set; }
-
-    public string? PaymentMode { get; set; }
-
-    public string? TransactionInfomation { get; set; }
-
-    public string? PaymentStatus { get; set; }
-
-    public int? CreatedBy { get; set; }
-
-    public DateTime? CreatedOn { get; set; }
-
-    public int? UpdatedBy { get; set; }
-
-    public DateTime? UpdatedOn { get; set; }
-
-    public virtual BookingOrder Booking { get; set; } = null!;
+    public virtual BookingOrder BookingOrder { get; set; } = null!;
 }

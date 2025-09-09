@@ -17,9 +17,9 @@ namespace Booking.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoadData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadData([FromBody] DataTableAjaxPostModel request, CancellationToken token)
         {
-            var roles = await _roleService.GetAllRoles();
+            var roles = await _roleService.GetAllRoles(token);
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
@@ -56,14 +56,14 @@ namespace Booking.Web.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, CancellationToken token)
+        public async Task<IActionResult> Edit(string id, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
                 {
                     return View("Index");
                 }, token);
-            var role = await _roleService.GetByIdAsync(id);
+            var role = await _roleService.GetByIdAsync(id, token);
             if (role == null) return NotFound();
             return View("Create", role);
         }
@@ -74,9 +74,9 @@ namespace Booking.Web.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<JsonResult> IsRoleNameAvailable(string name, int id = 0)
+        public async Task<JsonResult> IsRoleNameAvailable(string name, CancellationToken token, int id = 0)
         {
-            var exists = await _roleService.ExistsByNameAsync(name, id);
+            var exists = await _roleService.ExistsByNameAsync(name, token, id);
             return Json(!exists);
         }
         /// <summary>
@@ -96,26 +96,12 @@ namespace Booking.Web.Controllers
                 }, token);
             if (!ModelState.IsValid)
                 return View("Form", role);
-            bool exists = await _roleService.ExistsByNameAsync(role.Name);
+            bool exists = await _roleService.ExistsByNameAsync(role.Name, token);
             if (exists)
             {
                 ModelState.AddModelError("Name", "This role name already exists.");
                 return View("Form", role);
             }
-            //if (role.Id != "")
-            //{
-            //    var existingRole = await _roleService.GetByIdAsync(role.Id);
-            //    if (existingRole == null)
-            //        return NotFound();
-            //    existingRole.Name = role.Name;
-            //    await _roleService.UpdateAsync(existingRole);
-            //    TempData["SuccessMessage"] = "Role updated successfully!";
-            //}
-            //else
-            //{
-            //    await _roleService.CreateAsync(role);
-            //    TempData["SuccessMessage"] = "Role created successfully!";
-            //}
             return RedirectToAction("Index");
         }
         /// <summary>
@@ -125,14 +111,14 @@ namespace Booking.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id, CancellationToken token)
+        public async Task<IActionResult> DeleteConfirmed(string id, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
                 {
                     return View("Index");
                 }, token);
-            await _roleService.DeleteAsync(id);
+            await _roleService.DeleteAsync(id, token);
             TempData["SuccessMessage"] = "Role deleted successfully!";
             return RedirectToAction("Index");
         }

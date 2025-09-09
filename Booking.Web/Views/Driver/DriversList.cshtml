@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Driver Vehicle List";
+    ViewData["Title"] = "Drivers List";
 }
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Driver Vehicles</h5>
+                        <h5>All Drivers</h5>
                     </div>
                     <form class="d-inline-flex">
                         <div class="d-flex gap-2">
@@ -33,14 +33,16 @@
                             <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
                                 <thead>
                                     <tr>
-                                        <th>Vehicle Photo</th>
-                                        <th>Vehicle Name</th>
-                                        <th>Vehicle Type</th>
-                                        <th>Seating Capacity</th>
-                                        <th>Driver Name</th>
-                                        <th>Driver Contact</th>
+                                        <th>Id</th>
+                                        <th>Photo</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Phone Number</th>
+                                        <th>License Number</th>
                                         <th>Created Date</th>
                                         <th>Actions</th>
+                                        <th>AssignVehicle</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -71,31 +73,59 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
-         function approveDriver(driverid){
-                  $.ajax({
-                          type: "GET",
-                          url: "/Driver/Approve",
-                          data: { DriverVehicleId:driverid },
-                          dataType: "json",
-                          success: function(result) {
-                            driverListVM.refresh();
-                          },
-                          error: function(req, status, error) {
-                             console.error(error);
-                          }
-                     });
-                 }
-        function Preview(e, url) {
-          e.preventDefault();
-          location.href = url;
-        }
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        var deleteId = null;
 
+        // function approveDriver(driverid){
+        //           $.ajax({
+        //                   type: "POST",
+        //                   url: "/Driver/ApproveDriver",
+        //                   data: { DriverId:driverid },
+        //                   dataType: "json",
+        //                   headers: {
+        //                     'RequestVerificationToken': token
+        //                   },
+        //                   success: function(result) {
+        //                     driverListVM.refresh();
+        //                   },
+        //                   error: function(req, status, error) {
+        //                      console.error(error);
+        //                   }
+        //              });
+        //          }
+        // function Preview(e, url) {
+        //   e.preventDefault();
+        //   location.href = url;
+        // }
+
+              // Preview
+        // $(document).on("click", ".preview-link", function (e) {
+        //     e.preventDefault();
+        //     let url = $(this).attr("href");
+        //     window.location.href = url;   // or load in Bootstrap modal
+        // });
+
+                // Edit
+        $(document).on("click", ".edit-link", function (e) {
+            e.preventDefault();
+            let url = $(this).attr("href");
+            window.location.href = url;   // or AJAX load form
+        });
          function rejectDriver(driverid){
-              $.ajax({
-                     type: "GET",
-                     url: "/Driver/Reject",
-                     data: { DriverVehicleId:driverid },
+             deleteId=driverid;
+             $("#hdnParam").val(driverid);
+             $('#deleteConfirmModal').modal('show');
+         }
+         function DeleteConfirm(){
+             if (deleteId) {
+                $.ajax({
+                     type: "POST",
+                     url: "/Driver/RejectDriver",
+                     data: { DriverId:deleteId },
                      dataType: "json",
+                     headers: {
+                       'RequestVerificationToken': token
+                     },
                      success: function(result) {
                         driverListVM.refresh();
                      },
@@ -103,7 +133,7 @@
                      console.error(error);
                      }
                  });
-
+              }
          }
          var  driverListVM = {
                  Driverdt: null,
@@ -166,27 +196,37 @@
                              }
                          },
                       columns: [
+                             {data:'id'},
                              { data: 'photo',
                                  autoWidth: true,
                                  render: function (data, type, full, meta) {
-                                     return `<img src="${data}" alt="${full.driverId}" class="img-thumbnail" style="height:40px;" />`;
+                                     return `<img src="${data}" alt="${full.firstName} ${full.lastName}" class="img-thumbnail" style="height:40px;" />`;
                                  }
                              },
-                             { data: 'vehicleName', autoWidth: true },
-                             { data: 'seatingCapacity', autoWidth: true },
-                             { data: 'vehicleType', autoWidth: true },
-                             { data: 'driverName', autoWidth: true },
-                             { data: 'contact', autoWidth: true },
-                             { data: 'createdDate', autoWidth: true },
-                             { data: 'driverVehicleId',
+                             { data: 'firstName', autoWidth: true },
+                             { data: 'lastName', autoWidth: true },
+                             { data: 'email', autoWidth: true },
+                             { data: 'phoneNumber', autoWidth: true },
+                             { data: 'licenseNumber', autoWidth: true },
+                             { data: 'created', autoWidth: true,
+                                 render: function (data, type, row) {
+                                    return moment(data).format('YYYY-MM-DD'); // Formats the date
+                                 }
+                             },
+                             {
+                                 data: 'id',
                                  render: function (data, type, full, meta) {
-                                     debugger;
-                                    let actions = !full.approveDriver
-                                    ? `<a href="javascript:void(0)" onclick="approveDriver(${data})"><i class="fa fa-check"></i></a>`
-                                    : `<a title="preview" href="javascript:void(0)" onclick="Preview(event, '/Driver/Preview/${data}')"><i class="fa fa-eye"></i></a> |
-                                       <a href="javascript:void(0)" onclick="EditDriver(${data})"><i class="fa fa-pencil-square-o"></i></a>`;
-                                  actions += ` | <a href="javascript:void(0)" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
+                                    let actions = !full.isApproved
+                                     ?  `<a class="preview-link" title="Preview driver for approval" href="@Url.Action("Preview", "Driver")?DriverId=${data}"><i class="fa fa-eye"></i></a>`
+                                    :  `<a class="edit-link" title="Edit Driver"  href="@Url.Action("Edit", "Driver")?DriverId=${data}"><i class="fa fa-pencil-square-o"></i></a>`;
+                                  actions += ` | <a href="javascript:void(0)" title="Delete Driver" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
                                   return actions;
+                                 }
+                             },
+                             {
+                                 data: 'id',
+                                 render: function (data, type, full, meta) {
+                                    return `<a href="javascript:void(0)" onclick="AssignVehicle(${data})"><i class="fa fa-taxi"></i></a>`
                                  }
                              }
                          ],

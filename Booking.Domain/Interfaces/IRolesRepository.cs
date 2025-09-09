@@ -1,19 +1,13 @@
 ﻿using Booking.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Booking.Domain.Interfaces
 {
     public interface IRolesRepository
     {
-        Task<RoleEntity?> GetByIdAsync(int id);
-        Task<IEnumerable<RoleEntity>> GetAllRoles();
-        Task<bool> ExistsByNameAsync(string name, int excludeId = 0);
-        Task<int> CreateAsync(RoleEntity req);
-        Task UpdateAsync(RoleEntity role);
-        Task DeleteAsync(int id);
+        Task<RoleEntity?> GetByIdAsync(string id, CancellationToken token);
+        Task<IEnumerable<RoleEntity>> GetAllRoles(CancellationToken token);
+        Task<bool> ExistsByNameAsync(string name, CancellationToken token, int excludeId = 0);
+        Task<int> CreateAsync(RoleEntity req, CancellationToken token);
+        Task UpdateAsync(RoleEntity role, CancellationToken token);
+        Task DeleteAsync(string id, CancellationToken token);
     }
 }

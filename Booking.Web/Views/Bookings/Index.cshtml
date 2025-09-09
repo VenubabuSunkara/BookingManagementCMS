@@ -58,12 +58,16 @@
                             <table class="all-cars-table table table-striped w-100" id="tblbookings">
                                 <thead>
                                     <tr>
-                                        <th>Vehicle Name</th>
-                                        <th>Driver Name</th>
+                                        <th>Id</th>
+                                        <th>Booking Number</th>
                                         <th>Booking Date</th>
-                                        <th>Travel Date</th>
-                                        <th>Amount</th>
-                                        <th>Package Name</th>
+                                        <th>Pickup Location</th>
+                                        <th>Drop Location</th>
+                                        <th>Trip Type</th>
+                                        <th>Actual Fare</th>
+                                        <th>Estimated Fare</th>
+                                        <th>Pickup Time</th>
+                                        <th>Drop Time</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -114,12 +118,38 @@
                      processing: true,
                      serverSide: true,
                      stateSave: true,
-                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                    lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
                      layout: {
-                        topStart: {
-                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                        }
-                    },
+                      topStart: {
+                        buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/Bookings/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                     },
 
                      ajax: {
                             url: '/Bookings/GetAllBookings',
@@ -138,14 +168,18 @@
                             }
                         },
                      columns: [
-                            { data: 'vehicleName', autoWidth: true },
-                            { data: 'driverName', autoWidth: true },
+                            { data: 'bookingOrderId', autoWidth: true },
+                            { data: 'bookingNumber', autoWidth: true },
                             { data: 'bookingDate', autoWidth: true },
-                            { data: 'travelDate', autoWidth: true },
-                            { data: 'amount', autoWidth: true },
-                            { data: 'packageName', autoWidth: true },
+                            { data: 'pickupLocation', autoWidth: true },
+                            { data: 'dropLocation', autoWidth: true },
+                            { data: 'tripType', autoWidth: true },
+                            { data: 'actualFare', autoWidth: true },
+                            { data: 'estimatedFare', autoWidth: true },
+                            { data: 'scheduledPickupTime', autoWidth: true },
+                            { data: 'scheduledDropTime', autoWidth: true },
                             {
-                                data: 'Id',
+                                data: 'bookingOrderId',
                                 render: function (data, type, full, meta) {
                                     return `<a href="/Booking/View/${data}"><i class="fa fa-eye" aria-hidden="true"></i></a>
                                             <a href="/Booking/Delete/${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`

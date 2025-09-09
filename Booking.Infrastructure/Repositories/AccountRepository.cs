@@ -22,11 +22,80 @@ namespace Booking.Infrastructure.Repositories
         private readonly SignInManager<IdentityUser> _signInManager = signInManager;
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-        public Task<UserEntity> GetUserDetails(UserEntity user)
+        public async Task<bool> ChangePassword(ChangePasswordEntity model, CancellationToken cancellation)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var result = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+            if (result.Succeeded)
+            {
+                await _signInManager.RefreshSignInAsync(user);
+                return true;
+            }
+            return false;
         }
+        public async Task<bool> ConfirmEmailAsync(string userId, string regToken, CancellationToken cancellation)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var result = await _userManager.ConfirmEmailAsync(user, regToken);
+            return result.Succeeded;
+        }
+        public async Task<ForgotPasswordEntity> ForgotPassword(ForgotPasswordEntity model, CancellationToken cancellation)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            model.Token = token;
+            return model;
+        }
+        public async Task<UserEntity?> GetUserById(UserEntity user)
+        {
+            if (!string.IsNullOrEmpty(user.Id))
+            {
+                var identityuser = await _userManager.FindByIdAsync(user.Id);
+                return new UserEntity()
+                {
+                    Id = identityuser.Id,
+                    Email = identityuser.Email,
+                    Username = identityuser.UserName
+                };
+            }
+            return null;
 
+        }
+        public async Task<UserTableEntity> GetUsers(string SearchValue, int Take, int Skip, string roleName, CancellationToken token)
+        {
+            var q = _context.AspNetUsers
+                .Include(x => x.CompanyUser)
+                .Include(x => x.Roles)
+                .AsNoTracking();
+            var total = await q.CountAsync(token);
+            if (!string.IsNullOrWhiteSpace(SearchValue))
+            {
+                q = q.Where(d => d.UserName.Contains(SearchValue)
+                || d.PhoneNumber.Contains(SearchValue)
+                || d.Email.Contains(SearchValue));
+            }
+            q = q.OrderByDescending(d => d.CompanyUser.CreatedOn);
+            var filtered = await q.CountAsync(token);
+            var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
+
+            return new UserTableEntity()
+            {
+                TotalRecords = total,
+                FilterRecords = filtered,
+                UserEntities = [.. page.Select(x => new UserEntity()
+                {
+                    FirstName = x.CompanyUser.FirstName,
+                    LastName = x.CompanyUser.LastName,
+                    Address = x.CompanyUser.Address,
+                    Contact = x.PhoneNumber,
+                    Email = x.Email,
+                    Id = x.Id,
+                    Username = x.UserName,
+                    IsActive = x.CompanyUser.IsActive,
+                    RoleId=string.Join(",",x.Roles.Select(x=>x.Name))
+                })]
+            };
+        }
         public async Task<UserEntity?> Login(LoginEntity loginEntity)
         {
             var user = new IdentityUser()
@@ -61,12 +130,17 @@ namespace Booking.Infrastructure.Repositories
 
             return finalUserdata;
         }
-
-        public async Task Register(UserEntity userEntity)
+        public async Task LogOut(string UserId)
         {
-            if (!await roleManager.RoleExistsAsync(userEntity.RoleId))
+            var user = await _userManager.FindByIdAsync(UserId);
+            await _signInManager.SignOutAsync();
+            await _userManager.UpdateSecurityStampAsync(user);
+        }
+        public async Task<UserEntity> Register(UserEntity userEntity)
+        {
+            if (!await _roleManager.RoleExistsAsync(userEntity.RoleId))
             {
-                await roleManager.CreateAsync(new IdentityRole(userEntity.RoleId));
+                await _roleManager.CreateAsync(new IdentityRole(userEntity.RoleId));
             }
             var user = new IdentityUser()
             {
@@ -76,12 +150,15 @@ namespace Booking.Infrastructure.Repositories
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true
             };
-            await _userManager.CreateAsync(user, userEntity.Password);
-            //if (userResults.Succeeded)
-            //{
-            //    await _signInManager.SignInAsync(user, isPersistent: false);
-            //}
+            var userResults = await _userManager.CreateAsync(user, userEntity.Password);
+            var token = string.Empty;
+            if (userResults.Succeeded)
+            {
+                token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            }
             var IUser = await _userManager.FindByNameAsync(user.UserName);
+            userEntity.Id = IUser.Id;
+            userEntity.RegistrationToken = token;
             await _context.CompanyUsers.AddAsync(new CompanyUser()
             {
                 FirstName = userEntity.FirstName,
@@ -95,22 +172,13 @@ namespace Booking.Infrastructure.Repositories
             });
             await _context.SaveChangesAsync();
             var results = await _userManager.AddToRoleAsync(user, userEntity.RoleId);
-            if (results.Succeeded)
-            {
-             
-            }
-            //var roles = await _userManager.GetRolesAsync(user);
-            //return new UserEntity()
-            //{
-            //    Username = user.UserName,
-            //    Id = user.Id,
-            //    Email = user.Email,
-            //    FirstName = userEntity.FirstName,
-            //    LastName = userEntity.LastName,
-            //    Contact = user.PhoneNumber,
-            //    Address = userEntity.Address,
-            //    Roles = [.. roles]
-            //};
+            return userEntity;
+        }
+        public async Task<bool> ResetPassword(ForgotPasswordEntity model, CancellationToken cancellation)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            return result.Succeeded;
         }
     }
 }

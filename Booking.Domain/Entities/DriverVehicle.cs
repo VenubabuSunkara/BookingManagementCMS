@@ -28,13 +28,13 @@ namespace Booking.Domain.Entities
     public class DriverVehicle
     {
         public int DrivervehicleId { get; set; }
-        public Driver? Driver { get; set; }
-        public Vehicle? Vehicle { get; set; }
+        public DriverEntity? Driver { get; set; }
+        public VehicleEntity? Vehicle { get; set; }
         public VehicleMedia? VehicleMedia { get; set; }
         public DriverVehicle()
         {
-            Driver = new Driver();
-            Vehicle = new Vehicle();
+            Driver = new DriverEntity();
+            Vehicle = new VehicleEntity();
             VehicleMedia = new VehicleMedia();
         }
     }
