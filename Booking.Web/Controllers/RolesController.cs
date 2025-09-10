@@ -47,7 +47,11 @@ namespace Booking.Web.Controllers
                 }, token);
             return await Task.Run(() =>
             {
-                return View("Create", new RoleDto());
+                RoleDto dto = new()
+                {
+                    isEdit = false
+                };
+                return View("Create", dto);
             }, token);
         }
         /// <summary>
@@ -65,6 +69,7 @@ namespace Booking.Web.Controllers
                 }, token);
             var role = await _roleService.GetByIdAsync(id, token);
             if (role == null) return NotFound();
+            role.isEdit = true;
             return View("Create", role);
         }
         /// <summary>
@@ -95,12 +100,15 @@ namespace Booking.Web.Controllers
                     return View("Index");
                 }, token);
             if (!ModelState.IsValid)
-                return View("Form", role);
-            bool exists = await _roleService.ExistsByNameAsync(role.Name, token);
-            if (exists)
+                return View("Create", role);
+            //bool exists = await _roleService.ExistsByNameAsync(role.Name, token);
+            if (role.isEdit == true)
             {
-                ModelState.AddModelError("Name", "This role name already exists.");
-                return View("Form", role);
+                await _roleService.UpdateAsync(role, token);
+            }
+            else
+            {
+                await _roleService.CreateAsync(role, token);
             }
             return RedirectToAction("Index");
         }

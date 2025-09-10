@@ -1,14 +1,9 @@
-using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
-using Booking.Infrastructure.Data.Models;
 using Booking.Web.Models;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using NuGet.Common;
-using System.Diagnostics;
 
 namespace Booking.Web.Controllers
 {    /*
