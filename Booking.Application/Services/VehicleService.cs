@@ -7,22 +7,26 @@ namespace Booking.Application.Services
     public class VehicleService(IVehicleRepository vehicleRepository) : IVehicleService
     {
         private readonly IVehicleRepository _vehicleRepository = vehicleRepository;
-
-
-
         public async Task<int> ApproveVehicleAsync(int VehicleId, CancellationToken token)
         {
             return await _vehicleRepository.ApproveVehicleAsync(VehicleId, token);
         }
-
         public async Task<int> ApproveVehiclesAsync(List<int> VehicleIds, CancellationToken token)
         {
             return await _vehicleRepository.ApproveVehiclesAsync(VehicleIds, token);
         }
-
         public async Task<int> AssignDriverAsync(int DriverId, int VehicleId, CancellationToken token)
         {
             return await _vehicleRepository.AssignDriverAsync(DriverId, VehicleId, token);
+        }
+        public async Task<IEnumerable<UnAssignedVehiclesDto>> GetUnAssignedVehiclesList(CancellationToken token)
+        {
+            var unassigned = await _vehicleRepository.GetUnAssignedVehiclesList(token);
+            return unassigned.Select(v => new UnAssignedVehiclesDto
+            {
+                Id = v.Id,
+                RegistrationNumber = v.RegistrationNumber
+            }).ToList();
         }
         public async Task<VehicleDto?> GetVehicleAsync(int VehicleId, CancellationToken token)
         {
@@ -48,7 +52,6 @@ namespace Booking.Application.Services
                 OtherInfromation = vehicle.OtherInfromation,
             };
         }
-
         public async Task<VehicleTableDto> GetVehicleListAsync(string SearchValue, int Take, int Skip, CancellationToken token)
         {
             var vehicles = await _vehicleRepository.GetVehicleListAsync(SearchValue, Take, Skip, token);
@@ -73,12 +76,10 @@ namespace Booking.Application.Services
                 })
             };
         }
-
         public async Task<int> RejectVehicleAsync(int VehicleId, CancellationToken token)
         {
             return await _vehicleRepository.RejectVehicleAsync(VehicleId, token);
         }
-
         public async Task<int> RejectVehiclesAsync(List<int> VehicleIds, CancellationToken token)
         {
             return await _vehicleRepository.ApproveVehiclesAsync(VehicleIds, token);

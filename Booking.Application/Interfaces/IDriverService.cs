@@ -17,12 +17,7 @@ namespace Booking.Application.Interfaces
         Task<int> RejectDriversAsync(List<int> DriverIds, CancellationToken token);
         Task<int> AssignVehicleAsync(int DriverId, int VehicleId, CancellationToken token);
         Task<DriverDto?> GetDriverAsync(int DriverId, CancellationToken token);
-        //Task<IEnumerable<DriverDto>> GetAllAsync();
-        //Task<DriverDataTableDto> GetDriverVehicleList(int pageIndex, int pageSize, string searchKey = "");
-        //Task<IEnumerable<VehicleMediaDto>> GetVehicleMediaList(int vehicleId);
-        //Task<int> ApproveDriverAsync(int DriverId);
-        //Task<int> RejectDriverAsync(int DriverId);
-        //Task<DriverVehicleInfoDto?> GetDriverVehicle(int DriverVehileId);
-        //Task<IEnumerable<DriverVehicleExportDto>> ExportAllAsync();
+        Task<IEnumerable<DriverExportDto>> ExportAllAsync(CancellationToken token);
+        Task<IEnumerable<UnAssignedDriversDto>> GetUnAssignedDriversList(CancellationToken token);
     }
 }

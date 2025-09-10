@@ -102,12 +102,39 @@
                      processing: false,
                      serverSide: false,
                      stateSave: true,
+                       pageLength: 10,
                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
                      layout: {
-                        topStart: {
-                            buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-                        }
-                    },
+                      topStart: {
+                        buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/Packages/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                     },
 
                      ajax: {
                             url: '/Packages/GetAllPackageCategories',

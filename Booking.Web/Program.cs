@@ -1,11 +1,11 @@
 using Amazon.Runtime;
 using Amazon.S3;
+using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
 using Booking.Infrastructure;
 using Booking.Infrastructure.Data.Models;
 using Booking.Infrastructure.Identity.Data;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -55,7 +55,8 @@ builder.Services.AddSendGrid(options =>
 {
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
 });
-builder.Services.AddTransient<IEmailService, SendGridEmailService>();
+builder.Services.AddTransient<SmtpEmailService>();
+builder.Services.AddTransient<SendGridEmailService>();
 
 builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
 // or for AWS:

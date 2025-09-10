@@ -1,0 +1,43 @@
+﻿@model Booking.Web.Models.UnassignedDriversModel
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>Assign Driver</h5>
+                    </div>
+                </div>
+                <div class="card-body" style="min-height:400px;">
+                    <div>
+                        <form class="theme-form" asp-action="AssignDriver" asp-controller="Vehicle" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.VehicleId)
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.UnassignedDrivers, "Drivers")
+                                @Html.DropDownListFor(m => m.UnassignedDrivers, Model.UnassignedDrivers, "-- Select Driver --", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.UnassignedDrivers)
+                            </div>
+                            <div class="form-group mt-3">
+                                <button class="btn btn-primary btn-block w-100" type="submit">
+                                    Assign Driver
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#UnassignedDrivers').select2();
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+}

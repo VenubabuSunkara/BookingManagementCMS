@@ -1,10 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "Drivers List";
+    ViewData["Title"] = "Media List";
 }
-@section Styles {
-    <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
-}
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
@@ -12,15 +10,15 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Drivers</h5>
+                        <h5>All Media Files</h5>
                     </div>
                     <form class="d-inline-flex">
                         <div class="d-flex gap-2">
-                            <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
+                            <a asp-controller="Media" asp-action="Create" class="btn btn-theme">
                                 <i data-feather="plus-square"></i>Add New
                             </a>
 
-                            <a href="@Url.ActionLink("Import", "Driver")" class="btn btn-theme">
+                            <a href="@Url.ActionLink("Import", "Media")" class="btn btn-theme">
                                 <i data-feather="file-plus"></i>Import
                             </a>
                         </div>
@@ -36,15 +34,10 @@
                                 <thead>
                                     <tr>
                                         <th>Id</th>
-                                        <th>Photo</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Email</th>
-                                        <th>Phone Number</th>
-                                        <th>License Number</th>
-                                        <th>Created Date</th>
+                                        <th>Thumbnail</th>
+                                        <th>Media Name</th>
+                                        <th>Media Type</th>
                                         <th>Actions</th>
-                                        <th>AssignVehicle</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -77,36 +70,6 @@
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
         var deleteId = null;
-
-        // function approveDriver(driverid){
-        //           $.ajax({
-        //                   type: "POST",
-        //                   url: "/Driver/ApproveDriver",
-        //                   data: { DriverId:driverid },
-        //                   dataType: "json",
-        //                   headers: {
-        //                     'RequestVerificationToken': token
-        //                   },
-        //                   success: function(result) {
-        //                     driverListVM.refresh();
-        //                   },
-        //                   error: function(req, status, error) {
-        //                      console.error(error);
-        //                   }
-        //              });
-        //          }
-        // function Preview(e, url) {
-        //   e.preventDefault();
-        //   location.href = url;
-        // }
-
-              // Preview
-        // $(document).on("click", ".preview-link", function (e) {
-        //     e.preventDefault();
-        //     let url = $(this).attr("href");
-        //     window.location.href = url;   // or load in Bootstrap modal
-        // });
-
                 // Edit
         $(document).on("click", ".edit-link", function (e) {
             e.preventDefault();
@@ -118,7 +81,6 @@
              $("#hdnParam").val(driverid);
              $('#deleteConfirmModal').modal('show');
          }
-
          function DeleteConfirm(){
              if (deleteId) {
                 $.ajax({
@@ -184,7 +146,7 @@
                      },
 
                       ajax: {
-                             url: '/Driver/LoadDriverData',
+                             url: '/Media/LoadMedia',
                              type: 'POST',
                              contentType: 'application/json; charset=utf-8',
                              dataType: 'json',
@@ -219,23 +181,17 @@
                              {
                                  data: 'id',
                                  render: function (data, type, full, meta) {
-                                     if(!full.isApproved)
-                                        return `<a class="preview-link" title="Preview driver for approval" href="@Url.Action("Preview", "Driver")?DriverId=${data}"><i class="fa fa-eye"></i></a>`;
-                                     else
-                                        return '';
-                                  //    ?  `<a class="preview-link" title="Preview driver for approval" href="@Url.Action("Preview", "Driver")?DriverId=${data}"><i class="fa fa-eye"></i></a>`
-                                  //   :  `<a class="edit-link" title="Edit Driver"  href="@Url.Action("Edit", "Driver")?DriverId=${data}"><i class="fa fa-pencil-square-o"></i></a>`;
-                                  // actions += ` | <a href="javascript:void(0)" title="Delete Driver" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
-                                  // return actions;
+                                    let actions = !full.isApproved
+                                     ?  `<a class="preview-link" title="Preview driver for approval" href="@Url.Action("Preview", "Driver")?DriverId=${data}"><i class="fa fa-eye"></i></a>`
+                                    :  `<a class="edit-link" title="Edit Driver"  href="@Url.Action("Edit", "Driver")?DriverId=${data}"><i class="fa fa-pencil-square-o"></i></a>`;
+                                  actions += ` | <a href="javascript:void(0)" title="Delete Driver" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
+                                  return actions;
                                  }
                              },
                              {
                                  data: 'id',
                                  render: function (data, type, full, meta) {
-                                     if(!full.isVehicleAssigned)
-                                        return `<a  title="Assign Vehicle" href="@Url.Action("AssignVehicle", "Driver")?DriverId=${data}"><i class="fa fa-taxi"></i></a>`
-                                     else
-                                        return '';
+                                    return `<a href="javascript:void(0)" onclick="AssignVehicle(${data})"><i class="fa fa-taxi"></i></a>`
                                  }
                              }
                          ],
