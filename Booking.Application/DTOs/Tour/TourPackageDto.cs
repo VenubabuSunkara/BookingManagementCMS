@@ -19,7 +19,7 @@ namespace Booking.Application.DTOs.Tour
         public string? FullDescription { get; set; }
 
         public string? Source { get; set; }
-        public string BannerImage { get; set; }
+        public string BannerImage { get; set; } = string.Empty;
 
         public string? Destination { get; set; }
 

@@ -50,6 +50,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddSingleton<FileReaderService>();
 
 builder.Services.AddSendGrid(options =>
 {

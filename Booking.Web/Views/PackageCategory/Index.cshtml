@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "All Packages CAtegories";
+    ViewData["Title"] = "All Packages Categories";
 }
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
@@ -14,10 +14,10 @@
                     </div>
                     <form class="d-inline-flex">
                         <div class="d-flex gap-2">
-                            <a href="@Url.ActionLink("AddCategory", "Packages")" class="btn btn-theme">
+                            <a href="@Url.ActionLink("AddCategory", "PackageCategory")" class="btn btn-theme">
                                 <i data-feather="file-plus"></i>Add New Category
                             </a>
-                            <a href="@Url.ActionLink("ImportCategory", "Packages")" class="btn btn-theme">
+                            <a href="@Url.ActionLink("ImportCategory", "PackageCategory")" class="btn btn-theme">
                                 <i data-feather="file-plus"></i>Import
                             </a>
                         </div>
@@ -63,26 +63,11 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
-         function editpackagecategory(categoryId){
-                 $.ajax({
-                         type: "GET",
-                         url: "/Packages/EditPackageCategory",
-                         data: { CategoryId:categoryId },
-                         dataType: "json",
-                         success: function(result) {
-                            console.log(result);
-                         },
-                         error: function(req, status, error) {
-                            console.error(error);
-                         }
-                    });
-                }
-
         function deletePackage(categoryId){
 
              $.ajax({
                     type: "GET",
-                    url: "/Packages/DeletePackageCategory",
+                    url: "/PackageCategory/DeletePackageCategory",
                     data: { CategoryId:categoryId },
                     dataType: "json",
                     success: function(result) {
@@ -118,7 +103,7 @@
                                             setTimeout(function(){
                                                $(node).removeClass('processing');
                                             },500)
-                                           window.location = '/Packages/ExportAll';
+                                           window.location = '/PackageCategory/ExportAll';
                                          }
                                        },
                                        'copy',
@@ -137,7 +122,7 @@
                      },
 
                      ajax: {
-                            url: '/Packages/GetAllPackageCategories',
+                            url: '/PackageCategory/GetAllPackageCategories',
                             type: 'POST',
                             contentType: 'application/json; charset=utf-8',
                             dataType: 'json',
@@ -156,13 +141,13 @@
                             { data: 'categoryName', autoWidth: true,align:'center' },
                             { data: 'noOfPackages', autoWidth: true,align:'center',
                                 render: function (data, type, full, meta) {
-                                    return `<a href="/Package/TourPackages/${full.id}">${data}</i></a>`
+                                    return `<a href="/PackageCategory/TourPackages/${full.id}">${data}</i></a>`
                                 }
                             },
                             {
                                 data: 'id', align:'center',autoWidth: true,
                                 render: function (data, type, full, meta) {
-                                    return `<a href="/Packages/EditPackageCategory/${data}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>`
+                                    return `<a href="/PackageCategory/EditPackageCategory?CategoryId=${data}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>`
                                 }
                             },
                                {

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Booking.Web.Models.PackageViewModel
+@{
     ViewData["Title"] = "Add New Package";
 }
 @section Styles {
@@ -36,122 +37,55 @@
                                     <div class="step-circle" onclick="displayStep(3)">
                                         3
                                     </div>
+                                    <div class="step-circle" onclick="displayStep(4)">
+                                        4
+                                    </div>
                                 </div>
 
-                                <form id="multi-step-form"
-                                      class="theme-form mega-form">
+                                <form id="multi-step-form" class="theme-form mega-form"
+                                      asp-action="SavePackage" asp-controller="Packages" method="post" enctype="multipart/form-data">
                                     <div class="step step-1">
                                         <!-- Step 1 form fields here -->
-                                        <h3>Location</h3>
+                                        <h3>Package Details</h3>
                                         <hr />
                                         <div class="row">
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">
-                                                    Seclect Country
-                                                    <span class="mb-0 font-roboto text-end"
-                                                          style="font-size: 11px">
-                                                        <i class="middle fa fa-clock-o"></i> 11:30
-                                                        PM
-                                                    </span>
-                                                    <span class="mb-0 font-roboto">
-                                                        <i class="middle fa fa-pencil"></i>
-                                                    </span>
+                                                <label asp-for="PackagecategoryId" class="form-label-title">
+                                                    Select Package Category
                                                 </label>
-                                                <select id="tour-category"
-                                                        class="js-example-basic-single col-sm-12">
-                                                    <option value="">Select Country</option>
-                                                    <option value="india">India</option>
-                                                    <option value="usa">USA</option>
-                                                    <option value="canada">Canada</option>
-                                                    <option value="australia">Australia</option>
-                                                </select>
+                                                @Html.DropDownListFor(m => m.PackagecategoryId, Model.PackageCategory, "-- Select category --", new { @class = "form-control" })
+                                                <span asp-validation-for="PackagecategoryId" class="text-danger"></span>
                                             </div>
-
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">
-                                                    Seclect City
-                                                </label>
-                                                <select id="tour-category"
-                                                        class="js-example-basic-single col-sm-12">
-                                                    <option value="">Select City</option>
-                                                    <option value="delhi">Delhi</option>
-                                                    <option value="newyork">New York</option>
-                                                    <option value="toronto">Toronto</option>
-                                                    <option value="sydney">Sydney</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <label class="form-label-title">
-                                            Google Coordinates- Longitude/Latitude
-                                        </label>
-                                        <input class="form-control mb-3"
-                                               type="text"
-                                               placeholder="eg. 98.4739, -38.4473" />
-                                        <div class="row">
-                                            <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">
-                                                    from
-                                                </label>
-                                                <input class="form-control"
-                                                       type="text"
-                                                       placeholder="Add Route Headline" />
-                                            </div>
-
-                                            <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">to</label>
-                                                <input class="form-control"
-                                                       type="text"
-                                                       placeholder="Add Route Heading" />
+                                                <label asp-for="TourPackage.Title" class="form-label-title"></label>
+                                                <input asp-for="TourPackage.Title" class="form-control" placeholder="Package Title" />
+                                                <span asp-validation-for="TourPackage.Title" class="text-danger"></span>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">Route Headline</label>
-                                                <input class="form-control"
-                                                       type="text"
-                                                       placeholder="Add Route Headline" />
+                                                <label asp-for="TourPackage.Price" class="form-label-title">Base Price</label>
+                                                <input class="form-control" type="text" asp-for="TourPackage.Price" placeholder="Price" />
                                             </div>
-
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">Route Heading</label>
-                                                <input class="form-control"
-                                                       type="text"
-                                                       placeholder="Add Route Heading" />
+                                                <label asp-for="TourPackage.DurationDays" class="form-label-title">Duration Days</label>
+                                                <input class="form-control" asp-for="TourPackage.DurationDays" type="text" placeholder="days" />
                                             </div>
                                         </div>
-
-                                        <!--  <div class="row">
-
-                                          <div class="col-6 mb-3">
-                                            <label for="tour-category" class="form-label-title">Transportation Type</label>
-                                            <select class="form-control">
-                                              <option>Transportation Category</option>
-                                              <option>Air</option>
-                                              <option>Land</option>
-                                              <option>Water</option>
-                                            </select>
-                                          </div>
-
-                                          <div class="col-6 mb-3">
-                                            <label for="tour-category" class="form-label-title">Vehicle Type</label>
-                                            <select id="tour-category" class="js-example-basic-single col-sm-12">
-                                              <option>Vehicle Type</option>
-                                              <option>Innova</option>
-                                              <option>SUV</option>
-                                              <option>Sedan</option>
-                                            </select>
-                                          </div>
-                                        </div> -->
-
+                                        <div class="row">
+                                            <div class="col-12 mb-3">
+                                                <label class="form-label-title" asp-for="TourPackage.Destination">Description</label>
+                                                <textarea class="form-control" rows="5" asp-for="TourPackage.Destination" placeholder="package shot description"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 mb-3">
+                                                <label class="form-label-title" asp-for="TourPackage.FullDescription">Full Description</label>
+                                                <textarea class="form-control" rows="5" asp-for="TourPackage.FullDescription" placeholder="package full description"></textarea>
+                                            </div>
+                                        </div>
                                         <hr />
                                         <br />
-
                                         <div class="card-footer text-end">
                                             <button type="button"
                                                     class="btn btn-primary next-step">
@@ -159,26 +93,25 @@
                                             </button>
                                         </div>
                                     </div>
-
                                     <div class="step step-2">
                                         <!-- Step 2 form fields here -->
                                         <h3>Create Route</h3>
                                         <hr />
                                         <div class="row">
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
+                                                <label asp-for="location.Name"
                                                        class="form-label-title">Route Headline</label>
                                                 <input class="form-control"
-                                                       type="text"
-                                                       placeholder="Add Route Headline" />
+                                                       type="text" asp-for="location.Name"
+                                                       placeholder="location name" />
                                             </div>
 
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">Route Heading</label>
-                                                <input class="form-control"
-                                                       type="text"
-                                                       placeholder="Add Route Heading" />
+                                                <label asp-for="location.Location"
+                                                       class="form-label-title">Location</label>
+                                                <input class="form-control" id="autocomplete"
+                                                       type="text" asp-for="location.Location"
+                                                       placeholder="location" />
                                             </div>
                                         </div>
 
@@ -199,33 +132,47 @@
                                                        placeholder="Add Route Duration" />
                                             </div>
                                         </div>
-                                        <label class="form-label-title">
-                                            Inside Of City Google Coordinates-
-                                            Longitude/Latitude
-                                        </label>
-                                        <input class="form-control mb-3"
-                                               type="text"
-                                               placeholder="eg. 98.4739, -38.4473" />
                                         <div class="row">
                                             <div class="col-12 mb-3">
-                                                <label for="tour-category"
-                                                       class="form-label-title">Route Discription</label>
+                                                <label asp-for="LocationDescription"
+                                                       class="form-label-title">Route Description</label>
                                                 <br />
-                                                <textarea name="DescriptionOf"
+                                                <textarea asp-for="LocationDescription"
                                                           placeholder="Route Description"
                                                           class="form-control"
                                                           rows="10"
                                                           id="descriptionOf"></textarea>
                                             </div>
                                         </div>
+                                        <hr />
+                                        <br />
+                                        <div class="card-footer text-end">
+                                            <button type="button"
+                                                    class="btn btn-primary prev-step">
+                                                Previous
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-primary next-step">
+                                                Next
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="step step-3">
+                                        <!-- Step 3 form fields here -->
 
+                                        <div class="card-header card-header--2 package-card">
+                                            <div>
+                                                <h5>Tour Media</h5>
+                                            </div>
+                                        </div>
                                         <div class="row">
+                                            @* <form action="/Packages/Single" enctype="multipart/form-data" method="post"> *@
                                             <div class="col-12 mb-3">
                                                 <label class="form-label-title">
                                                     Upload Tour Banner Image here
                                                 </label>
 
-                                                <div class="dropzone" id="singleFileUpload">
+                                                <div class="dropzone" id="singleFileUpload" data-url="@Url.Action("Multiple", "Packages")">
                                                     <div class="dz-message needsclick">
                                                         <i class="icon-cloud-up"></i>
                                                         <h6>
@@ -239,15 +186,17 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @* </form> *@
                                         </div>
 
                                         <div class="row">
+                                            @* <form action="/Packages/Multiple" enctype="multipart/form-data" method="post"> *@
                                             <div class="col-12 mb-3">
                                                 <label class="form-label-title">
                                                     Upload Tour Gallery Image here
                                                 </label>
 
-                                                <div class="dropzone" id="singleFileUpload">
+                                                <div class="dropzone" id="multiFileUpload" data-url="@Url.Action("Multiple", "Packages")">
                                                     <div class="dz-message needsclick">
                                                         <i class="icon-cloud-up"></i>
                                                         <h6>
@@ -261,6 +210,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @* </form> *@
                                         </div>
 
                                         <div class="row">
@@ -301,13 +251,12 @@
                                             </button>
                                         </div>
                                     </div>
-
-                                    <div class="step step-3">
-                                        <!-- Step 3 form fields here -->
+                                    <div class="step step-4">
+                                        <!-- Step 4 form fields here -->
 
                                         <div class="card-header card-header--2 package-card">
                                             <div>
-                                                <h5>Priview Destinations</h5>
+                                                <h5>Preview Destinations</h5>
                                             </div>
                                         </div>
 
@@ -1473,4 +1422,31 @@
     <!--Dropzon start-->
     <script src="~/js/dropzone.js" type="text/javascript"></script>
     <script src="~/js/dropzone-script.js" type="text/javascript"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@Model.LocationApiKey&libraries=places"></script>
+    <script>
+        function initAutocomplete() {
+          // Find the textbox
+          const input = document.getElementById("autocomplete");
+
+          // Create the autocomplete object
+          const autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ["geocode"], // restricts to addresses
+            //componentRestrictions: { country: "in" } // optional: restrict to India
+          });
+
+          // When the user selects a place:
+          autocomplete.addListener("place_changed", function () {
+            const place = autocomplete.getPlace();
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+
+            console.log("Selected place:", place);
+            // You can access place.geometry.location.lat(), place.geometry.location.lng(), etc.
+          });
+        }
+
+        // Initialize when page loads
+        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+    </script>
+
 }
