@@ -62,5 +62,17 @@ namespace Booking.Web.Controllers
             };
             return View(model);
         }
+        public async Task<IActionResult> Edit(int VehicleId)
+        {
+            return null;
+        }
+        public async Task<IActionResult> Preview(int VehicleId)
+        {
+            return null;
+        }
+        public async Task<IActionResult> ExportAll(CancellationToken token)
+        {
+            return null;
+        }
     }
 }

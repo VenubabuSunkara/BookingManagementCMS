@@ -138,40 +138,66 @@ namespace Booking.Infrastructure.Repositories
         }
         public async Task<UserEntity> Register(UserEntity userEntity)
         {
+            // ✅ Use cache or preload roles in memory if frequently reused
             if (!await _roleManager.RoleExistsAsync(userEntity.RoleId))
             {
                 await _roleManager.CreateAsync(new IdentityRole(userEntity.RoleId));
             }
-            var user = new IdentityUser()
+
+            var user = new IdentityUser
             {
                 UserName = userEntity.Username,
                 Email = userEntity.Email,
                 PhoneNumber = userEntity.Contact,
-                EmailConfirmed = true,
+                EmailConfirmed = false,  // Let email confirmation happen via token
                 PhoneNumberConfirmed = true
             };
+
             var userResults = await _userManager.CreateAsync(user, userEntity.Password);
-            var token = string.Empty;
-            if (userResults.Succeeded)
+
+            if (!userResults.Succeeded)
             {
-                token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                // Optionally aggregate errors and throw/log here
+                throw new InvalidOperationException(
+                    $"User creation failed: {string.Join(", ", userResults.Errors.Select(e => e.Description))}");
             }
-            var IUser = await _userManager.FindByNameAsync(user.UserName);
-            userEntity.Id = IUser.Id;
-            userEntity.RegistrationToken = token;
-            await _context.CompanyUsers.AddAsync(new CompanyUser()
+
+            // ✅ No need to re-fetch user from DB
+            userEntity.Id = user.Id;
+
+            // Generate token only if needed
+            userEntity.RegistrationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // Use a transaction for consistency
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                FirstName = userEntity.FirstName,
-                LastName = userEntity.LastName,
-                IsActive = userEntity.IsActive,
-                Address = userEntity.Address,
-                UserId = IUser?.Id,
-                CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow,
-                TenantId = userEntity.TenantId,
-            });
-            await _context.SaveChangesAsync();
-            var results = await _userManager.AddToRoleAsync(user, userEntity.RoleId);
+                var companyUser = new CompanyUser
+                {
+                    FirstName = userEntity.FirstName,
+                    LastName = userEntity.LastName,
+                    IsActive = userEntity.IsActive,
+                    Address = userEntity.Address,
+                    UserId = user.Id,
+                    CreatedOn = DateTime.UtcNow,
+                    UpdatedOn = DateTime.UtcNow,
+                    TenantId = userEntity.TenantId,
+                };
+
+                await _context.CompanyUsers.AddAsync(companyUser);
+                await _context.SaveChangesAsync();
+
+                await _userManager.AddToRoleAsync(user, userEntity.RoleId);
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+
             return userEntity;
         }
         public async Task<bool> ResetPassword(ForgotPasswordEntity model, CancellationToken cancellation)
