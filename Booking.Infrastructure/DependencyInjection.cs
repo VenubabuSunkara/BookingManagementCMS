@@ -1,6 +1,7 @@
 ﻿using Booking.Application.Services;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
+using Booking.Infrastructure.Data.Models;
 using Booking.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -31,6 +32,10 @@ namespace Booking.Infrastructure
             services.AddScoped<ISettingRepository, SettingsRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IReviewCommentsRepository, ReviewCommentsRepository>();
+            services.AddScoped<IVehicleFeatureRepository, VehicleFeatureRepository>();
+            services.AddScoped<IDriverVehicleRepository,DriverVehicleRepository>();
 
             return services;
         }

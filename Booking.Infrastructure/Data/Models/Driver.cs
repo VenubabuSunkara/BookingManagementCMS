@@ -42,6 +42,7 @@ public partial class Driver
     public Guid? TenantId { get; set; }
 
     public Guid? ItemGuid { get; set; }
+    public bool? isActive { get; set; }
 
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 

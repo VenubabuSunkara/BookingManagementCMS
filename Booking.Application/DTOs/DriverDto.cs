@@ -20,8 +20,8 @@ namespace Booking.Application.DTOs
         public string? AboutOn { get; set; }
         public DateTime? Created { get; set; } = DateTime.Now;
         public string? Photo { get; set; }
-        public string GetFullName() => $"{FirstName} {LastName}";
-        public bool IsDriverAvailable() => AvailabilityStatus == true;
+        public string FullName => $"{FirstName} {LastName}";
+        public bool IsDriverAvailable => AvailabilityStatus == true;
         public bool? IsApproved { get; set; }
         public bool? IsVehicleAssigned { get; set; }
         public int NoTripsDone { get; set; }

@@ -9,6 +9,7 @@ using Booking.Infrastructure.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SendGrid.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,17 +28,20 @@ builder.Services.AddResponseCaching();
 builder.Services.AddOutputCache();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IPasswordHasher<CompanyUser>, PasswordHasher<CompanyUser>>();
-builder.Services.AddAuthentication(
-    CookieAuthenticationDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.SessionStore = builder.Services.BuildServiceProvider()
-                                       .GetRequiredService<ITicketStore>();
+    options.SessionStore = builder.Services.BuildServiceProvider().GetRequiredService<ITicketStore>();
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
     options.SlidingExpiration = true;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
+});
+builder.WebHost.ConfigureKestrel(o =>
+{
+    o.ConfigureEndpointDefaults(lo => lo.Protocols =
+        Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1);
 });
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
@@ -50,8 +54,12 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
-builder.Services.AddSingleton<FileReaderService>();
+builder.Services.AddScoped<IReviewCommentService, ReviewCommentService>();
+builder.Services.AddScoped<IDriverVehicleService, DriverVehicleService>();
 
+
+builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
+builder.Services.AddSingleton<FileReaderService>();
 builder.Services.AddSendGrid(options =>
 {
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
@@ -59,7 +67,6 @@ builder.Services.AddSendGrid(options =>
 builder.Services.AddTransient<SmtpEmailService>();
 builder.Services.AddTransient<SendGridEmailService>();
 
-builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
 // or for AWS:
 var awsOptions = builder.Configuration.GetAWSOptions();
 awsOptions.Credentials = new BasicAWSCredentials(
@@ -96,6 +103,12 @@ if (builder.Environment.IsDevelopment())
 }
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var ticketStore = scope.ServiceProvider.GetRequiredService<ITicketStore>();
+    var options = app.Services.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
+    options.Get(CookieAuthenticationDefaults.AuthenticationScheme).SessionStore = ticketStore;
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

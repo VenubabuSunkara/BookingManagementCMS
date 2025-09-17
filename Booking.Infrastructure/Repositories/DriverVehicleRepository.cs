@@ -1,11 +1,8 @@
 ﻿using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
-using Booking.Infrastructure.Data.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System.Buffers;
 
 namespace Booking.Infrastructure.Repositories
 {
@@ -13,12 +10,12 @@ namespace Booking.Infrastructure.Repositories
     {
         private readonly BookingCmsContext _context = context;
         private readonly IMemoryCache _cache = cache;
-        private IQueryable<DriverVehicleEntity> GetQuery()
+        private IQueryable<DriverVehicleFullEntity> GetDriverVehicleFullQuery()
         {
             return _context.DriverVehicles
                              .Where(dv => dv.Driver.AvailabilityStatus == true
                                     && dv.Vehicle.IsActive == true)
-                             .Select(dv => new DriverVehicleEntity
+                             .Select(dv => new DriverVehicleFullEntity
                              {
                                  Driver = new DriverEntity
                                  {
@@ -125,6 +122,43 @@ namespace Booking.Infrastructure.Repositories
                              }).AsNoTracking()
                              .AsQueryable();
         }
+        private IQueryable<DriverVehicleEntity> GetDriverVehicleTableQuery()
+        {
+            return _context.DriverVehicles.Where(dv => dv.Driver.AvailabilityStatus == true
+                                    && dv.Vehicle.IsActive == true)
+                             .Select(dv => new DriverVehicleEntity
+                             {
+                                 Driver = new DriverEntity
+                                 {
+                                     Id = dv.Driver.DriverId,
+                                     FirstName = dv.Driver.FirstName,
+                                     LastName = dv.Driver.LastName,
+                                     Address = dv.Driver.Address,
+                                     Email = dv.Driver.Email,
+                                     LicenseNumber = dv.Driver.LicenseNumber,
+                                     PhoneNumber = dv.Driver.PhoneNumber,
+                                     Photo = dv.Driver.Photo,
+                                     AboutOn = dv.Driver.AboutOn,
+                                     AvailabilityStatus = dv.Driver.AvailabilityStatus
+                                 },
+                                 Vehicle = new VehicleEntity
+                                 {
+                                     Id = dv.Vehicle.VehicleId,
+                                     ModelName = dv.Vehicle.ModelName,
+                                     VehicleNumber = dv.Vehicle.VehicleNumber,
+                                     DefaultImage = dv.Vehicle.DefaultImage,
+                                     BasePrice = dv.Vehicle.BasePrice,
+                                     AboutOnVehicle = dv.Vehicle.AboutOnVehicle,
+                                     Color = dv.Vehicle.Color,
+                                     FuelType = dv.Vehicle.FuelType,
+                                     Make = dv.Vehicle.Make,
+                                     TaxRate = dv.Vehicle.TaxRate,
+                                     OtherInfromation = dv.Vehicle.OtherInformation,
+                                     IsActive = dv.Vehicle.IsActive,
+                                 },
+                             }).AsNoTracking()
+                             .AsQueryable();
+        }
         public async Task<DriverVehicleTableEntity> DriverVehicleList(string SearchValue, int Take, int Skip, CancellationToken token)
         {
             // Create a cache key that varies by search + page
@@ -132,12 +166,11 @@ namespace Booking.Infrastructure.Repositories
 
             if (!_cache.TryGetValue(cacheKey, out DriverVehicleTableEntity? cached))
             {
-                var driverVehicleQuery = GetQuery();
+                var driverVehicleQuery = GetDriverVehicleTableQuery();
                 var total = await driverVehicleQuery.CountAsync(cancellationToken: token);
                 if (!string.IsNullOrEmpty(SearchValue))
                 {
                     var term = $"%{SearchValue}%";
-
                     driverVehicleQuery = driverVehicleQuery.Where(x =>
                         EF.Functions.Like(x.Driver.FirstName, term) ||
                         EF.Functions.Like(x.Driver.LastName, term) ||
@@ -147,7 +180,7 @@ namespace Booking.Infrastructure.Repositories
                 var FilterRecords = await driverVehicleQuery.CountAsync(cancellationToken: token);
                 var driverVehiclesList = await driverVehicleQuery.Skip(Skip).Take(Take).ToListAsync(cancellationToken: token);
                 // Cache for 5 minutes (absolute)
-               
+
                 var tableResults = new DriverVehicleTableEntity()
                 {
                     Total = total,
@@ -160,6 +193,15 @@ namespace Booking.Infrastructure.Repositories
                 return tableResults;
             }
             return cached!;
+        }
+
+        public async Task<int> RejectDriverVehicleAsync(int DriverId, int VehicleId, CancellationToken token)
+        {
+            await _context.DriverVehicles.Where(u => u.DriverId == DriverId).ExecuteDeleteAsync(token);
+            await _context.Vehicles.Where(d => d.VehicleId == VehicleId).ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
+            var rejectedCount = await _context.Drivers.Where(d => d.DriverId == DriverId)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.isActive, false), token);
+            return rejectedCount;
         }
     }
 }

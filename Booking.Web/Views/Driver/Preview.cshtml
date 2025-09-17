@@ -28,7 +28,7 @@
                     <!-- section start -->
                     <section class="single-section small-section bg-inner">
                         <div class="row">
-                            <h2 class="cars-title mb-2 mt-2">@Model.GetFullName()</h2>
+                            <h2 class="cars-title mb-2 mt-2">@Model.FullName</h2>
                             <div class="col-12">
                                 <div class="image_section">
                                     <div class="row">
@@ -38,7 +38,7 @@
                                                     <a href="@Model.Photo">
                                                         <img src="@Model.Photo"
                                                              class="img-fluid blur-up lazyload bg-img w-100"
-                                                             alt="@Model.GetFullName()" />
+                                                             alt="@Model.FullName" />
                                                     </a>
                                                 </div>
                                             </div>
@@ -66,7 +66,7 @@
                                             <h6>Driver Details</h6>
                                             <ul>
                                                 <li>
-                                                    @Model.GetFullName()
+                                                    @Model.FullName
                                                 </li>
                                                 <li>
                                                     @Model.LicenseNumber

@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Booking.Web.Controllers
 {
-    [Authorize(Roles = "Admin,Driver")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class HomeController : Controller
     {
         public async Task<IActionResult> Index()

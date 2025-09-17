@@ -1,3 +1,4 @@
+using Booking.Application.Enums;
 using Booking.Application.Interfaces;
 using Booking.Web.Models;
 using ClosedXML.Excel;
@@ -22,24 +23,18 @@ namespace Booking.Web.Controllers
   * 12. Bulk delete -- super admin
   * 13. Transfer Schedule to other driver -- super admin
   */
-    [Authorize(Roles = "Admin")]
-    public class DriverController : BaseController
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    //[Authorize(Roles = $"{nameof(RoleType.Admin)},{nameof(RoleType.SuperAdmin)}")]
+    public class DriverController(ILogger<DriverController> logger, IDriverService driverService,
+        IBookingService bookingService, IBookingDetailsService bookingDetailsService, IVehicleService vehicleService) : BaseController
     {
 
-        private readonly ILogger<DriverController> _logger;
-        private readonly IDriverService _driverService;
-        private readonly IBookingService _bookingService;
-        private readonly IBookingDetailsService _bookingDetailsService;
-        private readonly IVehicleService _vehicleService;
-        public DriverController(ILogger<DriverController> logger, IDriverService driverService,
-            IBookingService bookingService, IBookingDetailsService bookingDetailsService, IVehicleService vehicleService)
-        {
-            _logger = logger;
-            _driverService = driverService;
-            _bookingService = bookingService;
-            _bookingDetailsService = bookingDetailsService;
-            _vehicleService = vehicleService;
-        }
+        private readonly ILogger<DriverController> _logger = logger;
+        private readonly IDriverService _driverService = driverService;
+        private readonly IBookingService _bookingService = bookingService;
+        private readonly IBookingDetailsService _bookingDetailsService = bookingDetailsService;
+        private readonly IVehicleService _vehicleService = vehicleService;
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadDriverData([FromBody] DataTableAjaxPostModel request, CancellationToken token)
