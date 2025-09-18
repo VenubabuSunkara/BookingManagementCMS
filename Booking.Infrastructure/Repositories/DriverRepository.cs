@@ -1,17 +1,8 @@
 ﻿using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
-using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.VisualBasic;
-using Org.BouncyCastle.Ocsp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Booking.Infrastructure.Repositories
 {
@@ -77,7 +68,7 @@ namespace Booking.Infrastructure.Repositories
         {
             await _context.DriverVehicles.Where(u => u.DriverId == DriverId).ExecuteDeleteAsync(token);
             var rejectedCount = await _context.Drivers.Where(d => d.DriverId == DriverId)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.isActive, false), token);
+            .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             return rejectedCount;
         }
         public async Task<int> ApproveDriversAsync(List<int> DriverIds, CancellationToken token)

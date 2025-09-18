@@ -47,5 +47,11 @@ namespace Booking.Web.Controllers
             await _driverVehicleService.RejectDriverVehicleAsync(DriverId, VehicleId, token);
             return RedirectToAction("Index");
         }
+
+        [ValidateAntiForgeryToken, HttpPost]
+        public async Task<IActionResult> AddSchedule(int DriverId, int VehicleId, CancellationToken token)
+        {
+            return null;
+        }
     }
 }

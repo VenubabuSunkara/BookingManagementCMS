@@ -94,9 +94,9 @@ namespace Booking.Application.Services
                 })
             };
         }
-        public async Task<BookingOrderTableDto> GetVehicleBookings(int VehicleId, int Skip, int Take, CancellationToken token)
+        public async Task<BookingOrderTableDto> GetVehicleBookings(int VehicleId, int DriverId, int Skip, int Take, CancellationToken token)
         {
-            var BookingOrders = await _bookingRepository.GetVehicleBookings(VehicleId, Skip, Take, token);
+            var BookingOrders = await _bookingRepository.GetVehicleBookings(VehicleId, DriverId, Skip, Take, token);
             return new BookingOrderTableDto()
             {
                 TotalRecords = BookingOrders.TotalRecords,

@@ -1,0 +1,113 @@
+﻿@model IEnumerable<Booking.Application.DTOs.ReviewCommentsDto>
+@{
+    ViewData["Title"] = "Drivers Vehicle Comments";
+    var comments = Model.ToArray();
+}
+@section Styles {
+    <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>All Driver Vehicles Comments</h5>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>                                        
+                                        <th>Comment On Driver</th>
+                                        <th>Comment On Vehicle</th>
+                                        <th>Suggestions</th>
+                                        <th>Rating</th>
+                                        <th>CreatedOn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var obj in Model)
+                                    {
+                                        <tr>
+                                            <td>@obj.Id</td>
+                                            <td>@obj.DriverComment</td>
+                                            <td>@obj.VehicleComment</td>
+                                            <td>@obj.Suggestions</td>
+                                            <td>@obj.Rating</td>
+                                            <td>@obj.CreatedOn?.ToShortDateString()</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="pagination-box">
+                                <nav aria-label="Table navigation">
+                                    <ul id="customPaginate" class="pagination pagination-primary justify-content-center"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript">
+        var  driverListVM = {
+                Driverdt: null,
+                init: function () {
+                     this.Driverdt = $('#tblvehicledriver').DataTable({
+                     processing: true,
+                     info: false,
+                     stateSave: true,
+                     layout: {
+                     topStart: {
+                       buttons: [
+                                  {
+                                    extend: 'collection',
+                                    text: 'Export All',
+                                    buttons: [
+                                      'excel',
+                                      'copy',
+                                      'csv',
+                                      'pdf',
+                                      'print'
+                                    ]
+                                  }
+                                ]
+                        },
+                        bottomEnd: {
+                            paging: {
+                                type: 'simple'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        $(document).ready(function () {
+                driverListVM.init();
+        });
+    </script>
+}

@@ -45,11 +45,11 @@ public partial class Vehicle
 
     public virtual ICollection<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; } = new List<DriverVehicleAvailability>();
 
+    public virtual ICollection<ReviewComment> ReviewComments { get; set; } = new List<ReviewComment>();
+
     public virtual ICollection<SeasonalPricing> SeasonalPricings { get; set; } = new List<SeasonalPricing>();
 
     public virtual ICollection<VehicleFeatureMapping> VehicleFeatureMappings { get; set; } = new List<VehicleFeatureMapping>();
 
     public virtual ICollection<VehicleMediaMapping> VehicleMediaMappings { get; set; } = new List<VehicleMediaMapping>();
-
-    public virtual ICollection<VehicleRating> VehicleRatings { get; set; } = new List<VehicleRating>();
 }

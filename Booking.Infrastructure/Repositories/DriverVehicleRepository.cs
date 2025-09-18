@@ -65,24 +65,7 @@ namespace Booking.Infrastructure.Repositories
                                          SlotStart = a.SlotStart,
 
                                      }).ToList(),
-                                 DriverRatingEntities = dv.Driver.DriverRatings
-                                     .Select(r => new DriverRatingEntity
-                                     {
-                                         DriverId = r.DriverId,
-                                         Comments = r.Comments,
-                                         PassengerId = r.PassengerId,
-                                         Rating = r.Rating,
-                                         RatingId = r.RatingId
-                                     }).ToList(),
-                                 VehicleRatingEntities = dv.Vehicle.VehicleRatings
-                                     .Select(r => new VehicleRatingEntity
-                                     {
-                                         VehicleId = r.VehicleId,
-                                         Comments = r.Comments,
-                                         PassengerId = r.PassengerId,
-                                         Rating = r.Rating,
-                                         RatingId = r.RatingId
-                                     }).ToList(),
+                                 
                                  FeatureEntities = dv.Vehicle.VehicleFeatureMappings
                                      .Select(f => new FeatureEntity
                                      {
@@ -200,7 +183,7 @@ namespace Booking.Infrastructure.Repositories
             await _context.DriverVehicles.Where(u => u.DriverId == DriverId).ExecuteDeleteAsync(token);
             await _context.Vehicles.Where(d => d.VehicleId == VehicleId).ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             var rejectedCount = await _context.Drivers.Where(d => d.DriverId == DriverId)
-            .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.isActive, false), token);
+            .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             return rejectedCount;
         }
     }

@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Drivers Vehicle List";
+    ViewData["Title"] = "Reviews";
 }
 @section Styles {
     <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
@@ -12,20 +12,8 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Driver Vehicles</h5>
+                        <h5>All Reviews</h5>
                     </div>
-                    <form class="d-inline-flex">
-                        <div class="d-flex gap-2">
-                            <a asp-controller="DriverVehicle" asp-action="Create" class="btn btn-theme">
-                                <i data-feather="plus-square"></i>Add New
-                            </a>
-
-                            <a asp-controller="DriverVehicle" asp-action="Import" class="btn btn-theme">
-                                <i data-feather="file-plus"></i>Import
-                            </a>
-                        </div>
-
-                    </form>
                 </div>
 
                 <div class="card-body">
@@ -35,18 +23,14 @@
                             <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
                                 <thead>
                                     <tr>
-                                        <th>Vehicle Media</th>
-                                        <th>Driver FullName</th>
-                                        <th>License Number</th>
-                                        @*  <th>Email</th> *@
-                                        <th>Phone Number</th>
-                                        <th>Model Name</th>
-                                        <th>Make</th>
-                                        <th>Vehicle Number</th>
-                                        <th>Base Price</th>
-                                        @* <th>Tax Rate</th> *@
-                                        <th>Fuel Type</th>
-                                        <th>Action</th>
+                                        <th>Id</th>
+                                        <th>Driver License</th>
+                                        <th>Registration Number</th>
+                                        <th>Comment On Driver</th>
+                                        <th>Comment On Vehicle</th>
+                                        <th>Suggestions</th>
+                                        <th>Rating</th>
+                                        <th>CreatedOn</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -78,64 +62,6 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
-        let driverid = null;
-        let vehicleid=null;
-
-                // Edit
-        $(document).on("click", ".edit-link", function (e) {
-            e.preventDefault();
-            let url = $(this).attr("href");
-            window.location.href = url;   // or AJAX load form
-        });
-         function rejectDriver(driverid,vehicleid){
-             driverid=driverid;
-             vehicleid=vehicleid
-             $("#deleteParam").val(driverid);
-             $('#deleteConfirmModal').modal('show');
-         }
-
-         function DeleteConfirm(){
-             if (deleteId) {
-                $.ajax({
-                     type: "POST",
-                     url: "/DriverVehicle/RejectDriver",
-                     data: { DriverId:driverid,VehicleId: vehicleid},
-                     dataType: "json",
-                     headers: {
-                       'RequestVerificationToken': token
-                     },
-                     success: function(result) {
-                        driverListVM.refresh();
-                     },
-                     error: function(req, status, error) {
-                     console.error(error);
-                     }
-                 });
-              }
-         }
-
-         function submitReviewForm(url,vehicleId, driverId){
-             debugger;
-               const form = $('<form>', {
-                                method: 'post',
-                                action: url
-                            });
-            // Anti-forgery token from a hidden input on the page
-            const token = $('input[name="__RequestVerificationToken"]').val();
-            form.append($('<input>', { type: 'hidden', name: '__RequestVerificationToken', value: token }));
-
-            // Your parameters
-            form.append($('<input>', { type: 'hidden', name: 'VehicleId', value: vehicleId }));
-            form.append($('<input>', { type: 'hidden', name: 'DriverId', value: driverId }));
-
-            $('body').append(form);
-            form.submit();
-         }
-
-
-
-
-
          var  driverListVM = {
                  Driverdt: null,
                  init: function () {
@@ -163,7 +89,7 @@
                                             setTimeout(function(){
                                                $(node).removeClass('processing');
                                             },500)
-                                           window.location = '/DriverVehicle/ExportAll';
+                                           window.location = '/Review/ExportAll';
                                          }
                                        },
                                        'copy',
@@ -182,7 +108,7 @@
                      },
 
                       ajax: {
-                             url: '/DriverVehicle/LoadDriverVehicleData',
+                             url: '/Review/GetAllReviews',
                              type: 'POST',
                              contentType: 'application/json; charset=utf-8',
                              dataType: 'json',
@@ -197,38 +123,18 @@
                              }
                          },
                       columns: [
-                             { data: 'vehicle.defaultImage',
-                                 autoWidth: true,
-                                 render: function (data, type, full, meta) {
-                                     return `<img src="${data}" alt="${full.driver.fullName}" onclick="viewgallary('${full.vehicle.id}')" class="img-thumbnail" style="height:40px;" />`;
+                             { data: 'id', autoWidth: true },
+                             { data: 'driverLicense', autoWidth: true },
+                             { data: 'vehicleNo', autoWidth: true },
+                             { data: 'driverComment', autoWidth: true },
+                             { data: 'vehicleComment', autoWidth: true },
+                             { data: 'suggestions', autoWidth: true },
+                             { data: 'rating', autoWidth: true },
+                             { data: 'createdOn', autoWidth: true,
+                                 render: function (data, type, row) {
+                                    return moment(data).format('YYYY-MM-DD'); // Formats the date
                                  }
                              },
-                             { data: 'driver.fullName', autoWidth: true,
-                              render: function (data, type, full, meta) {
-                                     return `<a href="@Url.Action("Edit", "DriverVehicle")?DriverId=${data}">${full.driver.fullName}</a>`;
-                                 }
-                             },
-                             { data: 'driver.licenseNumber', autoWidth: true },
-                             // { data: 'driver.email', autoWidth: true },
-                             { data: 'driver.phoneNumber', autoWidth: true },
-                             { data: 'vehicle.modelName', autoWidth: true },
-                             { data: 'vehicle.make', autoWidth: true },
-                             { data: 'vehicle.vehicleNumber', autoWidth: true },
-                             { data: 'vehicle.basePrice', autoWidth: true },
-                             // { data: 'vehicle.taxRate', autoWidth: true },
-                             { data: 'vehicle.fuelType', autoWidth: true },
-                             {
-                                 data: 'driver.id',
-                                 render: function (data, type, full, meta) {
-                                 let actions='';
-                                   actions += `   <a href="javascript:void(0)" title="Delete" onclick="rejectDriver(${data},${full.vehicle.id})"><i class="fa fa-trash-o"></i></a>`;
-                                   actions += ` | <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("GetAllDriverVehicleBookings", "Bookings")',${full.vehicle.id},${data})" title="Trips" ><i class="fa fa-car"></i></a>`;
-                                   actions += ` | <a href="@Url.Action("Payments", "DriverVehicle")?DriverId=${data}" title="Payments"><i class="fa fa-credit-card-alt"></i></a>`;
-                                   actions += ` | <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("GetReviewsByVehicleDriver", "Review")',${full.vehicle.id},${data})" title="Feedback" ><i class="fa fa-comments-o"></i></a>`;
-                                   actions += ` | <a href="@Url.Action("AddSchedule", "DriverVehicle")?DriverId=${data}" title="Add Schedule"><i class="fa fa-calendar"></i></a>`;
-                                   return actions;
-                                 }
-                             }
                          ],
                            language: {
                                  emptyTable: "No entries to show"

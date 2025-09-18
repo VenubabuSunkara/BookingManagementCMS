@@ -37,6 +37,18 @@ public partial class BookingOrder
 
     public DateTime? CreatedAt { get; set; }
 
+    public decimal? DistanceInKm { get; set; }
+
+    public decimal? ExtraCharges { get; set; }
+
+    public int? DurationInMin { get; set; }
+
+    public int? CoupenId { get; set; }
+
+    public decimal? DiscountAmount { get; set; }
+
+    public decimal? TaxAmount { get; set; }
+
     public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
 
     public virtual Customer Customer { get; set; } = null!;

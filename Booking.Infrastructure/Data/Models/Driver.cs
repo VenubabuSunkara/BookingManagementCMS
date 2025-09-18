@@ -42,15 +42,16 @@ public partial class Driver
     public Guid? TenantId { get; set; }
 
     public Guid? ItemGuid { get; set; }
-    public bool? isActive { get; set; }
+
+    public bool? IsActive { get; set; }
 
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 
     public virtual ICollection<DriverMediaMapping> DriverMediaMappings { get; set; } = new List<DriverMediaMapping>();
 
-    public virtual ICollection<DriverRating> DriverRatings { get; set; } = new List<DriverRating>();
-
     public virtual DriverVehicle? DriverVehicle { get; set; }
 
     public virtual ICollection<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; } = new List<DriverVehicleAvailability>();
+
+    public virtual ICollection<ReviewComment> ReviewComments { get; set; } = new List<ReviewComment>();
 }

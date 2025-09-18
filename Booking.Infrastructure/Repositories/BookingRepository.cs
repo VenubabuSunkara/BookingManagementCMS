@@ -48,12 +48,15 @@ namespace Booking.Infrastructure.Repositories
             };
         }
 
-        public async Task<BookingOrderTableEntity> GetVehicleBookings(int VehicleId, int Skip, int Take, CancellationToken token)
+        public async Task<BookingOrderTableEntity> GetVehicleBookings(int VehicleId, int DriverId,
+            int Skip, int Take, CancellationToken token)
         {
             var q = _context.BookingOrders.AsNoTracking();
             var total = await q.CountAsync(token);
             if (VehicleId != 0)
                 q = q.Where(x => x.VehicleId.Equals(VehicleId));
+            if (DriverId != 0)
+                q = q.Where(x => x.DriverId.Equals(DriverId));
             q = q.OrderByDescending(d => d.CreatedAt);
             var filtered = await q.CountAsync(token);
             var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
@@ -121,7 +124,7 @@ namespace Booking.Infrastructure.Repositories
         {
             var q = _context.BookingOrders.AsNoTracking();
             var total = await q.CountAsync(token);
-            if (string.IsNullOrEmpty(searchKey))
+            if (!string.IsNullOrEmpty(searchKey))
                 q = q.Where(x => x.BookingNumber.Equals(searchKey));
             q = q.OrderByDescending(d => d.CreatedAt);
             var filtered = await q.CountAsync(token);
