@@ -8,6 +8,15 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.DTOs.Tour
 {
+    public class TourPackageMediaDto
+    {
+        public string FileName { get; set; } = string.Empty;
+        public string OriginalFileName { get; set; } = string.Empty;
+        public string FilePath { get; set; } = string.Empty;
+        public string ThumbnailPath { get; set; } = string.Empty;
+        public long FileSize { get; set; }
+        public string FileType { get; set; } = string.Empty;
+    }
     public class PackageMediaDto
     {
         public int Id { get; set; }

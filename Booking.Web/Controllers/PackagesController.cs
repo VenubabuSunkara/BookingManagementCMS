@@ -1,26 +1,75 @@
-﻿using Booking.Application.DTOs;
-using Booking.Application.DTOs.Tour;
+﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
-using Booking.Application.Services;
 using Booking.Web.Models;
+using ImageMagick;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json.Linq;
-using NuGet.Common;
+using System.Runtime.Versioning;
 
 namespace Booking.Web.Controllers
 {
-    public class PackagesController : BaseController
+    public class PackagesController(ILogger<PackagesController> logger, IPackageService packageService, IPackageCategoryService packageCategoryService) : BaseController
     {
-        private readonly ILogger<PackagesController> _logger;
-        private readonly IPackageService _packageService;
-        private readonly IPackageCategoryService _packageCategoryService;
-        public PackagesController(ILogger<PackagesController> logger, IPackageService packageService, IPackageCategoryService packageCategoryService)
+        private readonly ILogger<PackagesController> _logger = logger;
+        private readonly IPackageService _packageService = packageService;
+        private readonly IPackageCategoryService _packageCategoryService = packageCategoryService;
+
+
+        #region private member functions
+        private (bool IsValid, string Message) ValidateFile(IFormFile file, int _maxFileSize, string[] _allowedExtensions)
         {
-            _logger = logger;
-            _packageService = packageService;
-            _packageCategoryService = packageCategoryService;
+            // Check file size
+            if (file.Length > _maxFileSize)
+                return (false, "File size exceeds maximum limit");
+
+            // Check file extension
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!_allowedExtensions.Contains(extension))
+                return (false, "File type not allowed");
+
+            return (true, string.Empty);
         }
+        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file)
+        {
+            var fileName = Path.GetFileName(file.FileName);
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            var thumbsFolder = Path.Combine(uploadsFolder, "thumbs");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+            if (!Directory.Exists(thumbsFolder))
+                Directory.CreateDirectory(thumbsFolder);
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            var thumbPath = Path.Combine(thumbsFolder, uniqueFileName);
+
+            // Save original file
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+            const int size = 150;
+            const int quality = 75;
+            // Create thumbnail (requires System.Drawing.Common NuGet package)
+            using (var image = new MagickImage(filePath))
+            {
+                image.Resize(size, size);
+                image.Strip();
+                image.Quality = quality;
+                image.Write(thumbsFolder);
+            }
+            return new TourPackageMediaDto
+            {
+                FileName = uniqueFileName,
+                OriginalFileName = fileName,
+                FilePath = "/uploads/" + uniqueFileName,
+                ThumbnailPath = "/uploads/thumbs/" + uniqueFileName,
+                FileSize = file.Length,
+                FileType = Path.GetExtension(filePath)
+            };
+        }
+        #endregion
+
         public async Task<IActionResult> Index(CancellationToken token)
         {
             return await Task.Run(() =>
@@ -84,35 +133,49 @@ namespace Booking.Web.Controllers
             return View(model);
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPackage(int Id)
+        public async Task<IActionResult> SavePackage(PackageViewModel model, CancellationToken token)
         {
             return await Task.Run(() => { return View(); });
         }
         [HttpPost]
         public async Task<IActionResult> Single(IFormFile file)
         {
-            if (file != null && file.Length > 0)
+            try
             {
-                var path = Path.Combine("wwwroot/uploads", file.FileName);
-                using var stream = new FileStream(path, FileMode.Create);
-                await file.CopyToAsync(stream);
+                return Json(new { success = true, files = await ProcessAndSaveFile(file) });
             }
-            return Ok(new { success = true });
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading file");
+                return Json(new { success = false, message = "An error occurred while uploading files." });
+            }
         }
-
         [HttpPost]
         public async Task<IActionResult> Multiple(List<IFormFile> files)
         {
-            foreach (var file in files)
+            try
             {
-                if (file.Length > 0)
+                var uploadedFiles = new List<TourPackageMediaDto>();
+
+                foreach (var file in files)
                 {
-                    var path = Path.Combine("wwwroot/uploads", file.FileName);
-                    using var stream = new FileStream(path, FileMode.Create);
-                    await file.CopyToAsync(stream);
+                    //var validationResult = ValidateFile(file);
+                    //if (!validationResult.IsValid)
+                    //{
+                    //    return Json(new { success = false, message = validationResult.Message });
+                    //}
+
+                    var fileResult = await ProcessAndSaveFile(file);
+                    uploadedFiles.Add(fileResult);
                 }
+
+                return Json(new { success = true, files = uploadedFiles });
             }
-            return Ok(new { success = true });
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading files");
+                return Json(new { success = false, message = "An error occurred while uploading files." });
+            }
         }
     }
 }

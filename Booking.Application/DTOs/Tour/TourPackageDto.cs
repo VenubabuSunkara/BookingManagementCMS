@@ -26,5 +26,8 @@ namespace Booking.Application.DTOs.Tour
         public int? DurationDays { get; set; }
 
         public decimal? Price { get; set; }
+
+        public string? ThingsToNote { get; set; }
+        public string? Inclusions { get; set; }
     }
 }
