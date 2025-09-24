@@ -1,9 +1,12 @@
 ﻿using Booking.Application.DTOs;
+using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json.Linq;
+using NuGet.Common;
 
 namespace Booking.Web.Controllers
 {
@@ -25,34 +28,6 @@ namespace Booking.Web.Controllers
                 return View("Index");
             }, token);
         }
-        public async Task<IActionResult> PackageCategory(CancellationToken token)
-        {
-            return await Task.Run(() =>
-            {
-                return View("PackageCategory");
-            }, token);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetAllPackageCategories([FromBody] DataTableAjaxPostModel request)
-        {
-            var tourPackages = await _packageCategoryService.GetTourPackageCategory();
-            return Json(new
-            {
-                draw = request.draw == 0 ? 1 : request.draw,
-                recordsFiltered = tourPackages.Count(),
-                recordsTotal = tourPackages.Count(),
-                data = tourPackages.Select(x => new
-                {
-                    Id = x.Id,
-                    x.CategoryName,
-                    x.NoOfPackages
-                }).ToArray()
-            });
-
-        }
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAllPackages([FromBody] DataTableAjaxPostModel request,
@@ -78,6 +53,14 @@ namespace Booking.Web.Controllers
             });
         }
 
+        public async Task<IActionResult> AddCategory(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
+        }
+
         public async Task<IActionResult> ViewPackage(int PackageId, CancellationToken token)
         {
             if (PackageId > 0)
@@ -86,14 +69,50 @@ namespace Booking.Web.Controllers
             }
             return await Task.Run(() => { return View(); });
         }
-        public async Task<IActionResult> AddPackage()
+        public async Task<IActionResult> AddPackage(CancellationToken token)
         {
-            return await Task.Run(() => { return View(); });
+            var tourPackages = await _packageCategoryService.GetTourPackageCategory(token);
+            PackageViewModel model = new()
+            {
+                PackageCategory = [.. tourPackages.Select(x => new SelectListItem()
+                {
+                    Text = x.CategoryName,
+                    Value = x.Id.ToString()
+                })]
+            };
+
+            return View(model);
         }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPackage(int Id)
         {
             return await Task.Run(() => { return View(); });
+        }
+        [HttpPost]
+        public async Task<IActionResult> Single(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                var path = Path.Combine("wwwroot/uploads", file.FileName);
+                using var stream = new FileStream(path, FileMode.Create);
+                await file.CopyToAsync(stream);
+            }
+            return Ok(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Multiple(List<IFormFile> files)
+        {
+            foreach (var file in files)
+            {
+                if (file.Length > 0)
+                {
+                    var path = Path.Combine("wwwroot/uploads", file.FileName);
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await file.CopyToAsync(stream);
+                }
+            }
+            return Ok(new { success = true });
         }
     }
 }

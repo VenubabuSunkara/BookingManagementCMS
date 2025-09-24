@@ -75,7 +75,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     }
 
     /// <summary>
-    /// Check the couponcode existance
+    /// Check the coupon code is existing
     /// </summary>
     /// <param name="couponCodeId"></param>
     /// <param name="cancellationToken"></param>
@@ -91,7 +91,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     }
 
     /// <summary>
-    /// Get all the couponcodes
+    /// Get all the coupon codes
     /// </summary>
     /// <param name="Skip"></param>
     /// <param name="Take"></param>

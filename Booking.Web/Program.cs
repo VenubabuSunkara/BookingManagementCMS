@@ -1,21 +1,30 @@
 using Amazon.Runtime;
 using Amazon.S3;
+using Booking.Application.DTOs;
+using Booking.Application.Hubs;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
 using Booking.Infrastructure;
 using Booking.Infrastructure.Data.Models;
 using Booking.Infrastructure.Identity.Data;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SendGrid.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<GoogleSettings>(
+    builder.Configuration.GetSection("Google")
+);
+// If you want GoogleSettings to be directly injectable (not via IOptions), you can also do:
+builder.Services.AddSingleton(resolver =>
+    resolver.GetRequiredService<IOptions<GoogleSettings>>().Value
+);
 //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -27,18 +36,22 @@ builder.Services.AddResponseCaching();
 builder.Services.AddOutputCache();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IPasswordHasher<CompanyUser>, PasswordHasher<CompanyUser>>();
-builder.Services.AddAuthentication(
-    CookieAuthenticationDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.SessionStore = builder.Services.BuildServiceProvider()
-                                       .GetRequiredService<ITicketStore>();
+    options.SessionStore = builder.Services.BuildServiceProvider().GetRequiredService<ITicketStore>();
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
     options.SlidingExpiration = true;
     options.Cookie.Name = ".AspNetCore.Identity.Application";
     options.LoginPath = "/Account/Login";
     options.LogoutPath = "/Account/Logout";
 });
+builder.WebHost.ConfigureKestrel(o =>
+{
+    o.ConfigureEndpointDefaults(lo => lo.Protocols =
+        Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1);
+});
+builder.Services.AddSignalR();
 builder.Services.AddAuthorization();  // required
 builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<ICouponCodeService, CouponCodeService>();
@@ -50,14 +63,21 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IReviewCommentService, ReviewCommentService>();
+builder.Services.AddScoped<IDriverVehicleService, DriverVehicleService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
+builder.Services.AddHttpClient<IGooglePlacesService, GooglePlacesService>();
+builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
+builder.Services.AddSingleton<FileReaderService>();
 builder.Services.AddSendGrid(options =>
 {
     options.ApiKey = builder.Configuration["SendGrid:ApiKey"];
 });
-builder.Services.AddTransient<IEmailService, SendGridEmailService>();
+builder.Services.AddTransient<SmtpEmailService>();
+builder.Services.AddTransient<SendGridEmailService>();
 
-builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
+
 // or for AWS:
 var awsOptions = builder.Configuration.GetAWSOptions();
 awsOptions.Credentials = new BasicAWSCredentials(
@@ -86,6 +106,10 @@ builder.Services.AddSingleton<ICloudStorageService, GoogleCloudStorageService>()
 //    options.HeaderName = "X-CSRF-TOKEN";
 //});
 
+// Add MiniProfiler services
+// If using Entity Framework Core, add profiling for it as well (see the end)
+builder.Services.AddMiniProfiler().AddEntityFramework();
+
 // Runtime Compilation
 var mvcBuilder = builder.Services.AddControllersWithViews();
 if (builder.Environment.IsDevelopment())
@@ -94,6 +118,14 @@ if (builder.Environment.IsDevelopment())
 }
 
 var app = builder.Build();
+app.UseMiniProfiler();
+app.MapHub<NotificationHub>("/notificationHub");
+using (var scope = app.Services.CreateScope())
+{
+    var ticketStore = scope.ServiceProvider.GetRequiredService<ITicketStore>();
+    var options = app.Services.GetRequiredService<IOptionsMonitor<CookieAuthenticationOptions>>();
+    options.Get(CookieAuthenticationDefaults.AuthenticationScheme).SessionStore = ticketStore;
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -101,6 +133,8 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+   
+
 }
 else
 {
@@ -121,14 +155,11 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapStaticAssets();
 app.UseResponseCaching();
 app.UseOutputCache();
 //app.UseResponseCompression();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}")

@@ -1,11 +1,10 @@
-using Booking.Application.DTOs;
+using Booking.Application.Enums;
 using Booking.Application.Interfaces;
-using Booking.Infrastructure.Data.Models;
 using Booking.Web.Models;
 using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Common;
-using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Booking.Web.Controllers
 {    /*
@@ -24,21 +23,18 @@ namespace Booking.Web.Controllers
   * 12. Bulk delete -- super admin
   * 13. Transfer Schedule to other driver -- super admin
   */
-    public class DriverController : BaseController
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    //[Authorize(Roles = $"{nameof(RoleType.Admin)},{nameof(RoleType.SuperAdmin)}")]
+    public class DriverController(ILogger<DriverController> logger, IDriverService driverService,
+        IBookingService bookingService, IBookingDetailsService bookingDetailsService, IVehicleService vehicleService) : BaseController
     {
 
-        private readonly ILogger<DriverController> _logger;
-        private readonly IDriverService _driverService;
-        private readonly IBookingService _bookingService;
-        private readonly IBookingDetailsService _bookingDetailsService;
-        public DriverController(ILogger<DriverController> logger, IDriverService driverService,
-            IBookingService bookingService, IBookingDetailsService bookingDetailsService)
-        {
-            _logger = logger;
-            _driverService = driverService;
-            _bookingService = bookingService;
-            _bookingDetailsService = bookingDetailsService;
-        }
+        private readonly ILogger<DriverController> _logger = logger;
+        private readonly IDriverService _driverService = driverService;
+        private readonly IBookingService _bookingService = bookingService;
+        private readonly IBookingDetailsService _bookingDetailsService = bookingDetailsService;
+        private readonly IVehicleService _vehicleService = vehicleService;
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadDriverData([FromBody] DataTableAjaxPostModel request, CancellationToken token)
@@ -89,7 +85,6 @@ namespace Booking.Web.Controllers
             var driverInfo = await _driverService.GetDriverAsync(DriverId, token);
             return View("Preview", driverInfo);
         }
-
         [HttpPost]
         public async Task<IActionResult> ProcessDriver(int driverId, string actionType, CancellationToken token)
         {
@@ -103,50 +98,41 @@ namespace Booking.Web.Controllers
             }
             return RedirectToAction("DriversList");
         }
-        //public async Task<IActionResult> ExportAll()
-        //{
-        //    var data = await _driverService.ExportAllAsync(); // fetch unpaginated filtered data
-        //    using var workbook = new XLWorkbook();
-        //    var worksheet = workbook.Worksheets.Add("Drivers and Vehicles");
-        //    worksheet.Cell(1, 1).InsertTable(data);
+        public async Task<IActionResult> ExportAll(CancellationToken token)
+        {
+            var data = await _driverService.ExportAllAsync(token); // fetch unpaginated filtered data
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Drivers");
+            worksheet.Cell(1, 1).InsertTable(data);
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            var content = stream.ToArray();
 
-        //    using var stream = new MemoryStream();
-        //    workbook.SaveAs(stream);
-        //    var content = stream.ToArray();
+            return File(content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "DriversList.xlsx");
+        }
+        [HttpGet]
+        public async Task<IActionResult> AssignVehicle(int DriverId, CancellationToken token)
+        {
+            var vehicles = await _vehicleService.GetUnAssignedVehiclesList(token);
+            UnassignedVehiclesModel model = new()
+            {
+                UnassignedVehicles = [.. vehicles.Select(x => new SelectListItem()
+                {
+                    Text = x.RegistrationNumber,
+                    Value = x.Id.ToString()
+                })],
+                DriverId = DriverId
+            };
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AssignVehicle(UnassignedDriversModel model, CancellationToken token)
+        {
+            var vehicles = await _vehicleService.GetUnAssignedVehiclesList(token);
 
-        //    return File(content,
-        //                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        //                "DriversList.xlsx");
-        //}
-
-
-        //[HttpGet]
-        //public async Task<IActionResult> Reject(int DriverVehicleId)
-        //{
-        //    if (DriverVehicleId == 0)
-        //        throw new ArgumentException();
-        //    return Json(await _driverService.RejectDriverAsync(DriverVehicleId));
-        //}
-
-        //public async Task<IActionResult> Index()
-        //{
-        //    return await Task.Run(() =>
-        //    {
-        //        return View();
-        //    });
-        //}
-        //// public async Task<IActionResult> GetOrders()
-        //public async Task<IActionResult> Create(CancellationToken token)
-        //{
-        //    if (token.IsCancellationRequested)
-        //        return await Task.Run(() =>
-        //        {
-        //            return View("Index", new NewDriverVehicleDto());
-        //        }, token);
-        //    return await Task.Run(() =>
-        //    {
-        //        return View(new NewDriverVehicleDto());
-        //    }, token);
-        //}
+            return RedirectToAction("DriversList");
+        }
     }
 }

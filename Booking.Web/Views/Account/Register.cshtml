@@ -69,7 +69,7 @@
                     <div class="checkbox p-0">
                         <input asp-for="AcceptPrivacyPolicy" type="checkbox" />
                         <label asp-for="AcceptPrivacyPolicy" class="text-muted">
-                            Agree with<a class="ms-2" href="/">
+                            Agree with<a class="ms-2" asp-action="Privacy" asp-controller="Home">
                                 Privacy
                                 Policy
                             </a>
@@ -80,8 +80,8 @@
                         Create Account
                     </button>
                 </div>
-                <h6 class="text-muted mt-4 or">Or signup with</h6>
-                <div class="social mt-4">
+                @* <h6 class="text-muted mt-4 or">Or signup with</h6>
+               <div class="social mt-4">
                     <div class="btn-showcase">
                         <a class="btn btn-light" href="https://www.linkedin.com/login" target="_blank">
                             <i class="txt-linkedin" data-feather="linkedin"></i>
@@ -94,9 +94,9 @@
                                data-feather="facebook"></i>facebook
                         </a>
                     </div>
-                </div>
+                </div> *@
                 <p class="mt-4 mb-0">
-                    Already have an account?<a class="ms-2" href="login.html">Sign in</a>
+                    Already have an account?<a class="ms-2" asp-action="Login" asp-controller="Account">Sign in</a>
                 </p>
             </form>
         </div>

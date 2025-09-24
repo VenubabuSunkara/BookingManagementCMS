@@ -14,6 +14,7 @@ namespace Booking.Domain.Interfaces
         /// </summary>
         /// <param name="DriverId"></param>
         /// <returns></returns>
-        Task<IEnumerable<ReviewCommentEntity>> GetAllAsync(int DriverId);
+        Task<IEnumerable<ReviewCommentEntity>> GetAllVehicleDriverReviewsAsync(int DriverId, int VehicleId, CancellationToken token);
+        Task<ReviewCommentTableEntity> GetAllReviewComments(string Search, int Take, int Skip, CancellationToken token);
     }
 }

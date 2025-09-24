@@ -4,15 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Booking.Web.Controllers
 {
-    public class BookingsController : BaseController
+    public class BookingsController(ILogger<BookingsController> logger, IBookingService bookingService) : BaseController
     {
-        private readonly ILogger<BookingsController> _logger;
-        private readonly IBookingService _bookingService;
-        public BookingsController(ILogger<BookingsController> logger, IBookingService bookingService)
-        {
-            _logger = logger;
-            _bookingService = bookingService;
-        }
+        private readonly ILogger<BookingsController> _logger = logger;
+        private readonly IBookingService _bookingService = bookingService;
+
         public async Task<IActionResult> Index()
         {
             return await Task.Run(() =>
@@ -22,8 +18,7 @@ namespace Booking.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetAllBookings([FromBody] DataTableAjaxPostModel request,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAllBookings([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
         {
             string search = "";
             if (!String.IsNullOrEmpty(request.search?.value))
@@ -37,5 +32,20 @@ namespace Booking.Web.Controllers
                 data = result.BookingOrders
             });
         }
+        public async Task<IActionResult> GetAllDriverVehicleBookings(CancellationToken cancellationToken)
+        {
+            return await Task.Run(() =>
+            {
+                return View("Index");
+            });
+        }
+            [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GetAllDriverVehicleBookings(int VehicleId, int DriverId, CancellationToken cancellationToken)
+        {
+            var result = await _bookingService.GetVehicleBookings(VehicleId, DriverId, 0, 100, cancellationToken);
+            return View("DriverVehicleBookings", result);
+        }
+
     }
 }

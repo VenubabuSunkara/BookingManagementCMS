@@ -9,6 +9,7 @@ namespace Booking.Application.DTOs.Tour
     public class LocationDto
     {
         public int LocationId { get; set; }
+        public string? Location { get; set; }
 
         public string Name { get; set; } = null!;
 

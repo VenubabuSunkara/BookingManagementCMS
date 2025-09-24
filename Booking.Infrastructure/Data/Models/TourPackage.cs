@@ -37,6 +37,8 @@ public partial class TourPackage
 
     public virtual ICollection<TourActivate> TourActivates { get; set; } = new List<TourActivate>();
 
+    public virtual ICollection<TourBooking> TourBookings { get; set; } = new List<TourBooking>();
+
     public virtual ICollection<TourDestination> TourDestinations { get; set; } = new List<TourDestination>();
 
     public virtual ICollection<TourGuideAssignment> TourGuideAssignments { get; set; } = new List<TourGuideAssignment>();

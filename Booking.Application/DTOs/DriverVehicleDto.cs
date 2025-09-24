@@ -7,39 +7,9 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.DTOs
 {
-    public class DriverVehicleInfoDto
-    {
-        public DriverDto? Driver { get; set; }
-        public VehicleDto? Vehicle { get; set; }
-        public VehicleMediaDto? VehicleMedia { get; set; }
-        public DriverVehicleInfoDto()
-        {
-            Driver = new DriverDto();
-            Vehicle = new VehicleDto();
-            VehicleMedia = new VehicleMediaDto();
-        }
-    }
     public class DriverVehicleDto
     {
-        public int DriverId { get; set; }
-        public string DriverName { get; set; } = string.Empty;
-        public string DriverContact { get; set; } = string.Empty;
-        public string VehicleName { get; set; } = string.Empty;
-        public int SeatingCapacity { get; set; }
-        public string VehicleThumbnail { get; set; } = string.Empty;
-        public string VehicleType { get; set; } = string.Empty;
-        public int VehicleId { get; set; }
-        public DateTime Created { get; set; }
-        public bool? isApproved { get; set; }
-        public int DriverVehicleId { get; set; }
+        public DriverDto Driver { get; set; } = new DriverDto();
+        public VehicleDto Vehicle { get; set; } = new VehicleDto();
     }
-    public class DriverDataTableDto
-    {
-        public int TotalRecords { get; set; }
-        public int FilterRecords { get; set; }
-        public IEnumerable<DriverVehicleDto> DriverInfo { get; set; } = [];
-        public string NextLink { get; set; } = string.Empty;
-        public string PrevLink { get; set; } = string.Empty;
-    }
-
 }

@@ -1,11 +1,6 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
@@ -16,26 +11,44 @@ namespace Booking.Application.Services
         /// </summary>
         private readonly IReviewCommentsRepository _reviewCommentsRepository = reviewCommentsRepository;
 
-        /// <summary>
-        /// Get Driver vehicle Comments
-        /// </summary>
-        /// <param name="DriverId"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<ReviewCommentsDto>> GetAllAsync(int DriverId)
+        public async Task<ReviewCommentTableDto> GetAllReviewComments(string Search, int Take, int Skip, CancellationToken token)
         {
-            var reviewComments = await _reviewCommentsRepository.GetAllAsync(DriverId);
+            var reviewComments = await _reviewCommentsRepository.GetAllReviewComments(Search, Take, Skip, token);
+            return new ReviewCommentTableDto()
+            {
+                Total = reviewComments.Total,
+                Filtered = reviewComments.Filtered,
+                ReviewComments = reviewComments.ReviewComments.Select(x => new ReviewCommentsDto()
+                {
+                    DriverComment = x.DriverComment,
+                    DriverId = x.DriverId,
+                    VehicleId = x.VehicleId,
+                    Id = x.Id,
+                    Rating = x.Rating,
+                    VehicleComment = x.VehicleComment,
+                    Suggestions = x.Suggestions,
+                    DriverLicense = x.DriverLicense,
+                    VehicleNo = x.VehicleNo,
+                    CreatedOn = x.CreatedOn,
+                })
+            };
+
+        }
+
+        public async Task<IEnumerable<ReviewCommentsDto>> GetAllVehicleDriverReviewsAsync(int DriverId, int VehicleId, CancellationToken token)
+        {
+            var reviewComments = await _reviewCommentsRepository.GetAllVehicleDriverReviewsAsync(DriverId, VehicleId, token);
             return reviewComments.Select(x => new ReviewCommentsDto()
             {
-                Comment = x.Comment,
-                CreatedBy = x.CreatedBy,
-                CreatedOn = x.CreatedOn,
+                DriverComment = x.DriverComment,
                 DriverId = x.DriverId,
+                VehicleId = x.VehicleId,
                 Id = x.Id,
                 Rating = x.Rating,
-                UpdatedBy = x.UpdatedBy,
-                UpdatedOn = x.UpdatedOn,
-
-            }).AsParallel();
+                VehicleComment = x.VehicleComment,
+                Suggestions = x.Suggestions,
+                CreatedOn = x.CreatedOn,
+            });
         }
     }
 }

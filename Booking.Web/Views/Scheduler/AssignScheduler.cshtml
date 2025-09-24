@@ -1,0 +1,127 @@
+﻿@model Booking.Application.DTOs.AssignmentViewModel
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Quick Assignment</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="quickAssignForm" asp-action="QuickAssign" asp-controller="Assignment">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <!-- start -->
+                                    <div class="">
+                                        <div class="row mb-3">
+                                            <div class="col-6 mb-3">
+                                                <label class="form-label-title" asp-for="Assignment.DriverId">Select Driver</label>
+                                                <select asp-for="Assignment.DriverId"
+                                                        asp-items="Model.Drivers"
+                                                        class="form-control">
+                                                    <option value="">Choose Driver</option>
+                                                </select>
+                                                <span asp-validation-for="Assignment.DriverId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <label class="form-label-title" asp-for="Assignment.VehicleId">Select Vehicle</label>
+                                                <select asp-for="Assignment.VehicleId"
+                                                        asp-items="Model.Vehicles"
+                                                        class="form-control">
+                                                    <option value="">Choose Vehicle</option>
+                                                </select>
+                                                <span asp-validation-for="Assignment.VehicleId" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-center">
+                                        <label class="form-label-title">
+                                            Date Range
+                                        </label>
+                                    </div>
+                                    <div id="route-container">
+                                        <div class="route-form">
+                                            <div class="mt-3">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.StartDate"
+                                                               type="date"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.StartDate" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.EndDate"
+                                                               type="date"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.EndDate" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-center">
+                                        <label class="form-label-title">
+                                            Schedule Time
+                                        </label>
+                                    </div>
+                                    <div id="route-container">
+                                        <div class="route-form">
+                                            <div class="mt-3">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.StartTime"
+                                                               type="time"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.StartTime" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.EndTime"
+                                                               type="time"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.EndTime" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <!-- start -->
+                                    <div class="">
+                                        <div class="row mb-3">
+                                            <div class="col-6 mb-3">
+                                                <label asp-for="Assignment.RouteId">Route</label>
+                                                <select asp-for="Assignment.RouteId"
+                                                        asp-items="Model.Routes"
+                                                        class="form-control">
+                                                    <option value="">Select Route</option>
+                                                </select>
+                                                <span asp-validation-for="Assignment.RouteId" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- end route -->
+                                <div class="card-footer text-end">
+                                    <button class="btn btn-primary me-3" type="submit">Submit</button>
+                                    <button class="btn btn-outline-primary" type="button">Cancel</button>
+                                </div>
+                            </form>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->

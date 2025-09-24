@@ -1,14 +1,17 @@
 ﻿using Booking.Application.Interfaces;
 using Booking.Application.Services;
+using Booking.Infrastructure.Data.Models;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Booking.Web.Controllers
 {
     public class VehicleController(ILogger<VehicleController> logger, IVehicleService vehicleService,
-       IBookingService bookingService, IBookingDetailsService bookingDetailsService) : BaseController
+       IBookingService bookingService, IBookingDetailsService bookingDetailsService, IDriverService driverService) : BaseController
     {
         private readonly ILogger<VehicleController> _logger = logger;
+        private readonly IDriverService _driverService = driverService;
         private readonly IVehicleService _vehicleService = vehicleService;
         private readonly IBookingService _bookingService = bookingService;
         private readonly IBookingDetailsService _bookingDetailsService = bookingDetailsService;
@@ -43,6 +46,33 @@ namespace Booking.Web.Controllers
             {
                 return View();
             }, token);
+        }
+
+        public async Task<IActionResult> AssignDriver(int VehicleId, CancellationToken token)
+        {
+            var drivers = await _driverService.GetUnAssignedDriversList(token);
+            UnassignedDriversModel model = new()
+            {
+                UnassignedDrivers = [.. drivers.Select(x => new SelectListItem()
+                {
+                    Text = x.License,
+                    Value = x.Id.ToString()
+                })],
+                VehicleId = VehicleId
+            };
+            return View(model);
+        }
+        public async Task<IActionResult> Edit(int VehicleId)
+        {
+            return null;
+        }
+        public async Task<IActionResult> Preview(int VehicleId)
+        {
+            return null;
+        }
+        public async Task<IActionResult> ExportAll(CancellationToken token)
+        {
+            return null;
         }
     }
 }

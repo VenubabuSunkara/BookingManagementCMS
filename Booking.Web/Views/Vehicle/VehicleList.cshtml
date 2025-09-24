@@ -12,18 +12,18 @@
                     <div>
                         <h5>All Vehicles</h5>
                     </div>
-                    <form class="d-inline-flex">
-                        <div class="d-flex gap-2">
-                            <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
-                                <i data-feather="plus-square"></i>Add New
-                            </a>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
 
-                            <a href="@Url.ActionLink("Import", "Driver")" class="btn btn-theme">
-                                <i data-feather="file-plus"></i>Import
-                            </a>
-                        </div>
-
-                    </form>
+                        <form asp-controller="Vehicle" asp-action="Import" method="post" enctype="multipart/form-data">
+                            <label class="btn btn-theme mb-0">
+                                <i data-feather="file-plus"></i> Import
+                                <input type="file" name="file" hidden onchange="this.form.submit()" />
+                            </label>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -60,7 +60,9 @@
         </div>
     </div>
 </div>
+@section Popup {
 
+}
 
 <!-- Container-fluid ends-->
 <!-- Container-fluid Ends-->
@@ -79,17 +81,18 @@
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
         var deleteId = null;
+        var ApproveId=null;
          function approveVehicle(vehicleId){
-             deleteId=vehicleId;
-             $("#hdnParam").val(vehicleId);
-             $('#deleteConfirmModal').modal('show');
+             ApproveId=vehicleId;
+             $("#approveParam").val(vehicleId);
+             $('#approveConfirmModal').modal('show');
          }
-             $('#confirmDeleteBtn').on('click', function () {
-                  if (deleteId) {
+            function ApproveConfirm(){
+                  if (ApproveId) {
                       $.ajax({
                           type: "POST",
                           url: "/Vehicle/ApproveVehicle",
-                          data: { VehicleId:vehicleId },
+                          data: { VehicleId:ApproveId },
                           dataType: "json",
                           headers: {
                             'RequestVerificationToken': token
@@ -102,17 +105,20 @@
                           }
                      });
                  }
-               });
-        function Preview(e, url) {
-          e.preventDefault();
-          location.href = url;
-        }
+               }
 
          function rejectVehicle(vehicleId){
-              $.ajax({
+             deleteId=vehicleId;
+             $("#deleteParam").val(vehicleId);
+             $('#deleteConfirmModal').modal('show');
+         }
+         function DeleteConfirm(){
+             if(deleteId)
+             {
+                 $.ajax({
                      type: "POST",
                      url: "/Vehicle/RejectVehicle",
-                     data: { vehicleId:vehicleId },
+                     data: { vehicleId:deleteId },
                      dataType: "json",
                      headers: {
                        'RequestVerificationToken': token
@@ -124,8 +130,13 @@
                      console.error(error);
                      }
                  });
-
+             }
          }
+
+        function Preview(e, url) {
+          e.preventDefault();
+          location.href = url;
+        }
          var  VehicleListVM = {
                  Vehicledt: null,
                  init: function () {
@@ -211,8 +222,8 @@
                                  render: function (data, type, full, meta) {
                                     let actions = !full.isActive
                                     ? `<a href="javascript:void(0)" title="approve vehicle" onclick="approveVehicle(${data})"><i class="fa fa-id-card"></i></a>`
-                                    : `<a title="preview" href="javascript:void(0)" title="preview vehicle" onclick="Preview(event, '/Vehicle/Preview/${data}')"><i class="fa fa-eye"></i></a> |
-                                       <a href="javascript:void(0)" title="edit vehicle" onclick="EditVehicle(${data})"><i class="fa fa-pencil-square-o"></i></a>`;
+                                    : `<a title="preview" href="/Vehicle/Preview?VehicleId=${data}" title="preview vehicle"><i class="fa fa-eye"></i></a> |
+                                       <a href="/Vehicle/Edit?VehicleId=${data}" title="edit vehicle"><i class="fa fa-pencil-square-o"></i></a>`;
                                   actions += ` | <a href="javascript:void(0)" title="reject vehicle" onclick="rejectvehicle(${data})"><i class="fa fa-trash-o"></i></a>`;
                                   return actions;
                                  }

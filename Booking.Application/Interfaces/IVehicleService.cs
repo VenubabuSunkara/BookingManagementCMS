@@ -17,5 +17,7 @@ namespace Booking.Application.Interfaces
         Task<int> RejectVehiclesAsync(List<int> VehicleIds, CancellationToken token);
         Task<int> AssignDriverAsync(int DriverId, int VehicleId, CancellationToken token);
         Task<VehicleDto?> GetVehicleAsync(int VehicleId, CancellationToken token);
+        Task<IEnumerable<UnAssignedVehiclesDto>> GetUnAssignedVehiclesList(CancellationToken token);
+        Task<IEnumerable<VehicleDropdownDto>> GetVehicleDropdownList(CancellationToken token);
     }
 }

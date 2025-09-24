@@ -145,7 +145,10 @@
                     </a>
                 </li>
                 <li class="profile-nav onhover-dropdown pe-0 me-0">
-                    @await Component.InvokeAsync("UserProfile")
+                    @if (User != null && User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        await Component.InvokeAsync("UserProfile");
+                    }
                 </li>
             </ul>
         </div>

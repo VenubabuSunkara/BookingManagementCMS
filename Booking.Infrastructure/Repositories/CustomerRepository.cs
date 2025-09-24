@@ -10,25 +10,18 @@ namespace Booking.Infrastructure.Repositories
     {
         private readonly BookingCmsContext _context = context;
         private readonly IMemoryCache _cache = cache;
-        public async Task DeActivateAccount(int CustomerId)
+        public async Task<int> DeActivateAccount(int CustomerId, CancellationToken token)
         {
-            var customer = await _context.Customers.FindAsync(CustomerId);
-            if (customer != null)
-            {
-                customer.IsActive = false;
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Customers
+                            .Where(x => x.Id == CustomerId)
+                            .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false)
+                            , cancellationToken: token);
         }
 
-        public Task<IEnumerable<CustomerEntity>> ExportAllAsync()
+        public Task<IEnumerable<CustomerEntity>> ExportAllAsync(CancellationToken token)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<CustomerDTableEntity> GetAll(int Skip, int Take, string searchKey = "")
-        {
-            int TotalCount = await _context.Customers.CountAsync();
-            var Customers = _context.Customers.Select(x => new CustomerEntity()
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            return Task.FromResult(_context.Customers.Select(x => new CustomerEntity()
             {
                 Email = x.Email,
                 FirstName = x.FirstName,
@@ -38,32 +31,51 @@ namespace Booking.Infrastructure.Repositories
                 PhoneNumber = x.PhoneNumber,
                 IsLocked = x.IsLocked,
                 UpdatedOn = x.UpdatedOn
+            }).AsEnumerable());
+        }
 
-            }).Skip(Skip).Take(Take);
+        public async Task<CustomerDTableEntity> GetAll(int Skip, int Take, string searchKey, CancellationToken token)
+        {
+            var q = _context.Customers.AsNoTracking();
+            var total = await q.CountAsync(token);
+            if (!string.IsNullOrWhiteSpace(searchKey))
+            {
+                q = q.Where(d =>
+                            d.FirstName.Contains(searchKey) ||
+                            d.PhoneNumber.Contains(searchKey) ||
+                            d.Email.Contains(searchKey) ||
+                            d.LastName.Contains(searchKey));
+            }
+            // simple order by FullName default
+            q = q.OrderByDescending(d => d.CreatedOn);
+            var filtered = await q.CountAsync(token);
+            var page = await q.Skip(Skip).Take(Take).ToListAsync(token);
             return new CustomerDTableEntity()
             {
-                Total = TotalCount,
-                Filtered = TotalCount,
-                CustomerEntities = Customers
+                Total = total,
+                Filtered = filtered,
+                CustomerEntities = page.Select(x => new CustomerEntity()
+                {
+                    Email = x.Email,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    IsActive = x.IsActive,
+                    Id = x.Id,
+                    PhoneNumber = x.PhoneNumber,
+                    IsLocked = x.IsLocked,
+                    UpdatedOn = x.UpdatedOn
+                })
             };
         }
 
-        public async Task UnLockCustomer(int CustomerId)
+        public async Task<int> UnLockCustomer(int CustomerId, CancellationToken token)
         {
-            var customer = await _context.Customers.FindAsync(CustomerId);
-            if (customer != null)
-            {
-                customer.IsLocked = false;
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Customers
+                           .Where(x => x.Id == CustomerId)
+                           .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsLocked, true)
+                           , cancellationToken: token);
         }
-
-        public Task UpdateCustomer(CustomerEntity customerEntity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdatePassword(CustomerEntity customerEntity)
+        public Task UpdatePassword(CustomerPassordEntity customerEntity, CancellationToken token)
         {
             throw new NotImplementedException();
         }

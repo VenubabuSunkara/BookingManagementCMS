@@ -23,16 +23,12 @@
            class="sidebar-link sidebar-title link-nav"><i data-feather="home"> </i><span>Media</span></a>
     </li>
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Packages</span></a>
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Tour Packages</span></a>
         <ul class="sidebar-submenu">
-            <li><a href="@Url.Action("PackageCategory", "Packages")">All Packages Categories</a></li>
+            <li><a href="@Url.Action("Index", "PackageCategory")">All Packages Categories</a></li>
             <li><a href="@Url.Action("Index", "Packages")">All Packages</a></li>
-            <li>
-                <a href="@Url.Action("ViewPackage", "Packages")">Package Detail</a>
-            </li>
-            <li>
-                <a href="@Url.Action("AddPackage", "Packages")">Add Destinations</a>
-            </li>
+            <li><a href="@Url.Action("ViewPackage", "Packages")">Package Detail</a></li>
+            <li><a href="@Url.Action("AddPackage", "Packages")">Add Destinations</a></li>
             @*  <li>
                 <a href="all-package-categories.html">All Destination Categories</a>
             </li>
@@ -46,7 +42,7 @@
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Driver Vehicles</span></a>
         <ul class="sidebar-submenu">
-            <li><a asp-controller="Driver" asp-action="Index">All Driver Vehicle</a></li>
+            <li><a asp-controller="DriverVehicle" asp-action="Index">All Driver Vehicle</a></li>
             <li><a asp-controller="Driver" asp-action="DriversList">All Drivers</a></li>
             <li><a asp-controller="Vehicle" asp-action="VehicleList">All Vehicles</a></li>
             <li><a asp-controller="Feature" asp-action="Index">All Features</a></li>
@@ -82,8 +78,7 @@
         </a>
     </li>
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title link-nav"
-           href="reviews.html">
+        <a class="sidebar-link sidebar-title link-nav" asp-controller="Review" asp-action="Index">
             <i data-feather="message-square"> </i><span>Reviews</span>
         </a>
     </li>
@@ -91,8 +86,9 @@
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="users"></i><span>Users Management</span></a>
         <ul class="sidebar-submenu">
-            <li><a href="@Url.Action("Index", "Account")">All users</a></li>
-            <li><a href="@Url.Action("AddUser", "Users")">Add new user</a></li>
+            <li><a href="@Url.Action("Index", "Customer")">Customers</a></li>
+            <li><a href="@Url.Action("Index", "Account")">Company Users</a></li>
+            <li><a href="@Url.Action("AddUser", "Users")">Add New User</a></li>
             <li><a href="@Url.Action("Index", "Roles")">Roles</a></li>
         </ul>
     </li>

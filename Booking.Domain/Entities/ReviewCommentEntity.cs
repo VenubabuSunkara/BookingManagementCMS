@@ -11,20 +11,14 @@ namespace Booking.Domain.Entities
     public class ReviewCommentEntity
     {
         public int Id { get; set; }
-
-        public string? Comment { get; set; }
-
+        public string? VehicleComment { get; set; }
+        public string? DriverComment { get; set; }
+        public string? Suggestions { get; set; }
         public decimal? Rating { get; set; }
-
+        public string? DriverLicense { get; set; }
+        public string? VehicleNo { get; set; }
         public int? DriverId { get; set; }
-
+        public int? VehicleId { get; set; }
         public DateTime? CreatedOn { get; set; }
-
-        public DateTime? UpdatedOn { get; set; }
-
-        public int? CreatedBy { get; set; }
-
-        public int? UpdatedBy { get; set; }
-
     }
 }

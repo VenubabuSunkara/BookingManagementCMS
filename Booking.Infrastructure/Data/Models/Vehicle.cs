@@ -41,15 +41,21 @@ public partial class Vehicle
 
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 
+    public virtual ICollection<DriverRoute> DriverRoutes { get; set; } = new List<DriverRoute>();
+
     public virtual DriverVehicle? DriverVehicle { get; set; }
 
+    public virtual ICollection<DriverVehicleAssignment> DriverVehicleAssignments { get; set; } = new List<DriverVehicleAssignment>();
+
     public virtual ICollection<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; } = new List<DriverVehicleAvailability>();
+
+    public virtual ICollection<RentalContract> RentalContracts { get; set; } = new List<RentalContract>();
+
+    public virtual ICollection<ReviewComment> ReviewComments { get; set; } = new List<ReviewComment>();
 
     public virtual ICollection<SeasonalPricing> SeasonalPricings { get; set; } = new List<SeasonalPricing>();
 
     public virtual ICollection<VehicleFeatureMapping> VehicleFeatureMappings { get; set; } = new List<VehicleFeatureMapping>();
 
     public virtual ICollection<VehicleMediaMapping> VehicleMediaMappings { get; set; } = new List<VehicleMediaMapping>();
-
-    public virtual ICollection<VehicleRating> VehicleRatings { get; set; } = new List<VehicleRating>();
 }

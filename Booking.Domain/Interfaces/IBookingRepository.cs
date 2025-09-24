@@ -11,7 +11,7 @@ namespace Booking.Domain.Interfaces
     public interface IBookingRepository
     {
         Task<BookingOrderTableEntity> GetCustomerBookings(string CustomerId, int Skip, int Take, CancellationToken token);
-        Task<BookingOrderTableEntity> GetVehicleBookings(int VehicleId, int Skip, int Take, CancellationToken token);
+        Task<BookingOrderTableEntity> GetVehicleBookings(int VehicleId, int DriverId, int Skip, int Take, CancellationToken token);
         Task<BookingOrderTableEntity> GetDriverBookings(int DriverId, int Skip, int Take, CancellationToken token);
         Task<BookingOrderTableEntity> GetAllBookings(int Skip, int Take, CancellationToken token, string searchKey = "");
     }

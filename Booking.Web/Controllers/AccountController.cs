@@ -1,8 +1,10 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
+using Booking.Application.Services;
 using Booking.Domain.Entities;
 using Booking.Web.Models;
 using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +14,15 @@ using System.Security.Claims;
 
 namespace Booking.Web.Controllers
 {
+    [Authorize]
     public class AccountController(IAccountService accountService, IRoleService roleService,
-        ILogger<AccountController> logger, IEmailService emailService) : BaseController
+        ILogger<AccountController> logger, SmtpEmailService emailService) : BaseController
     {
         private readonly IAccountService _accountService = accountService;
         private readonly IRoleService _roleService = roleService;
         private readonly ILogger<AccountController> _logger = logger;
-        private readonly IEmailService _emailService = emailService;
-
+        private readonly SmtpEmailService _emailService = emailService;
+        [AllowAnonymous]
         public async Task<IActionResult> Login(CancellationToken token)
         {
             return await Task.Run(() =>
@@ -27,6 +30,7 @@ namespace Booking.Web.Controllers
                 return View();
             }, token);
         }
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginDto loginDto)
@@ -57,6 +61,7 @@ namespace Booking.Web.Controllers
             await _accountService.LogOut(userId);
             return RedirectToAction("Login");
         }
+        [AllowAnonymous]
         public async Task<IActionResult> Register(CancellationToken token)
         {
             RegisterDto registerDto = new();
@@ -68,6 +73,7 @@ namespace Booking.Web.Controllers
             });
             return View(registerDto);
         }
+        [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterDto model, CancellationToken token)
@@ -116,7 +122,7 @@ namespace Booking.Web.Controllers
             var result = await _accountService.ConfirmEmailAsync(userId, token, cancellation);
             return View(result ? "ConfirmEmailSuccess" : "Error");
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers([FromBody] DataTableAjaxPostModel request, CancellationToken token,
             string RoleName = "All")
         {
@@ -132,7 +138,25 @@ namespace Booking.Web.Controllers
                 data = users.UsersDto.ToArray()
             });
         }
-
+        [HttpGet]
+        public async Task<IActionResult> PrivacyPolicy(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
+        }
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> ForgotPassword(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
+        }
+        [AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model, CancellationToken cancellation)
         {
             if (!ModelState.IsValid) return View(model);
@@ -143,11 +167,32 @@ namespace Booking.Web.Controllers
             await _emailService.SendEmailAsync(new IEmailService.EmailMessage(model.Email, "Reset Password", "", $"Reset your password by <a href='{resetLink}'>clicking here</a>."));
             return RedirectToAction("ForgotPasswordConfirmation");
         }
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string Token, string email, CancellationToken cancellation)
+        {
+            return await Task.Run(() =>
+            {
+                ResetPasswordDto dto = new()
+                {
+                    Token = Token,
+                    Email = email
+                };
+
+                return View(dto);
+            });
+        }
+        [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> ResetPassword(ForgotPasswordDto model, CancellationToken cancellation)
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model, CancellationToken cancellation)
         {
             if (!ModelState.IsValid) return View(model);
-            bool isReset = await _accountService.ResetPassword(model, cancellation);
+            ForgotPasswordDto dto = new()
+            {
+                Email = model.Email,
+                Password = model.Password,
+                Token = model.Token
+            };
+            bool isReset = await _accountService.ResetPassword(dto, cancellation);
             if (isReset) return RedirectToAction("ResetPasswordConfirmation");
             return View(model);
         }
@@ -160,6 +205,7 @@ namespace Booking.Web.Controllers
             return View(model);
         }
         // GET: /Account/ForgotPasswordConfirmation
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult ForgotPasswordConfirmation()
         {
@@ -167,6 +213,7 @@ namespace Booking.Web.Controllers
         }
 
         // GET: /Account/ResetPasswordConfirmation
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult ResetPasswordConfirmation()
         {

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 
 namespace Booking.Web.Controllers
 {
-    public class HomeController : Controller
+    [Authorize(Roles = "Admin,SuperAdmin")]
+    public class HomeController : BaseController
     {
         public async Task<IActionResult> Index()
         {

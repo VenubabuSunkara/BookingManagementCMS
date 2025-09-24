@@ -411,7 +411,7 @@ var currentStep = 1;
 var updateProgressBar;
 
 function displayStep(stepNumber) {
-  if (stepNumber >= 1 && stepNumber <= 3) {
+  if (stepNumber >= 1 && stepNumber <= 4) {
     $(".step-" + currentStep).hide();
     $(".step-" + stepNumber).show();
     currentStep = stepNumber;
@@ -423,7 +423,7 @@ function displayStep(stepNumber) {
     $('#multi-step-form').find('.step').slice(1).hide();
   
     $(".next-step").click(function() {
-      if (currentStep < 3) {
+      if (currentStep < 4) {
         $(".step-" + currentStep).addClass("animate__animated animate__fadeOutLeft");
         currentStep++;
         setTimeout(function() {

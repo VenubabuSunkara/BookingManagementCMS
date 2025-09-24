@@ -21,5 +21,7 @@ namespace Booking.Domain.Entities
         public DateTime? Created { get; set; } = DateTime.Now;
         public string? Photo { get; set; }
         public bool? IsApproved { get; set; }
+        public float Rating { get; set; }
+        public bool? IsVehicleAssigned { get; set; }
     }
 }
