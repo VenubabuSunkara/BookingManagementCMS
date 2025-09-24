@@ -1,4 +1,5 @@
-﻿using Booking.Domain.Entities;
+﻿using Booking.Application.DTOs;
+using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -145,6 +146,16 @@ namespace Booking.Infrastructure.Repositories
             }, token);
             var records = await _context.SaveChangesAsync(token);
             return records > 0;
+        }
+        public async Task<IEnumerable<VehicleDropdownEntity>> GetVehicleDropdownList(CancellationToken token)
+        {
+            return await _context.Vehicles.AsNoTracking()
+                                  .Select(d => new VehicleDropdownEntity()
+                                  {
+                                      VehicleId = d.VehicleId,
+                                      ModelName = d.ModelName,
+                                      RegistrationNumber = d.VehicleNumber
+                                  }).ToListAsync(token);
         }
     }
 }

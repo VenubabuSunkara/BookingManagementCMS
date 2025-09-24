@@ -1,0 +1,304 @@
+﻿@model Booking.Application.DTOs.QuickAssignmentViewModel
+@{
+    var today = DateTime.Today;
+    var twoMonthsFromNow = today.AddMonths(2);
+    string minDate = today.ToString("yyyy-MM-dd");
+    string maxDate = twoMonthsFromNow.ToString("yyyy-MM-dd");
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Quick Assignment</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="quickAssignForm" asp-action="QuickAssign" asp-controller="Assignment">
+                                @Html.AntiForgeryToken()
+                                <div class="mb-3">
+                                    <!-- start -->
+                                    <div class="">
+                                        <div class="row mb-3">
+                                            <div class="col-6 mb-3">
+                                                <label class="form-label-title" asp-for="Driver.FullName">@Model.Driver.FullName</label>
+                                                <label asp-for="Driver.LicenseNumber" class="form-label-title">@Model.Driver.LicenseNumber</label>
+                                                <input asp-for="Driver.Id" type="hidden" />
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <label class="form-label-title" asp-for="Vehicle.ModelName">@Model.Vehicle.ModelName</label>
+                                                <label class="form-label-title" asp-for="Vehicle.Make">@Model.Vehicle.Make</label>
+                                                <label asp-for="Vehicle.VehicleNumber" class="form-label-title">@Model.Vehicle.VehicleNumber</label>
+                                                <input asp-for="Vehicle.Id" type="hidden" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-center">
+                                        <label class="form-label-title">
+                                            Add Transportation Sources
+                                        </label>
+                                    </div>
+                                    <div id="transportation-container">
+                                        <div class="row input-row">
+                                            <div class="col-6 mb-3">
+                                                <select asp-for="TripTypeId"
+                                                        asp-items="Model.TripType"
+                                                        class="form-control">
+                                                    <option value="">Choose TripType</option>
+                                                    <option value="1">Airport To Location</option>
+                                                </select>
+                                                <span asp-validation-for="TripTypeId" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <select asp-for="VehicleTypeId"
+                                                        asp-items="Model.VehicleType"
+                                                        class="form-control">
+                                                    <option value="">Choose VehicleType</option>
+                                                    <option value="1">Sedan</option>
+                                                </select>
+                                                <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-center">
+                                        <label class="form-label-title">
+                                            Date Range
+                                        </label>
+                                    </div>
+                                    <div id="route-container">
+                                        <div class="route-form">
+                                            <div class="mt-3">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 col-md-6">
+
+                                                        <input asp-for="Assignment.StartDate"
+                                                               type="date" min="@minDate"
+                                                               max="@maxDate"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.StartDate" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.EndDate"
+                                                               type="date" min="@minDate"
+                                                               max="@maxDate"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.EndDate" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-center">
+                                        <label class="form-label-title">
+                                            Schedule Time
+                                        </label>
+                                    </div>
+                                    <div id="route-container">
+                                        <div class="route-form">
+                                            <div class="mt-3">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.StartTime"
+                                                               type="time"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.StartTime" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <input asp-for="Assignment.EndTime"
+                                                               type="time"
+                                                               class="form-control" />
+                                                        <span asp-validation-for="Assignment.EndTime" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-center">
+                                        <label class="form-label-title">
+                                            Create Route
+                                        </label>
+                                        <button id="btn-add-route" class="mb-2 add-new-route btn btn-primary me-3">
+                                            +Add New
+                                        </button>
+                                    </div>
+                                    <div id="route-container">
+                                        <div class="route-form">
+                                            <input class="form-control" asp-for="@Model.Routes[0].RouteName"
+                                                   type="text"
+                                                   placeholder="Add Route Headline" />
+                                            <input class="form-control mt-3"
+                                                   type="text"
+                                                   placeholder="Add Destination" />
+
+                                            <div class="mt-3">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <select class="form-control">
+                                                            <option value="">
+                                                                City/Location: 1
+                                                            </option>
+                                                            <option value="india">India</option>
+                                                            <option value="usa">USA</option>
+                                                            <option value="canada">Canada</option>
+                                                            <option value="australia">
+                                                                Australia
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <select class="form-control">
+                                                            <option value="">
+                                                                City/Location: 2
+                                                            </option>
+                                                            <option value="delhi">Delhi</option>
+                                                            <option value="newyork">
+                                                                New York
+                                                            </option>
+                                                            <option value="toronto">Toronto</option>
+                                                            <option value="sydney">Sydney</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <div class="row mb-3">
+                                                    <div class="col-12 col-md-6">
+                                                        <input class="form-control"
+                                                               type="number"
+                                                               placeholder="Distance" />
+                                                    </div>
+                                                    <div class="col-12 col-md-6">
+                                                        <input class="form-control"
+                                                               type="time"
+                                                               placeholder="Duration/Time" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- end route -->
+                                <div class="card-footer text-end">
+                                    <button class="btn btn-primary me-3" type="submit">Submit</button>
+                                    <button class="btn btn-outline-primary" type="button">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+   @*  <script async defer src="https://maps.googleapis.com/maps/api/js?key=@ViewBag.ApiKey&libraries=places&callback=initPlaces&loading=async"></script>
+    <script>
+        let routeIndex = 0;
+        async function initPlaces() {
+             await google.maps.importLibrary("places");
+          // Called once Google Maps JS is ready
+          document.getElementById('btn-add-route').addEventListener('click', addRouteForm);
+
+          // Add the first route by default
+          addRouteForm();
+
+          //document.getElementById('btn-submit').addEventListener('click', submitRoutes);
+        }
+        function addRouteForm() {
+          const tpl = document.getElementById('route-template');
+          const formEl  = tpl.querySelector('.route-form').cloneNode(true);
+          const idx = routeIndex++;
+          formEl.dataset.idx = idx;
+              // Fix name attributes replacing placeholder __idx__ with actual idx
+            formEl.querySelectorAll('[name]').forEach(el => {
+              el.name = el.name.replace("__idx__", idx);
+            });
+                       // Start autocomplete element
+            const startContainer = formEl.querySelector('.start-autocomplete-container');
+            const startPlaceIdInput = formEl.querySelector('.start-place-id');
+            const startFormattedAddressInput = formEl.querySelector('.start-formatted-address');
+            const startAutocompleteEl = new google.maps.places.PlaceAutocompleteElement({
+            });
+            startContainer.appendChild(startAutocompleteEl);
+
+            startAutocompleteEl.addEventListener("gmp-select", async ({ placePrediction }) => {
+              const place = placePrediction.toPlace();
+              await place.fetchFields({ fields: ['formattedAddress','placeId','geometry'] });
+              startPlaceIdInput.value = place.placeId;
+              startFormattedAddressInput.value = place.formattedAddress;
+            });
+
+                 // End autocomplete element
+            const endContainer = formEl.querySelector('.end-autocomplete-container');
+            const endPlaceIdInput = formEl.querySelector('.end-place-id');
+            const endFormattedAddressInput = formEl.querySelector('.end-formatted-address');
+
+            const endAutocompleteEl = new google.maps.places.PlaceAutocompleteElement({
+            });
+            endContainer.appendChild(endAutocompleteEl);
+
+            endAutocompleteEl.addEventListener("gmp-select", async ({ placePrediction }) => {
+              const place = placePrediction.toPlace();
+              await place.fetchFields({ fields: ['formattedAddress','placeId','geometry'] });
+              endPlaceIdInput.value = place.placeId;
+              endFormattedAddressInput.value = place.formattedAddress;
+            });
+
+            document.getElementById('route-template').appendChild(formEl);
+
+        }
+
+        function submitRoutes() {
+          const container = document.getElementById('route-container');
+          const routeForms = container.querySelectorAll('.route-form');
+
+          const routes = Array.from(routeForms).map(rf => {
+            return {
+              routeName: rf.querySelector('.route-name').value,
+              startLocation: rf.querySelector('.start-location').value,
+              startPlaceId: rf.querySelector('.start-place-id').value,
+              startPlaceJson: rf.querySelector('.start-place-json').value,
+              endLocation: rf.querySelector('.end-location').value,
+              endPlaceId: rf.querySelector('.end-place-id').value,
+              endPlaceJson: rf.querySelector('.end-place-json').value,
+              distance: rf.querySelector('.distance').value,
+              duration: rf.querySelector('.duration').value
+            };
+          });
+
+          // For example send via fetch
+          fetch('/YourRouteSubmitEndpoint', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ routes: routes })
+          })
+          .then(resp => resp.json())
+          .then(data => {
+            console.log('Server responded', data);
+            // Handle server response
+          })
+          .catch(err => {
+            console.error('Error submitting routes', err);
+          });
+        }
+
+    </script> *@
+}

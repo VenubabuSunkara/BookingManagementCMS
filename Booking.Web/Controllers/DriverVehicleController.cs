@@ -1,17 +1,24 @@
-﻿using Booking.Application.Interfaces;
+﻿using Booking.Application.DTOs;
+using Booking.Application.Interfaces;
 using Booking.Application.Services;
+using Booking.Infrastructure.Data.Models;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
 
 namespace Booking.Web.Controllers
 {
     [Authorize(Roles = "Admin,SuperAdmin")]
-    public class DriverVehicleController(ILogger<DriverVehicleController> logger,
-        IDriverVehicleService driverVehicleService) : BaseController
+    public class DriverVehicleController(ILogger<DriverVehicleController> logger, IDriverService driverService,
+        IDriverVehicleService driverVehicleService, IVehicleService vehicleService, IOptions<GoogleSettings> options) : BaseController
     {
         private readonly ILogger<DriverVehicleController> _logger = logger;
         private readonly IDriverVehicleService _driverVehicleService = driverVehicleService;
+        private readonly IDriverService _driverService = driverService;
+        private readonly IVehicleService _vehicleService = vehicleService;
+        private readonly GoogleSettings _settings = options.Value;
         public async Task<IActionResult> Index(CancellationToken token)
         {
             return await Task.Run(() =>
@@ -48,10 +55,57 @@ namespace Booking.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> AddSchedule(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View("Index");
+            }, token);
+
+            //var driver = await _driverService.GetDriversDropdownList(token);
+            //var vehicle = await _vehicleService.GetVehicleDropdownList(token);
+            //ViewBag.ApiKey = _settings.PlacesApiKey;
+            //QuickAssignmentViewModel model = new()
+            //{
+            //    Vehicles = [.. vehicle.Select(x => new SelectListItem()
+            //    {
+            //        Text = x.ModelName,
+            //        Value = x.VehicleId.ToString()
+            //    })],
+            //    Drivers = [.. driver.Select(x => new SelectListItem()
+            //    {
+            //        Text = x.FullName,
+            //        Value = x.Id.ToString()
+            //    })]
+            //};
+            //return View("QuickAssign", model);
+        }
+
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<IActionResult> AddSchedule(int DriverId, int VehicleId, CancellationToken token)
         {
+            var driver = await _driverService.GetDriverAsync(DriverId, token);
+            var vehicle = await _vehicleService.GetVehicleAsync(VehicleId, token);
+            ViewBag.ApiKey = _settings.PlacesApiKey;
+            QuickAssignmentViewModel model = new()
+            {
+                Vehicle = vehicle,
+                Driver = driver,
+            };
+            return View("QuickAssign", model);
+        }
+        [ValidateAntiForgeryToken, HttpPost]
+        public async Task<ActionResult> DriverVehicleRoutes(int DriverId, int VehicleId, CancellationToken token)
+        {
             return null;
+        }
+
+        public async Task<IActionResult> Create(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
         }
     }
 }

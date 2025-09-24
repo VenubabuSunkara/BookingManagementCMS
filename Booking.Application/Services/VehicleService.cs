@@ -52,6 +52,16 @@ namespace Booking.Application.Services
                 OtherInfromation = vehicle.OtherInfromation,
             };
         }
+        public async Task<IEnumerable<VehicleDropdownDto>> GetVehicleDropdownList(CancellationToken token)
+        {
+            var vehicleList = await _vehicleRepository.GetVehicleDropdownList(token);
+            return [.. vehicleList.Select(x => new VehicleDropdownDto()
+            {
+                ModelName = x.ModelName,
+                VehicleId = x.VehicleId,
+                RegistrationNumber = x.RegistrationNumber
+            })];
+        }
         public async Task<VehicleTableDto> GetVehicleListAsync(string SearchValue, int Take, int Skip, CancellationToken token)
         {
             var vehicles = await _vehicleRepository.GetVehicleListAsync(SearchValue, Take, Skip, token);

@@ -18,5 +18,6 @@ namespace Booking.Domain.Interfaces
         Task<DriverEntity?> GetDriverAsync(int DriverId, CancellationToken token);
         Task<IEnumerable<DriverExportEntity>> ExportAllAsync(CancellationToken token);
         Task<IEnumerable<UnAssignedDriversEntity>> GetUnAssignedDriversList(CancellationToken token);
+        Task<IEnumerable<DriversDropdownEntity>> GetDriversDropdownList(CancellationToken token);
     }
 }

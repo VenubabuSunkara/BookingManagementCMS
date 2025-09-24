@@ -18,5 +18,6 @@ namespace Booking.Domain.Interfaces
         Task<VehicleEntity?> GetVehicleAsync(int VehicleId, CancellationToken token);
         Task<IEnumerable<UnAssignedVehiclesEntity>> GetUnAssignedVehiclesList(CancellationToken token);
         Task<bool> AssignDriver(AssignVehicleDriverEntity model, CancellationToken token);
+        Task<IEnumerable<VehicleDropdownEntity>> GetVehicleDropdownList(CancellationToken token);
     }
 }

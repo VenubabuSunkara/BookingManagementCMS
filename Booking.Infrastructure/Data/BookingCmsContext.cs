@@ -18,6 +18,8 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<AddressType> AddressTypes { get; set; }
 
+    public virtual DbSet<Airport> Airports { get; set; }
+
     public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
 
     public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
@@ -52,7 +54,11 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<DriverMediaMapping> DriverMediaMappings { get; set; }
 
+    public virtual DbSet<DriverRoute> DriverRoutes { get; set; }
+
     public virtual DbSet<DriverVehicle> DriverVehicles { get; set; }
+
+    public virtual DbSet<DriverVehicleAssignment> DriverVehicleAssignments { get; set; }
 
     public virtual DbSet<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; }
 
@@ -72,6 +78,8 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<Permission> Permissions { get; set; }
 
+    public virtual DbSet<RentalContract> RentalContracts { get; set; }
+
     public virtual DbSet<ReviewComment> ReviewComments { get; set; }
 
     public virtual DbSet<RoleMenu> RoleMenus { get; set; }
@@ -85,6 +93,8 @@ public partial class BookingCmsContext : DbContext
     public virtual DbSet<Taxis> Taxes { get; set; }
 
     public virtual DbSet<TourActivate> TourActivates { get; set; }
+
+    public virtual DbSet<TourBooking> TourBookings { get; set; }
 
     public virtual DbSet<TourDestination> TourDestinations { get; set; }
 
@@ -139,6 +149,38 @@ public partial class BookingCmsContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.TypeName)
                 .HasMaxLength(10)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<Airport>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Airports__3214EC07BB1E7C16");
+
+            entity.Property(e => e.City)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.Country)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.DefaultDropoffZone)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.DefaultPickupZone)
+                .HasMaxLength(200)
+                .IsUnicode(false);
+            entity.Property(e => e.Iata)
+                .HasMaxLength(3)
+                .IsUnicode(false)
+                .IsFixedLength()
+                .HasColumnName("IATA");
+            entity.Property(e => e.Name)
+                .HasMaxLength(200)
                 .IsUnicode(false);
             entity.Property(e => e.UpdatedOn)
                 .HasDefaultValueSql("(getdate())")
@@ -518,6 +560,39 @@ public partial class BookingCmsContext : DbContext
                 .HasConstraintName("FK__DriverMed__Media__20E1DCB5");
         });
 
+        modelBuilder.Entity<DriverRoute>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__DriverRo__3214EC072F812E34");
+
+            entity.ToTable("DriverRoute");
+
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(450)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.EndLocation).HasMaxLength(200);
+            entity.Property(e => e.StartLocation).HasMaxLength(200);
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.UpdatedBy)
+                .HasMaxLength(450)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Driver).WithMany(p => p.DriverRoutes)
+                .HasForeignKey(d => d.DriverId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Route_Driver");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.DriverRoutes)
+                .HasForeignKey(d => d.VehicleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Route_Vehicle");
+        });
+
         modelBuilder.Entity<DriverVehicle>(entity =>
         {
             entity.HasKey(e => new { e.DriverId, e.VehicleId }).HasName("PK__DriverVe__C5C7786FE1B7386D");
@@ -549,6 +624,41 @@ public partial class BookingCmsContext : DbContext
                 .HasForeignKey<DriverVehicle>(d => d.VehicleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__DriverVeh__Vehic__66B53B20");
+        });
+
+        modelBuilder.Entity<DriverVehicleAssignment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__DriverVe__3214EC07E4B4F779");
+
+            entity.ToTable("DriverVehicleAssignment");
+
+            entity.Property(e => e.CreatedBy)
+                .HasMaxLength(450)
+                .IsUnicode(false);
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedBy)
+                .HasMaxLength(450)
+                .IsUnicode(false);
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Driver).WithMany(p => p.DriverVehicleAssignments)
+                .HasForeignKey(d => d.DriverId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DVA_Driver");
+
+            entity.HasOne(d => d.Route).WithMany(p => p.DriverVehicleAssignments)
+                .HasForeignKey(d => d.RouteId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DVA_Route");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.DriverVehicleAssignments)
+                .HasForeignKey(d => d.VehicleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_DVA_Vehicle");
         });
 
         modelBuilder.Entity<DriverVehicleAvailability>(entity =>
@@ -729,6 +839,35 @@ public partial class BookingCmsContext : DbContext
                 .HasColumnType("datetime");
         });
 
+        modelBuilder.Entity<RentalContract>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__RentalCo__3214EC07F5FAA720");
+
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Extras).HasMaxLength(1000);
+            entity.Property(e => e.RatePerDay).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.RatePerHour).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.Status)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasDefaultValue("Active");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Booking).WithMany(p => p.RentalContracts)
+                .HasForeignKey(d => d.BookingId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RentalCon__Booki__18178C8A");
+
+            entity.HasOne(d => d.Vehicle).WithMany(p => p.RentalContracts)
+                .HasForeignKey(d => d.VehicleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RentalCon__Vehic__190BB0C3");
+        });
+
         modelBuilder.Entity<ReviewComment>(entity =>
         {
             entity.Property(e => e.CreatedOn).HasColumnType("datetime");
@@ -876,6 +1015,32 @@ public partial class BookingCmsContext : DbContext
                 .HasForeignKey(d => d.PackageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Tour_Acti__Packa__3DE82FB7");
+        });
+
+        modelBuilder.Entity<TourBooking>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Tour_Boo__3214EC0733E62A6C");
+
+            entity.ToTable("Tour_Bookings");
+
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Guests).HasDefaultValue(1);
+            entity.Property(e => e.Price).HasColumnType("decimal(12, 2)");
+            entity.Property(e => e.UpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Booking).WithMany(p => p.TourBookings)
+                .HasForeignKey(d => d.BookingId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Book__Booki__1EC48A19");
+
+            entity.HasOne(d => d.TourPackage).WithMany(p => p.TourBookings)
+                .HasForeignKey(d => d.TourPackageId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Tour_Book__TourP__1FB8AE52");
         });
 
         modelBuilder.Entity<TourDestination>(entity =>

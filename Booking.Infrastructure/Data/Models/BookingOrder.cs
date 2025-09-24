@@ -57,5 +57,9 @@ public partial class BookingOrder
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
+    public virtual ICollection<RentalContract> RentalContracts { get; set; } = new List<RentalContract>();
+
+    public virtual ICollection<TourBooking> TourBookings { get; set; } = new List<TourBooking>();
+
     public virtual Vehicle? Vehicle { get; set; }
 }

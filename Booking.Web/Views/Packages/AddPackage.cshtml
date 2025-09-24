@@ -3,6 +3,8 @@
     ViewData["Title"] = "Add New Package";
 }
 @section Styles {
+    <!--MultiSelect-->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <!--Drop zon-->
     <link rel="stylesheet" type="text/css" href="~/css/dropzone.css" />
 }
@@ -37,9 +39,9 @@
                                     <div class="step-circle" onclick="displayStep(3)">
                                         3
                                     </div>
-                                    <div class="step-circle" onclick="displayStep(4)">
+                                    @*   <div class="step-circle" onclick="displayStep(4)">
                                         4
-                                    </div>
+                                    </div> *@
                                 </div>
 
                                 <form id="multi-step-form" class="theme-form mega-form"
@@ -53,7 +55,7 @@
                                                 <label asp-for="PackagecategoryId" class="form-label-title">
                                                     Select Package Category
                                                 </label>
-                                                @Html.DropDownListFor(m => m.PackagecategoryId, Model.PackageCategory, "-- Select category --", new { @class = "form-control" })
+                                                @Html.DropDownListFor(m => m.PackagecategoryId, Model.PackageCategory, "-- Select category --", new { @class = "form-control", @id = "ddlPackageCategory" })
                                                 <span asp-validation-for="PackagecategoryId" class="text-danger"></span>
                                             </div>
                                             <div class="col-6 mb-3">
@@ -66,22 +68,30 @@
                                             <div class="col-6 mb-3">
                                                 <label asp-for="TourPackage.Price" class="form-label-title">Base Price</label>
                                                 <input class="form-control" type="text" asp-for="TourPackage.Price" placeholder="Price" />
+                                                <span asp-validation-for="TourPackage.Price" class="text-danger"></span>
+
                                             </div>
                                             <div class="col-6 mb-3">
                                                 <label asp-for="TourPackage.DurationDays" class="form-label-title">Duration Days</label>
                                                 <input class="form-control" asp-for="TourPackage.DurationDays" type="text" placeholder="days" />
+                                                <span asp-validation-for="TourPackage.DurationDays" class="text-danger"></span>
+
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12 mb-3">
                                                 <label class="form-label-title" asp-for="TourPackage.Destination">Description</label>
                                                 <textarea class="form-control" rows="5" asp-for="TourPackage.Destination" placeholder="package shot description"></textarea>
+                                                <span asp-validation-for="TourPackage.Destination" class="text-danger"></span>
+
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12 mb-3">
                                                 <label class="form-label-title" asp-for="TourPackage.FullDescription">Full Description</label>
                                                 <textarea class="form-control" rows="5" asp-for="TourPackage.FullDescription" placeholder="package full description"></textarea>
+                                                <span asp-validation-for="TourPackage.FullDescription" class="text-danger"></span>
+
                                             </div>
                                         </div>
                                         <hr />
@@ -117,7 +127,7 @@
 
                                         <div class="row">
                                             <div class="col-6 mb-3">
-                                                <label for="tour-category"
+                                                <label 
                                                        class="form-label-title">Route Distance</label>
                                                 <input class="form-control"
                                                        type="text"
@@ -166,7 +176,6 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            @* <form action="/Packages/Single" enctype="multipart/form-data" method="post"> *@
                                             <div class="col-12 mb-3">
                                                 <label class="form-label-title">
                                                     Upload Tour Banner Image here
@@ -245,13 +254,12 @@
                                                     class="btn btn-primary prev-step">
                                                 Previous
                                             </button>
-                                            <button type="button"
-                                                    class="btn btn-primary next-step">
-                                                Next
+                                            <button type="submit" class="btn btn-success">
+                                                Submit
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="step step-4">
+                                    @*    <div class="step step-4">
                                         <!-- Step 4 form fields here -->
 
                                         <div class="card-header card-header--2 package-card">
@@ -1407,7 +1415,7 @@
                                                 Submit
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> *@
                                 </form>
                             </div>
                         </div>
@@ -1419,34 +1427,43 @@
 </div>
 <!-- Container-fluid Ends-->
 @section Scripts {
+    <!--Searchable dropdown-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <!--Dropzon start-->
     <script src="~/js/dropzone.js" type="text/javascript"></script>
     <script src="~/js/dropzone-script.js" type="text/javascript"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=@Model.LocationApiKey&libraries=places"></script>
     <script>
+        $(document).ready(function() {
+          $('#ddlPackageCategory').select2({
+            placeholder: "-- Select category --",
+            allowClear: true
+          });
+        });
         function initAutocomplete() {
-          // Find the textbox
-          const input = document.getElementById("autocomplete");
+                // Find the textbox
+                const input = document.getElementById("autocomplete");
 
-          // Create the autocomplete object
-          const autocomplete = new google.maps.places.Autocomplete(input, {
-            types: ["geocode"], // restricts to addresses
-            //componentRestrictions: { country: "in" } // optional: restrict to India
-          });
+                // Create the autocomplete object
+                const autocomplete = new google.maps.places.Autocomplete(input, {
+                  types: ["geocode"], // restricts to addresses
+                  //componentRestrictions: { country: "in" } // optional: restrict to India
+                });
 
-          // When the user selects a place:
-          autocomplete.addListener("place_changed", function () {
-            const place = autocomplete.getPlace();
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
+                // When the user selects a place:
+                autocomplete.addListener("place_changed", function () {
+                  const place = autocomplete.getPlace();
+                  const lat = place.geometry.location.lat();
+                  const lng = place.geometry.location.lng();
 
-            console.log("Selected place:", place);
-            // You can access place.geometry.location.lat(), place.geometry.location.lng(), etc.
-          });
-        }
+                  console.log("Selected place:", place);
+                  // You can access place.geometry.location.lat(), place.geometry.location.lng(), etc.
+                });
+              }
 
-        // Initialize when page loads
-        google.maps.event.addDomListener(window, 'load', initAutocomplete);
+              // Initialize when page loads
+              google.maps.event.addDomListener(window, 'load', initAutocomplete);
     </script>
 
 }
