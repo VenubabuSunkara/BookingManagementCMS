@@ -9,11 +9,10 @@ namespace Booking.Domain.Interfaces
 {
     public interface ICustomerRepository
     {
-        Task<CustomerDTableEntity> GetAll(int Skip, int Take, string searchKey = "");
-        Task<IEnumerable<CustomerEntity>> ExportAllAsync();
-        Task UnLockCustomer(int CustomerId);
-        Task UpdatePassword(CustomerEntity customerEntity);
-        Task UpdateCustomer(CustomerEntity customerEntity);
-        Task DeActivateAccount(int CustomerId);
+        Task<CustomerDTableEntity> GetAll(int Skip, int Take, string searchKey, CancellationToken token);
+        Task<IEnumerable<CustomerEntity>> ExportAllAsync(CancellationToken token);
+        Task<int> UnLockCustomer(int CustomerId, CancellationToken token);
+        Task UpdatePassword(CustomerPassordEntity customerEntity, CancellationToken token);
+        Task<int> DeActivateAccount(int CustomerId, CancellationToken token);
     }
 }

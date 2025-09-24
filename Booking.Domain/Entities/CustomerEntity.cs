@@ -11,6 +11,11 @@ namespace Booking.Domain.Entities
         public int Total { get; set; }
         public int Filtered { get; set; }
         public IEnumerable<CustomerEntity> CustomerEntities { get; set; } = [];
+    }
+    public class CustomerPassordEntity
+    {
+        public int CustomerId { get; set; }
+        public string NewPassword { get; set; } = null!;
 
     }
 
