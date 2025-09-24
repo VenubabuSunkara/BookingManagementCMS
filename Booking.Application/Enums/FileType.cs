@@ -13,5 +13,4 @@ namespace Booking.Application.Enums
         Json,
         Xml
     }
-
 }

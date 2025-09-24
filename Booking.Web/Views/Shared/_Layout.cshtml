@@ -165,6 +165,7 @@
             </div>
         </div>
     </div>
+    <mini-profiler position="@RenderPosition.Right" max-traces="5" color-scheme="ColorScheme.Auto" decimal-places="2" />
     @await RenderSectionAsync("Popup", required: false)
     @await Html.PartialAsync("_Scripts")
     @await RenderSectionAsync("Scripts", required: false)

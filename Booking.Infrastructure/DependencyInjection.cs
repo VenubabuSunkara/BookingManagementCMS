@@ -36,7 +36,6 @@ namespace Booking.Infrastructure
             services.AddScoped<IReviewCommentsRepository, ReviewCommentsRepository>();
             services.AddScoped<IVehicleFeatureRepository, VehicleFeatureRepository>();
             services.AddScoped<IDriverVehicleRepository,DriverVehicleRepository>();
-
             return services;
         }
 

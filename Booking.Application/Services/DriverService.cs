@@ -109,5 +109,15 @@ namespace Booking.Application.Services
                 License = x.License
             })];
         }
+        public async Task<IEnumerable<DriversDropdownDto>> GetDriversDropdownList(CancellationToken token)
+        {
+            var drivers = await _driverRepository.GetDriversDropdownList(token);
+            return [.. drivers.Select(x => new DriversDropdownDto()
+            {
+                FullName = x.FullName,
+                Id = x.Id,
+                License = x.License
+            })];
+        }
     }
 }

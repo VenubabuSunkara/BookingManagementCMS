@@ -9,5 +9,9 @@
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
     }
+    public class GoogleSettings
+    {
+        public string PlacesApiKey { get; set; } = string.Empty;
+    }
 
 }

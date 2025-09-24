@@ -154,5 +154,16 @@ namespace Booking.Infrastructure.Repositories
                                       FullName = $"{d.FirstName} {d.LastName}"
                                   }).ToListAsync(token);
         }
+
+        public async Task<IEnumerable<DriversDropdownEntity>> GetDriversDropdownList(CancellationToken token)
+        {
+            return await _context.Drivers.AsNoTracking()
+                                  .Select(d => new DriversDropdownEntity()
+                                  {
+                                      Id = d.DriverId,
+                                      License = d.LicenseNumber,
+                                      FullName = $"{d.FirstName} {d.LastName}"
+                                  }).ToListAsync(token);
+        }
     }
 }

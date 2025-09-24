@@ -49,7 +49,11 @@ public partial class Driver
 
     public virtual ICollection<DriverMediaMapping> DriverMediaMappings { get; set; } = new List<DriverMediaMapping>();
 
+    public virtual ICollection<DriverRoute> DriverRoutes { get; set; } = new List<DriverRoute>();
+
     public virtual DriverVehicle? DriverVehicle { get; set; }
+
+    public virtual ICollection<DriverVehicleAssignment> DriverVehicleAssignments { get; set; } = new List<DriverVehicleAssignment>();
 
     public virtual ICollection<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; } = new List<DriverVehicleAvailability>();
 
