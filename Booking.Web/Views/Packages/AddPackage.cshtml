@@ -79,9 +79,9 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-12 mb-3">
-                                                <label class="form-label-title" asp-for="TourPackage.Destination">Description</label>
-                                                <textarea class="form-control" rows="5" asp-for="TourPackage.Destination" placeholder="package shot description"></textarea>
-                                                <span asp-validation-for="TourPackage.Destination" class="text-danger"></span>
+                                                <label class="form-label-title" asp-for="TourPackage.ShortDescription">Description</label>
+                                                <textarea class="form-control" rows="5" asp-for="TourPackage.ShortDescription" placeholder="package shot description"></textarea>
+                                                <span asp-validation-for="TourPackage.ShortDescription" class="text-danger"></span>
 
                                             </div>
                                         </div>
@@ -179,7 +179,7 @@
                                                 <label asp-for="location.Longitude"
                                                        class="form-label-title">Longitude</label>
                                                 <input class="form-control" asp-for="location.Longitude"
-                                                       type="time"
+                                                       type="text"
                                                        placeholder="Add Route Longitude" />
                                                 <span asp-validation-for="location.Longitude" class="text-danger"></span>
 
@@ -197,7 +197,7 @@
                                                 <label asp-for="location.RouteDuration"
                                                        class="form-label-title">Route Duration</label>
                                                 <input class="form-control"
-                                                       type="time" asp-for="location.RouteDuration"
+                                                       type="text" asp-for="location.RouteDuration"
                                                        placeholder="Add Route Duration" />
                                                 <span asp-validation-for="location.ZipCode" class="text-danger"></span>
 
@@ -243,7 +243,6 @@
                                                 <label class="form-label-title">
                                                     Upload Tour Banner Image here
                                                 </label>
-
                                                 <div class="dropzone" id="singleFileUpload" data-url="@Url.Action("Multiple", "Packages")">
                                                     <div class="dz-message needsclick">
                                                         <i class="icon-cloud-up"></i>
@@ -257,12 +256,7 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div id="preview-container" class="mt-3">
-                                                    <h4>Uploaded Files:</h4>
-                                                    <div id="file-preview-single" class="row">
-                                                    </div>
-                                                </div>
-
+                                                <input type="hidden" asp-for="SingleMediajson" />
                                             </div>
                                             @* </form> *@
                                         </div>
@@ -287,11 +281,7 @@
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <div id="preview-container" class="mt-3">
-                                                    <h4>Uploaded Files:</h4>
-                                                    <div id="file-preview-multiple" class="row">
-                                                    </div>
-                                                </div>
+                                                <input type="hidden" asp-for="MultipleMediajson" />
                                             </div>
                                             @* </form> *@
                                         </div>

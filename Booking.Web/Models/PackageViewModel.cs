@@ -11,6 +11,8 @@ namespace Booking.Web.Models
         public TourPackageDto TourPackage { get; set; } = new TourPackageDto();
         public PackageMediaDto packageMedia { get; set; } = new PackageMediaDto();
         public TourLocationDto location { get; set; } = new TourLocationDto();
+        public string SingleMediajson { get; set; } = string.Empty;
+        public string MultipleMediajson { get; set; } = string.Empty;
         public string? LocationApiKey { get; set; }
     }
 }
