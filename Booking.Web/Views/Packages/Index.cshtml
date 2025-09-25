@@ -19,8 +19,7 @@
                             <a asp-controller="Packages" asp-action="AddPackage" class="btn btn-theme">
                                 <i data-feather="plus-square"></i>Add New Package
                             </a>
-
-                            <a href="@Url.ActionLink("Import", "Packages")" class="btn btn-theme">
+                            <a asp-controller="Packages" asp-action="Import" class="btn btn-theme">
                                 <i data-feather="file-plus"></i>Import
                             </a>
                         </div>
@@ -167,7 +166,7 @@
                                 }
                             },
                             { data: 'title', autoWidth: true },
-                             { data:'shortDescription', autoWidth:true },
+                            { data:'shortDescription', autoWidth:true },
                             { data: 'durationDays', autoWidth: true },
                             { data: 'destination', autoWidth: true },
                             { data: 'price', autoWidth: true },

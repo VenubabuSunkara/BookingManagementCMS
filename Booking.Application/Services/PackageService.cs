@@ -1,13 +1,6 @@
 ﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
-using Booking.Domain.Entities;
-using Booking.Domain.Entities.Tour;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
@@ -26,15 +19,32 @@ namespace Booking.Application.Services
                 {
                     Price = x.BasePrice,
                     DurationDays = x.DurationDays,
-                    FullDescription = x.Description,
+                    FullDescription = x.FullDescription,
                     ShortDescription = x.ShortDescription,
                     Id = x.ItemId,
-                    Title = x.PackageName,
+                    PackageName = x.PackageName,
                     Destination = x.Location.Destination,
-                    BannerImage=x.BannerImage,
-                    
+                    BannerImage = x.BannerImage,
                 })
             };
+        }
+
+        public async Task<int> SavePackage(TourPackageDto tourPackage, CancellationToken token)
+        {
+            return await _packageRepository.SavePackage(new Domain.Entities.Tour.TourPackageEntity()
+            {
+                PackageName = tourPackage.PackageName,
+                DurationDays = tourPackage.DurationDays,
+                BasePrice = tourPackage.Price,
+                BannerImage = tourPackage.BannerImage,
+                FullDescription = tourPackage.FullDescription,
+                ShortDescription = tourPackage.ShortDescription,
+                CreatedBy=tourPackage.CreatedBy,
+                UpdatedBy=tourPackage.UpdatedBy,
+                CreatedOn= tourPackage.CreatedOn,
+                UpdatedOn= tourPackage.UpdatedOn,
+                ItemGuid= tourPackage.ItemGuid,
+            }, token);
         }
     }
 }

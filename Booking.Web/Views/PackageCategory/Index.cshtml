@@ -64,7 +64,6 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
         function deletePackage(categoryId){
-
              $.ajax({
                     type: "GET",
                     url: "/PackageCategory/DeletePackageCategory",
@@ -78,7 +77,6 @@
                     }
                 });
         }
-
         var  packageCatListVM = {
                 packagecatdt: null,
                 init: function () {
