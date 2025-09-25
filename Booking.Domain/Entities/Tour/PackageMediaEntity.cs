@@ -23,7 +23,7 @@ namespace Booking.Domain.Entities.Tour
 
         public string? ThumbnailImage { get; set; }
 
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 

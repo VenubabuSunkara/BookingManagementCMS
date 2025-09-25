@@ -144,13 +144,16 @@ namespace Booking.Web.Controllers
         public async Task<IActionResult> SavePackage(PackageViewModel model, CancellationToken token)
         {
 
-            model.TourPackage.BannerImage = string.IsNullOrWhiteSpace(model.SingleMediajson) ? string.Empty :
-                JsonSerializer.Deserialize<TourPackageMediaDto>(model.SingleMediajson)?.FilePath ?? string.Empty;
+            var bannerdata = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.SingleMediajson);
+            if (bannerdata != null && bannerdata.Count > 0)
+            {
+                model.TourPackage.BannerImage = bannerdata[0].FilePath;
+            }
             var packageId = await _packageService.SavePackage(model.TourPackage, token);
 
             if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
             {
-                List<TourPackageMediaDto>? gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson);
+                List<TourPackageMediaDto> gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson) ?? [];
                 List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
                 {
                    PackageId = packageId,
