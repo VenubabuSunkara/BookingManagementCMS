@@ -1021,6 +1021,7 @@ public partial class BookingCmsContext : DbContext
         modelBuilder.Entity<TourLocation>(entity =>
         {
             entity.HasKey(e => e.LocationId).HasName("PK__TourLoca__E7FEA49720B2F576");
+            entity.ToTable("Tour_Locations");
 
             entity.ToTable(tb => tb.HasTrigger("TRG_TourLocations_UpdatedOn"));
 

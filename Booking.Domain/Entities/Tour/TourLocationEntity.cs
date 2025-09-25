@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booking.Application.DTOs.Tour
+namespace Booking.Domain.Entities.Tour
 {
-    public class TourLocationDto
+    public class TourLocationEntity
     {
         public int LocationId { get; set; }
 
@@ -45,6 +45,8 @@ namespace Booking.Application.DTOs.Tour
         public string? UpdatedBy { get; set; }
 
         public DateTime? UpdatedOn { get; set; }
+
         public int PackageId { get; set; }
+
     }
 }

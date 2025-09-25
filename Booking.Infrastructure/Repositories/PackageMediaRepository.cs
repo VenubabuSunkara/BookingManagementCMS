@@ -29,16 +29,36 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<int> SavePackageMedia(PackageMediaEntity mediaEntity, CancellationToken token)
         {
-            throw new NotImplementedException();
-            //_context.TourPackageMedia.AddAsync(new Data.Models.TourPackageMedium()
-            //{
-            //    PackageId = mediaEntity.PackageId,
-            //    MediaType = mediaEntity.MediaType,
-            //    MediaUrl = mediaEntity.MediaUrl,
-            //    ThumbnailUrl = mediaEntity.ThumbnailUrl,
-            //    CreatedBy = mediaEntity.CreatedBy,
-            //    CreatedDate = DateTime.UtcNow
-            //}, token);
+            await _context.TourPackageMedia.AddAsync(new Data.Models.TourPackageMedium()
+            {
+                PackageId = mediaEntity.PackageId,
+                MediaType = mediaEntity.MediaType,
+                MediaUrl = mediaEntity.MediaUrl ?? string.Empty,
+                ThumbnailUrl = mediaEntity.ThumbnailImage,
+                CreatedBy = mediaEntity.CreatedBy,
+                CreatedOn = mediaEntity.CreatedAt ?? DateTime.UtcNow,
+                Caption = mediaEntity.Filename,
+                UpdatedBy = mediaEntity.UpdatedBy,
+                UpdatedOn = mediaEntity.UpdatedAt,
+            }, token);
+            return await _context.SaveChangesAsync(token);
+        }
+
+        public async Task<int> SavePackageMediaList(IEnumerable<PackageMediaEntity> mediaEntitys, CancellationToken token)
+        {
+           await _context.TourPackageMedia.AddRangeAsync(mediaEntitys.Select(mediaEntity => new Data.Models.TourPackageMedium()
+            {
+                PackageId = mediaEntity.PackageId,
+                MediaType = mediaEntity.MediaType,
+                MediaUrl = mediaEntity.MediaUrl ?? string.Empty,
+                ThumbnailUrl = mediaEntity.ThumbnailImage,
+                CreatedBy = mediaEntity.CreatedBy,
+                CreatedOn = mediaEntity.CreatedAt ?? DateTime.UtcNow,
+                Caption = mediaEntity.Filename,
+                UpdatedBy = mediaEntity.UpdatedBy,
+                UpdatedOn = mediaEntity.UpdatedAt,
+            }), token);
+            return await _context.SaveChangesAsync(token);
         }
     }
 }

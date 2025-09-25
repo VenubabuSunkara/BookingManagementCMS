@@ -15,6 +15,7 @@ namespace Booking.Domain.Entities.Tour
         public int PackageId { get; set; }
 
         public string? MediaUrl { get; set; }
+        public string? Filename { get; set; }
 
         public string? MediaType { get; set; }
 
@@ -22,11 +23,11 @@ namespace Booking.Domain.Entities.Tour
 
         public string? ThumbnailImage { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
-        public int? UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
     }

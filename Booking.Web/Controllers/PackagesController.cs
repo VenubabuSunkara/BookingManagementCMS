@@ -1,5 +1,6 @@
 ﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
+using Booking.Application.Services;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,12 +13,15 @@ using Size = SixLabors.ImageSharp.Size;
 namespace Booking.Web.Controllers
 {
     public class PackagesController(ILogger<PackagesController> logger, IPackageService packageService,
-        IPackageCategoryService packageCategoryService, IWebHostEnvironment webHostEnvironment) : BaseController
+        IPackageCategoryService packageCategoryService, IWebHostEnvironment webHostEnvironment,
+        IPackageMediaService packageMediaService, IPackageLocationService packageLocationService) : BaseController
     {
         private readonly ILogger<PackagesController> _logger = logger;
         private readonly IPackageService _packageService = packageService;
         private readonly IPackageCategoryService _packageCategoryService = packageCategoryService;
         private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
+        private readonly IPackageMediaService _packageMediaService = packageMediaService;
+        private readonly IPackageLocationService _packageLocationService = packageLocationService;
 
         #region private member functions
         private (bool IsValid, string Message) ValidateFile(IFormFile file, int _maxFileSize, string[] _allowedExtensions)
@@ -140,14 +144,17 @@ namespace Booking.Web.Controllers
         public async Task<IActionResult> SavePackage(PackageViewModel model, CancellationToken token)
         {
 
-            model.TourPackage.BannerImage = string.IsNullOrWhiteSpace(model.SingleMediajson) ? string.Empty :
-                JsonSerializer.Deserialize<TourPackageMediaDto>(model.SingleMediajson)?.FilePath ?? string.Empty;
+            var bannerdata = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.SingleMediajson);
+            if (bannerdata != null && bannerdata.Count > 0)
+            {
+                model.TourPackage.BannerImage = bannerdata[0].FilePath;
+            }
             var packageId = await _packageService.SavePackage(model.TourPackage, token);
 
             if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
             {
-                List<TourPackageMediaDto>? gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson);
-                model.PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
+                List<TourPackageMediaDto> gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson) ?? [];
+                List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
                 {
                    PackageId = packageId,
                    MediaType= x.FileType,
@@ -160,8 +167,12 @@ namespace Booking.Web.Controllers
                    UpdatedAt=DateTime.UtcNow,
                    UpdatedBy=GetUserId()
                 })];
+                await _packageMediaService.SavePackageMediaList(PackageMedia, token);
             }
-            return await Task.Run(() => { return View(); });
+            model.Location.PackageId = packageId;
+            await _packageLocationService.SavePackageLocation(model.Location, token);
+
+            return RedirectToAction("Index");
         }
         [HttpPost]
         public async Task<IActionResult> Single(IFormFile file, CancellationToken token)

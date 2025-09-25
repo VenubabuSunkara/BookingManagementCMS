@@ -48,4 +48,6 @@ public partial class TourLocation
     public int? SortOrder { get; set; }
 
     public string FullAddress { get; set; } = null!;
+    public int PackageId { get; set; }
+    public virtual TourPackage Package { get; set; } = null!;
 }

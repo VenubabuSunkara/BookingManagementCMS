@@ -23,7 +23,7 @@ namespace Booking.Application.Services
                     ShortDescription = x.ShortDescription,
                     Id = x.ItemId,
                     PackageName = x.PackageName,
-                    Destination = x.Location.Destination,
+                    Destination = x.Location.LocationName,
                     BannerImage = x.BannerImage,
                 })
             };

@@ -15,18 +15,16 @@ namespace Booking.Infrastructure.Repositories
         public async Task<ReviewCommentTableEntity> GetAllReviewComments(string Search, int Take, int Skip, CancellationToken token)
         {
             var q = _context.ReviewComments
-                .Include(x => x.Vehicle)
-                .Include(x => x.Driver)
                 .AsNoTracking();
             var total = await q.CountAsync(token);
 
             if (!string.IsNullOrWhiteSpace(Search))
             {
                 q = q.Where(d =>
-                            d.DriverComment.Contains(Search) ||
-                            d.VehicleComment.Contains(Search) ||
-                            d.Driver.LicenseNumber.Contains(Search) ||
-                            d.Vehicle.VehicleNumber.Contains(Search) ||
+                            //d.DriverComment.Contains(Search) ||
+                            //d.VehicleComment.Contains(Search) ||
+                            //d.Driver.LicenseNumber.Contains(Search) ||
+                            //d.Vehicle.VehicleNumber.Contains(Search) ||
                             d.Rating.ToString().Contains(Search));
             }
             // simple order by FullName default
@@ -42,12 +40,12 @@ namespace Booking.Infrastructure.Repositories
                 ReviewComments = [.. page.Select(x => new ReviewCommentEntity()
                    {
                        DriverId = x.DriverId,
-                       VehicleId = x.VehicleId,
-                       VehicleNo=x.Vehicle?.VehicleNumber,
-                       DriverLicense=x.Driver?.LicenseNumber,
-                       DriverComment = x.DriverComment,
-                       VehicleComment = x.VehicleComment,
-                       Suggestions = x.Suggestion,
+                       //VehicleId = x.VehicleId,
+                       //VehicleNo=x.Vehicle?.VehicleNumber,
+                       //DriverLicense=x.Driver?.LicenseNumber,
+                       //DriverComment = x.DriverComment,
+                       //VehicleComment = x.VehicleComment,
+                       //Suggestions = x.Suggestion,
                        CreatedOn = x.CreatedOn,
                        Id = x.Id,
                        Rating = x.Rating
@@ -64,14 +62,14 @@ namespace Booking.Infrastructure.Repositories
         public async Task<IEnumerable<ReviewCommentEntity>> GetAllVehicleDriverReviewsAsync(int DriverId, int VehicleId, CancellationToken token)
         {
             return await _context.ReviewComments
-                .Where(x => x.DriverId.Equals(DriverId) && x.VehicleId.Equals(VehicleId))
+                .Where(x => x.DriverId.Equals(DriverId))
                 .Select(x => new ReviewCommentEntity()
                 {
                     DriverId = x.DriverId,
-                    VehicleId = x.VehicleId,
-                    DriverComment = x.DriverComment,
-                    VehicleComment = x.VehicleComment,
-                    Suggestions = x.Suggestion,
+                    //VehicleId = x.VehicleId,
+                    //DriverComment = x.DriverComment,
+                    //VehicleComment = x.VehicleComment,
+                    //Suggestions = x.Suggestion,
                     CreatedOn = x.CreatedOn,
                     Id = x.Id,
                     Rating = x.Rating
