@@ -29,5 +29,7 @@ public partial class TourPackageMedium
 
     public int? ItemOrder { get; set; }
 
+    public string? ThumbnailUrl { get; set; }
+
     public virtual TourPackage Package { get; set; } = null!;
 }
