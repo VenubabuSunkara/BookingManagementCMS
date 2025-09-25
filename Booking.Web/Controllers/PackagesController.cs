@@ -1,16 +1,11 @@
 ﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
 using Booking.Web.Models;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using ImageMagick;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Org.BouncyCastle.Utilities.Zlib;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using StackExchange.Profiling.Internal;
-using System.Runtime.Versioning;
 using System.Text.Json;
 using Size = SixLabors.ImageSharp.Size;
 
@@ -88,7 +83,10 @@ namespace Booking.Web.Controllers
         public async Task<IActionResult> GetAllPackages([FromBody] DataTableAjaxPostModel request,
         CancellationToken cancellationToken)
         {
-            var result = await _packageService.GetPackages(request.start, request.length, "", 0);
+            string search = "";
+            if (!String.IsNullOrEmpty(request.search?.value))
+                search = request.search?.value ?? string.Empty;
+            var result = await _packageService.GetPackages(request.start, request.length, search, 0);
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
@@ -97,7 +95,7 @@ namespace Booking.Web.Controllers
                 data = result.PackagesData.Select(x => new
                 {
                     x.Id,
-                    x.Title,
+                    x.PackageName,
                     x.DurationDays,
                     x.Destination,
                     x.ShortDescription,
@@ -141,13 +139,27 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SavePackage(PackageViewModel model, CancellationToken token)
         {
-            if (!string.IsNullOrWhiteSpace(model.SingleMediajson))
-            {
-                TourPackageMediaDto? banner = JsonSerializer.Deserialize<TourPackageMediaDto>(model.SingleMediajson);
-            }
+
+            model.TourPackage.BannerImage = string.IsNullOrWhiteSpace(model.SingleMediajson) ? string.Empty :
+                JsonSerializer.Deserialize<TourPackageMediaDto>(model.SingleMediajson)?.FilePath ?? string.Empty;
+            var packageId = await _packageService.SavePackage(model.TourPackage, token);
+
             if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
             {
                 List<TourPackageMediaDto>? gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson);
+                model.PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
+                {
+                   PackageId = packageId,
+                   MediaType= x.FileType,
+                   MediaUrl=x.FilePath,
+                   FileName=x.FileName,
+                   IsDefault=false,
+                   ThumbnailImage=x.ThumbnailPath,
+                   CreatedAt=DateTime.UtcNow,
+                   CreatedBy=GetUserId(),
+                   UpdatedAt=DateTime.UtcNow,
+                   UpdatedBy=GetUserId()
+                })];
             }
             return await Task.Run(() => { return View(); });
         }
@@ -156,8 +168,10 @@ namespace Booking.Web.Controllers
         {
             try
             {
-                var uploadedFiles = new List<TourPackageMediaDto>();
-                uploadedFiles.Add(await ProcessAndSaveFile(file, token));
+                var uploadedFiles = new List<TourPackageMediaDto>
+                {
+                    await ProcessAndSaveFile(file, token)
+                };
                 return Json(new { success = true, files = uploadedFiles });
             }
             catch (Exception ex)

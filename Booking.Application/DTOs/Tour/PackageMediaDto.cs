@@ -30,6 +30,7 @@ namespace Booking.Application.DTOs.Tour
         public bool? IsDefault { get; set; }
 
         public string? ThumbnailImage { get; set; }
+        public string? FileName { get; set; }
 
         public int? CreatedBy { get; set; }
 

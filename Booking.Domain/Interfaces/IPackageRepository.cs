@@ -1,14 +1,10 @@
 ﻿using Booking.Domain.Entities.Tour;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Domain.Interfaces
 {
     public interface IPackageRepository
     {
-        Task<TourPackageTable> GetPackages(int Skip, int Take, string searchKey = "",int CategoryId = 0);
+        Task<TourPackageTable> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0);
+        Task<int> SavePackage(TourPackageEntity tourPackage, CancellationToken token);
     }
 }
