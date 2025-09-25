@@ -53,9 +53,9 @@ namespace Booking.Infrastructure.Repositories
                 var identityuser = await _userManager.FindByIdAsync(user.Id);
                 return new UserEntity()
                 {
-                    Id = identityuser.Id,
-                    Email = identityuser.Email,
-                    Username = identityuser.UserName
+                    Id = identityuser?.Id ?? string.Empty,
+                    Email = identityuser?.Email ?? string.Empty,
+                    Username = identityuser?.UserName ?? string.Empty
                 };
             }
             return null;
@@ -84,15 +84,15 @@ namespace Booking.Infrastructure.Repositories
                 FilterRecords = filtered,
                 UserEntities = [.. page.Select(x => new UserEntity()
                 {
-                    FirstName = x.CompanyUser.FirstName,
-                    LastName = x.CompanyUser.LastName,
-                    Address = x.CompanyUser.Address,
-                    Contact = x.PhoneNumber,
-                    Email = x.Email,
+                    FirstName = x.CompanyUser?.FirstName ?? string.Empty,
+                    LastName = x.CompanyUser?.LastName ?? string.Empty,
+                    Address = x.CompanyUser?.Address,
+                    Contact = x.PhoneNumber?? string.Empty,
+                    Email = x.Email?? string.Empty,
                     Id = x.Id,
-                    Username = x.UserName,
-                    IsActive = x.CompanyUser.IsActive,
-                    RoleId=string.Join(",",x.Roles.Select(x=>x.Name))
+                    Username = x.UserName?? string.Empty,
+                    IsActive = x.CompanyUser?.IsActive,
+                    RoleId = string.Join(",", x.Roles.Select(r => r.Name))
                 })]
             };
         }

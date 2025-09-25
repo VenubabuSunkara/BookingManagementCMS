@@ -16,18 +16,14 @@ namespace Booking.Web.Controllers
                 ViewData["UserDto"] = userData;
             }
         }
-        public int GetUserId()
+        public string GetUserId()
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return 0; // or throw an exception if appropriate
+                return ""; // or throw an exception if appropriate
             }
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
-            {
-                return userId;
-            }
-            return 0; // or throw an exception if appropriate
+            return userIdClaim?.Value ?? "";
         }
     }
 }

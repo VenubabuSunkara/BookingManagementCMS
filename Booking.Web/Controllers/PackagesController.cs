@@ -1,5 +1,6 @@
 ﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
+using Booking.Application.Services;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,12 +13,15 @@ using Size = SixLabors.ImageSharp.Size;
 namespace Booking.Web.Controllers
 {
     public class PackagesController(ILogger<PackagesController> logger, IPackageService packageService,
-        IPackageCategoryService packageCategoryService, IWebHostEnvironment webHostEnvironment) : BaseController
+        IPackageCategoryService packageCategoryService, IWebHostEnvironment webHostEnvironment,
+        IPackageMediaService packageMediaService, IPackageLocationService packageLocationService) : BaseController
     {
         private readonly ILogger<PackagesController> _logger = logger;
         private readonly IPackageService _packageService = packageService;
         private readonly IPackageCategoryService _packageCategoryService = packageCategoryService;
         private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
+        private readonly IPackageMediaService _packageMediaService = packageMediaService;
+        private readonly IPackageLocationService _packageLocationService = packageLocationService;
 
         #region private member functions
         private (bool IsValid, string Message) ValidateFile(IFormFile file, int _maxFileSize, string[] _allowedExtensions)
@@ -147,7 +151,7 @@ namespace Booking.Web.Controllers
             if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
             {
                 List<TourPackageMediaDto>? gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson);
-                model.PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
+                List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
                 {
                    PackageId = packageId,
                    MediaType= x.FileType,
@@ -160,8 +164,12 @@ namespace Booking.Web.Controllers
                    UpdatedAt=DateTime.UtcNow,
                    UpdatedBy=GetUserId()
                 })];
+                await _packageMediaService.SavePackageMediaList(PackageMedia, token);
             }
-            return await Task.Run(() => { return View(); });
+            model.Location.PackageId = packageId;
+            await _packageLocationService.SavePackageLocation(model.Location, token);
+
+            return RedirectToAction("Index");
         }
         [HttpPost]
         public async Task<IActionResult> Single(IFormFile file, CancellationToken token)

@@ -66,6 +66,8 @@ builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IReviewCommentService, ReviewCommentService>();
 builder.Services.AddScoped<IDriverVehicleService, DriverVehicleService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IPackageMediaService, PackageMediaService>();
+builder.Services.AddScoped<IPackageLocationService, PackageLocationService>();
 
 builder.Services.AddHttpClient<IGooglePlacesService, GooglePlacesService>();
 builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();

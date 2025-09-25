@@ -33,11 +33,11 @@ namespace Booking.Infrastructure.Repositories
                 BannerImage = x.BannerImage,
                 FullDescription = x.Description,
                 ShortDescription = x.ShortDescription,
-                Location = x.TourDestinations.Any() && x.TourDestinations.FirstOrDefault()!.Location != null ? new LocationEntity()
+                Location = x.TourDestinations.Any() && x.TourDestinations.FirstOrDefault()!.Location != null ? new TourLocationEntity()
                 {
-                    Name = x.TourDestinations.FirstOrDefault()!.Location!.Name,
+                    LocationName = x.TourDestinations.FirstOrDefault()!.Location!.Name,
                     LocationId = x.TourDestinations.FirstOrDefault()!.Location!.LocationId,
-                } : new LocationEntity(),
+                } : new TourLocationEntity(),
             }).ToListAsync();
             return new TourPackageTable()
             {
