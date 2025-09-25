@@ -9,21 +9,23 @@ var DropzoneExample = function () {
             dictDefaultMessage: "Drop files here or click to upload",
             init: function () {
                 this.on("success", function (file, response) {
+                    debugger;
                     if (response.success) {
-                        response.files.forEach(function (fileInfo) {
+                        $("#SingleMediajson").val(JSON.stringify(response.files));
+//                            .forEach(function (fileInfo) {
                             // Add preview
-                            var previewHtml = `
-                        <div class="col-md-3 mb-3">
-                            <div class="card">
-                                <img src="${fileInfo.thumbnailPath}" class="card-img-top" alt="${fileInfo.originalFileName}">
-                                <div class="card-body">
-                                    <p class="card-text">${fileInfo.originalFileName}</p>
-                                    <small class="text-muted">${(fileInfo.fileSize / 1024).toFixed(2)} KB</small>
-                                </div>
-                            </div>
-                        </div>`;
-                            $("#file-preview-single").append(previewHtml);
-                        });
+                        //var previewHtml = `
+                        //<div class="col-md-3 mb-3">
+                        //    <div class="card">
+                        //        <img src="${fileInfo.thumbnailPath}" class="card-img-top" alt="${fileInfo.originalFileName}">
+                        //        <div class="card-body">
+                        //            <p class="card-text">${fileInfo.originalFileName}</p>
+                        //            <small class="text-muted">${(fileInfo.fileSize / 1024).toFixed(2)} KB</small>
+                        //        </div>
+                        //    </div>
+                        //</div>`;
+                        //    $("#file-preview-single").append(previewHtml);
+                        //});
                     } else {
                         alert(response.message);
                     }
@@ -44,21 +46,23 @@ var DropzoneExample = function () {
             init: function () {
                 this.on("success", function (file, response) {
                     if (response.success) {
-                        response.files.forEach(function (fileInfo) {
-                            // Add preview
-                            var previewHtml = `
-                        <div class="col-md-3 mb-3">
-                            <div class="card">
-                                <img src="${fileInfo.thumbnailPath}" class="card-img-top" alt="${fileInfo.originalFileName}">
-                                <div class="card-body">
-                                    <p class="card-text">${fileInfo.originalFileName}</p>
-                                    <small class="text-muted">${(fileInfo.fileSize / 1024).toFixed(2)} KB</small>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                            $("#file-preview-multiple").append(previewHtml);
-                        });
+                        $("#MultipleMediajson").val(JSON.stringify(response.files));
+
+                    //    response.files.forEach(function (fileInfo) {
+                    //        // Add preview
+                    //        var previewHtml = `
+                    //    <div class="col-md-3 mb-3">
+                    //        <div class="card">
+                    //            <img src="${fileInfo.thumbnailPath}" class="card-img-top" alt="${fileInfo.originalFileName}">
+                    //            <div class="card-body">
+                    //                <p class="card-text">${fileInfo.originalFileName}</p>
+                    //                <small class="text-muted">${(fileInfo.fileSize / 1024).toFixed(2)} KB</small>
+                    //            </div>
+                    //        </div>
+                    //    </div>
+                    //`;
+                    //        $("#file-preview-multiple").append(previewHtml);
+                     //   });
                     } else {
                         alert(response.message);
                     }

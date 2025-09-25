@@ -1,20 +1,27 @@
 ﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
+using Booking.Application.Services;
 using Booking.Web.Models;
-using ImageMagick;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Runtime.Versioning;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using StackExchange.Profiling.Internal;
+using System.Text.Json;
+using Size = SixLabors.ImageSharp.Size;
 
 namespace Booking.Web.Controllers
 {
-    public class PackagesController(ILogger<PackagesController> logger, IPackageService packageService, IPackageCategoryService packageCategoryService) : BaseController
+    public class PackagesController(ILogger<PackagesController> logger, IPackageService packageService,
+        IPackageCategoryService packageCategoryService, IWebHostEnvironment webHostEnvironment,
+        IPackageMediaService packageMediaService, IPackageLocationService packageLocationService) : BaseController
     {
         private readonly ILogger<PackagesController> _logger = logger;
         private readonly IPackageService _packageService = packageService;
         private readonly IPackageCategoryService _packageCategoryService = packageCategoryService;
-
+        private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
+        private readonly IPackageMediaService _packageMediaService = packageMediaService;
+        private readonly IPackageLocationService _packageLocationService = packageLocationService;
 
         #region private member functions
         private (bool IsValid, string Message) ValidateFile(IFormFile file, int _maxFileSize, string[] _allowedExtensions)
@@ -30,40 +37,38 @@ namespace Booking.Web.Controllers
 
             return (true, string.Empty);
         }
-        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file)
+        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file, CancellationToken token)
         {
             var fileName = Path.GetFileName(file.FileName);
-            var uniqueFileName = Guid.NewGuid().ToString() + "_" + fileName;
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            var thumbsFolder = Path.Combine(uploadsFolder, "thumbs");
+            var uniqueId = Guid.NewGuid().ToString();
+            var uniqueFileName = $"{uniqueId}_{fileName}";
+            var uniquethumbFileName = $"{uniqueId}_thumb_{fileName}";
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
-            if (!Directory.Exists(thumbsFolder))
-                Directory.CreateDirectory(thumbsFolder);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-            var thumbPath = Path.Combine(thumbsFolder, uniqueFileName);
+            var thumbPath = Path.Combine(uploadsFolder, uniquethumbFileName);
 
             // Save original file
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                await file.CopyToAsync(fileStream);
+                await file.CopyToAsync(fileStream, token);
             }
-            const int size = 150;
-            const int quality = 75;
-            // Create thumbnail (requires System.Drawing.Common NuGet package)
-            using (var image = new MagickImage(filePath))
+            using (Image image = Image.Load(filePath))
             {
-                image.Resize(size, size);
-                image.Strip();
-                image.Quality = quality;
-                image.Write(thumbsFolder);
+                image.Mutate(x => x.Resize(new ResizeOptions
+                {
+                    Size = new Size(200, 200),
+                    Mode = ResizeMode.Max,
+                }));
+                await image.SaveAsync(thumbPath, token);
             }
             return new TourPackageMediaDto
             {
                 FileName = uniqueFileName,
                 OriginalFileName = fileName,
                 FilePath = "/uploads/" + uniqueFileName,
-                ThumbnailPath = "/uploads/thumbs/" + uniqueFileName,
+                ThumbnailPath = "/uploads/" + uniquethumbFileName,
                 FileSize = file.Length,
                 FileType = Path.GetExtension(filePath)
             };
@@ -82,7 +87,10 @@ namespace Booking.Web.Controllers
         public async Task<IActionResult> GetAllPackages([FromBody] DataTableAjaxPostModel request,
         CancellationToken cancellationToken)
         {
-            var result = await _packageService.GetPackages(request.start, request.length, "", 0);
+            string search = "";
+            if (!String.IsNullOrEmpty(request.search?.value))
+                search = request.search?.value ?? string.Empty;
+            var result = await _packageService.GetPackages(request.start, request.length, search, 0);
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
@@ -91,7 +99,7 @@ namespace Booking.Web.Controllers
                 data = result.PackagesData.Select(x => new
                 {
                     x.Id,
-                    x.Title,
+                    x.PackageName,
                     x.DurationDays,
                     x.Destination,
                     x.ShortDescription,
@@ -135,14 +143,44 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SavePackage(PackageViewModel model, CancellationToken token)
         {
-            return await Task.Run(() => { return View(); });
+
+            model.TourPackage.BannerImage = string.IsNullOrWhiteSpace(model.SingleMediajson) ? string.Empty :
+                JsonSerializer.Deserialize<TourPackageMediaDto>(model.SingleMediajson)?.FilePath ?? string.Empty;
+            var packageId = await _packageService.SavePackage(model.TourPackage, token);
+
+            if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
+            {
+                List<TourPackageMediaDto>? gallary = JsonSerializer.Deserialize<List<TourPackageMediaDto>>(model.MultipleMediajson);
+                List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
+                {
+                   PackageId = packageId,
+                   MediaType= x.FileType,
+                   MediaUrl=x.FilePath,
+                   FileName=x.FileName,
+                   IsDefault=false,
+                   ThumbnailImage=x.ThumbnailPath,
+                   CreatedAt=DateTime.UtcNow,
+                   CreatedBy=GetUserId(),
+                   UpdatedAt=DateTime.UtcNow,
+                   UpdatedBy=GetUserId()
+                })];
+                await _packageMediaService.SavePackageMediaList(PackageMedia, token);
+            }
+            model.Location.PackageId = packageId;
+            await _packageLocationService.SavePackageLocation(model.Location, token);
+
+            return RedirectToAction("Index");
         }
         [HttpPost]
-        public async Task<IActionResult> Single(IFormFile file)
+        public async Task<IActionResult> Single(IFormFile file, CancellationToken token)
         {
             try
             {
-                return Json(new { success = true, files = await ProcessAndSaveFile(file) });
+                var uploadedFiles = new List<TourPackageMediaDto>
+                {
+                    await ProcessAndSaveFile(file, token)
+                };
+                return Json(new { success = true, files = uploadedFiles });
             }
             catch (Exception ex)
             {
@@ -151,7 +189,7 @@ namespace Booking.Web.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Multiple(List<IFormFile> files)
+        public async Task<IActionResult> Multiple(List<IFormFile> files, CancellationToken token)
         {
             try
             {
@@ -165,7 +203,7 @@ namespace Booking.Web.Controllers
                     //    return Json(new { success = false, message = validationResult.Message });
                     //}
 
-                    var fileResult = await ProcessAndSaveFile(file);
+                    var fileResult = await ProcessAndSaveFile(file, token);
                     uploadedFiles.Add(fileResult);
                 }
 

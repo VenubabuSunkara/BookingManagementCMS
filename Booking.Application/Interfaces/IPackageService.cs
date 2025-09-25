@@ -12,5 +12,7 @@ namespace Booking.Application.Interfaces
     public interface IPackageService
     {
         Task<PackageDataTableDto> GetPackages(int Skip, int Take, string searchKey = "", int CategoryId = 0);
+        Task<int> SavePackage(TourPackageDto tourPackage, CancellationToken token);
+
     }
 }

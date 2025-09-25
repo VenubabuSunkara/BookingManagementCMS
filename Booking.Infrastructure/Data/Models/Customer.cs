@@ -42,4 +42,8 @@ public partial class Customer
     public virtual ICollection<CustomerAddress> CustomerAddresses { get; set; } = new List<CustomerAddress>();
 
     public virtual ICollection<CustomerRelative> CustomerRelatives { get; set; } = new List<CustomerRelative>();
+
+    public virtual ICollection<DriverRating> DriverRatings { get; set; } = new List<DriverRating>();
+
+    public virtual ICollection<VehicleRating> VehicleRatings { get; set; } = new List<VehicleRating>();
 }
