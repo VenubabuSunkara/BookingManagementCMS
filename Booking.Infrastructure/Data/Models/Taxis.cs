@@ -7,17 +7,19 @@ public partial class Taxis
 {
     public int Id { get; set; }
 
-    public string? Country { get; set; }
+    public string Country { get; set; } = null!;
 
-    public string? City { get; set; }
+    public string City { get; set; } = null!;
 
-    public int? TaxPercentage { get; set; }
+    public decimal TaxPercentage { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
+
+    public Guid ItemGuid { get; set; }
 }

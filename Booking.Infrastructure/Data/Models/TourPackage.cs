@@ -15,35 +15,31 @@ public partial class TourPackage
 
     public decimal BasePrice { get; set; }
 
-    public int? DurationDays { get; set; }
+    public string DurationDays { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public int? CategoryId { get; set; }
+    public int CategoryId { get; set; }
 
-    public string? BannerImage { get; set; }
+    public string BannerImage { get; set; } = null!;
 
     public string? ShortDescription { get; set; }
 
-    public virtual TourPackageCategory? Category { get; set; }
-
-    public virtual ICollection<PackagePolicy> PackagePolicies { get; set; } = new List<PackagePolicy>();
+    public virtual TourPackageCategory Category { get; set; } = null!;
 
     public virtual ICollection<TourActivate> TourActivates { get; set; } = new List<TourActivate>();
 
-    public virtual ICollection<TourDestination> TourDestinations { get; set; } = new List<TourDestination>();
-
     public virtual ICollection<TourGuideAssignment> TourGuideAssignments { get; set; } = new List<TourGuideAssignment>();
 
-    public virtual ICollection<TourItineraryDay> TourItineraryDays { get; set; } = new List<TourItineraryDay>();
+    public virtual ICollection<TourLocation> TourLocations { get; set; } = new List<TourLocation>();
 
-    public virtual ICollection<TourPackageItem> TourPackageItems { get; set; } = new List<TourPackageItem>();
+    public virtual ICollection<TourPackageItineraryDay> TourPackageItineraryDays { get; set; } = new List<TourPackageItineraryDay>();
 
     public virtual ICollection<TourPackageMedium> TourPackageMedia { get; set; } = new List<TourPackageMedium>();
 

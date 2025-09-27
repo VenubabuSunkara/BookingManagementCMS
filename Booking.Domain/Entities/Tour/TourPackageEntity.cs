@@ -17,12 +17,12 @@ namespace Booking.Domain.Entities.Tour
         public string? ShortDescription { get; set; }
         public decimal BasePrice { get; set; }
         public required string DurationDays { get; set; }
-        public string? BannerImage { get; set; }
-        public int? CategoryId { get; set; }
-        public int? CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
+        public string BannerImage { get; set; } = null!;
+        public int CategoryId { get; set; }
+        public string CreatedBy { get; set; } = null!;
+        public string UpdatedBy { get; set; } = null!;
+        public DateTime CreatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }
         public string? ThingsToNote { get; set; }
         public string? Inclusions { get; set; }
         public TourPackageCategoryEntity Category { get; set; } = new TourPackageCategoryEntity();

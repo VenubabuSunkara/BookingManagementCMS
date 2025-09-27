@@ -5,6 +5,7 @@ using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using static Azure.Core.HttpHeader;
 
 namespace Booking.Infrastructure.Repositories;
 
@@ -23,17 +24,20 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
         await _context.CouponCodes.AddAsync(new()
         {
             Code = couponCode.Code,
-            ValidityFrom = couponCode.ValidityFrom,
-            ValidityTo = couponCode.ValidityTo,
-            PriceRangeMin = couponCode.PriceRangeMin,
-            PriceRangeMax = couponCode.PriceRangeMax,
+            StartDate = couponCode.StartDate,
+            EndDate = couponCode.EndDate,
             DiscountType = couponCode.DiscountType,
             DiscountValue = couponCode.DiscountValue,
             CreatedOn = couponCode.CreatedOn,
             UpdatedOn = couponCode.UpdatedOn,
             CreatedBy = couponCode.CreatedBy,
             UpdatedBy = couponCode.UpdatedBy,
-            MediaUrl = couponCode.MediaUrl
+            Description = couponCode.Description,
+            UsageCount = couponCode.UsageCount,
+            MaximumDiscount = couponCode.MaximumDiscount,
+            MinimumAmount = couponCode.MinimumAmount,
+            UsageLimit = couponCode.UsageLimit,
+            IsActive = couponCode.IsActive
         }, cancellationToken);
         return await _context.SaveChangesAsync(cancellationToken) > 0;
     }
@@ -50,15 +54,16 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
                              .Where(x => x.Id.Equals(couponCode.Id))
                              .ExecuteUpdateAsync(c => c
                                  .SetProperty(s => s.Code, couponCode.Code)
-                                 .SetProperty(s => s.ValidityFrom, couponCode.ValidityFrom)
-                                 .SetProperty(s => s.ValidityTo, couponCode.ValidityTo)
-                                 .SetProperty(s => s.PriceRangeMin, couponCode.PriceRangeMin)
-                                 .SetProperty(s => s.PriceRangeMax, couponCode.PriceRangeMax)
+                                 .SetProperty(s => s.StartDate, couponCode.StartDate)
+                                 .SetProperty(s => s.EndDate, couponCode.EndDate)
                                  .SetProperty(s => s.DiscountType, couponCode.DiscountType)
                                  .SetProperty(s => s.DiscountValue, couponCode.DiscountValue)
+                                 .SetProperty(s => s.Description, couponCode.Description)
+                                 .SetProperty(s => s.UsageCount, couponCode.UsageCount)
+                                 .SetProperty(s => s.MaximumDiscount, couponCode.MaximumDiscount)
+                                 .SetProperty(s => s.MinimumAmount, couponCode.MinimumAmount)
                                  .SetProperty(s => s.UpdatedOn, couponCode.UpdatedOn)
                                  .SetProperty(s => s.UpdatedBy, couponCode.UpdatedBy)
-                                 .SetProperty(s => s.MediaUrl, couponCode.MediaUrl)
                              , cancellationToken) > 0;
     }
 
@@ -102,47 +107,38 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     {
         // Base query (read-only, optimized)
         var query = _context.CouponCodes.AsNoTracking();
-
+        var total = await query.CountAsync(cancellationToken);
         // Apply search if provided
         if (!string.IsNullOrWhiteSpace(searchKey))
         {
             query = query.Where(c =>
                 c.Code!.Contains(searchKey) ||
                 (c.DiscountType ?? string.Empty).Contains(searchKey) ||
-                Convert.ToString(c.ValidityFrom)!.Contains(searchKey) ||
-                Convert.ToString(c.ValidityTo)!.Contains(searchKey) ||
-                Convert.ToString(c.UpdatedBy)!.Contains(searchKey));
+                Convert.ToString(c.StartDate)!.Contains(searchKey) ||
+                Convert.ToString(c.EndDate)!.Contains(searchKey))
+                .Where(x => x.IsActive == true);
         }
-
         //Total Count
-        var totalCount = await query.AsNoTracking().CountAsync(cancellationToken);
-
-        var couponCodeList = await query.AsNoTracking()
-            .Select(s => new CouponCodeEntity()
-            {
-                Id = s.Id,
-                Code = s.Code ?? string.Empty,
-                ValidityFrom = s.ValidityFrom,
-                ValidityTo = s.ValidityTo,
-                PriceRangeMin = s.PriceRangeMin,
-                PriceRangeMax = s.PriceRangeMax,
-                DiscountType = s.DiscountType ?? string.Empty,
-                DiscountValue = s.DiscountValue ?? string.Empty,
-                CreatedOn = s.CreatedOn,
-                UpdatedOn = s.UpdatedOn,
-                CreatedBy = s.CreatedBy,
-                UpdatedBy = s.UpdatedBy,
-                MediaUrl = s.MediaUrl ?? string.Empty
-            })
-            .Skip(Skip)
-            .Take(Take)
-            .ToListAsync(cancellationToken) ?? new List<CouponCodeEntity>();
+        var filterCount = await query.CountAsync(cancellationToken);
+        var couponCodeList = await query.Select(coupon => new CouponCodeEntity()
+        {
+            Code = coupon.Code,
+            StartDate = coupon.StartDate,
+            EndDate = coupon.EndDate,
+            DiscountType = coupon.DiscountType,
+            DiscountValue = coupon.DiscountValue,
+            CreatedOn = coupon.CreatedOn,
+            UsageCount = coupon.UsageCount,
+            MaximumDiscount = coupon.MaximumDiscount,
+            MinimumAmount = coupon.MinimumAmount,
+            UsageLimit = coupon.UsageLimit,
+        }).Skip(Skip).Take(Take).ToListAsync(cancellationToken);
 
         //Final Result
         return new()
         {
-            Total = totalCount,
-            Filtered = totalCount,
+            Total = total,
+            Filtered = filterCount,
             CouponCode = couponCodeList
         };
     }
@@ -154,20 +150,24 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     public async Task<IEnumerable<CouponCodeExportEntity>> ExportAllAsync()
     {
         return await _context.CouponCodes.AsNoTracking()
-            .Select(s => new CouponCodeExportEntity()
+            .Select(coupon => new CouponCodeExportEntity()
             {
-                Code = s.Code ?? string.Empty,
-                ValidityFrom = s.ValidityFrom,
-                ValidityTo = s.ValidityTo,
-                PriceRangeMin = s.PriceRangeMin,
-                PriceRangeMax = s.PriceRangeMax,
-                DiscountType = s.DiscountType ?? string.Empty,
-                DiscountValue = s.DiscountValue ?? string.Empty,
-                CreatedOn = s.CreatedOn,
-                UpdatedOn = s.UpdatedOn,
-                CreatedBy = s.CreatedBy,
-                UpdatedBy = s.UpdatedBy
-            }).ToListAsync() ?? new List<CouponCodeExportEntity>();
+                Code = coupon.Code,
+                StartDate = coupon.StartDate,
+                EndDate = coupon.EndDate,
+                DiscountType = coupon.DiscountType,
+                DiscountValue = coupon.DiscountValue,
+                CreatedOn = coupon.CreatedOn,
+                UpdatedOn = coupon.UpdatedOn,
+                CreatedBy = coupon.CreatedBy,
+                UpdatedBy = coupon.UpdatedBy,
+                Description = coupon.Description,
+                UsageCount = coupon.UsageCount,
+                MaximumDiscount = coupon.MaximumDiscount,
+                MinimumAmount = coupon.MinimumAmount,
+                UsageLimit = coupon.UsageLimit,
+                IsActive = coupon.IsActive
+            }).ToListAsync();
     }
 
     /// <summary>
@@ -179,24 +179,25 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     public async Task<CouponCodeEntity?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken)
     {
         return await _context.CouponCodes
-            .Where(x => x.Id.Equals(couponCodeId))
-            .Select(s => new CouponCodeEntity()
+            .Where(coupon => coupon.Id.Equals(couponCodeId))
+            .Select(coupon => new CouponCodeEntity()
             {
-                Id = s.Id,
-                Code = s.Code,
-                ValidityFrom = s.ValidityFrom,
-                ValidityTo = s.ValidityTo,
-                PriceRangeMin = s.PriceRangeMin,
-                PriceRangeMax = s.PriceRangeMax,
-                DiscountType = s.DiscountType,
-                DiscountValue = s.DiscountValue,
-                CreatedOn = s.CreatedOn,
-                UpdatedOn = s.UpdatedOn,
-                CreatedBy = s.CreatedBy,
-                UpdatedBy = s.UpdatedBy,
-                MediaUrl = s.MediaUrl
-            })
-            .FirstOrDefaultAsync(cancellationToken);
+                Code = coupon.Code,
+                StartDate = coupon.StartDate,
+                EndDate = coupon.EndDate,
+                DiscountType = coupon.DiscountType,
+                DiscountValue = coupon.DiscountValue,
+                CreatedOn = coupon.CreatedOn,
+                UpdatedOn = coupon.UpdatedOn,
+                CreatedBy = coupon.CreatedBy,
+                UpdatedBy = coupon.UpdatedBy,
+                Description = coupon.Description,
+                UsageCount = coupon.UsageCount,
+                MaximumDiscount = coupon.MaximumDiscount,
+                MinimumAmount = coupon.MinimumAmount,
+                UsageLimit = coupon.UsageLimit,
+                IsActive = coupon.IsActive
+            }).FirstOrDefaultAsync(cancellationToken);
     }
 
     /// <summary>
@@ -206,21 +207,23 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
     public IQueryable<CouponCodeEntity> GetQuarableCouponCodeData()
     {
         return _context.CouponCodes
-            .Select(s => new CouponCodeEntity()
+            .Select(coupon => new CouponCodeEntity()
             {
-                Id = s.Id,
-                Code = s.Code,
-                ValidityFrom = s.ValidityFrom,
-                ValidityTo = s.ValidityTo,
-                PriceRangeMin = s.PriceRangeMin,
-                PriceRangeMax = s.PriceRangeMax,
-                DiscountType = s.DiscountType,
-                DiscountValue = s.DiscountValue,
-                CreatedOn = s.CreatedOn,
-                UpdatedOn = s.UpdatedOn,
-                CreatedBy = s.CreatedBy,
-                UpdatedBy = s.UpdatedBy,
-                MediaUrl = s.MediaUrl
-            }).AsParallel().AsQueryable();
+                Code = coupon.Code,
+                StartDate = coupon.StartDate,
+                EndDate = coupon.EndDate,
+                DiscountType = coupon.DiscountType,
+                DiscountValue = coupon.DiscountValue,
+                CreatedOn = coupon.CreatedOn,
+                UpdatedOn = coupon.UpdatedOn,
+                CreatedBy = coupon.CreatedBy,
+                UpdatedBy = coupon.UpdatedBy,
+                Description = coupon.Description,
+                UsageCount = coupon.UsageCount,
+                MaximumDiscount = coupon.MaximumDiscount,
+                MinimumAmount = coupon.MinimumAmount,
+                UsageLimit = coupon.UsageLimit,
+                IsActive = coupon.IsActive
+            }).AsQueryable();
     }
 }

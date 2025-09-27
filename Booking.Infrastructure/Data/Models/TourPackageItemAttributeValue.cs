@@ -5,25 +5,19 @@ namespace Booking.Infrastructure.Data.Models;
 
 public partial class TourPackageItemAttributeValue
 {
-    public int PackageItemId { get; set; }
+    public int PackageId { get; set; }
 
     public int AttributeId { get; set; }
 
-    public string? Value { get; set; }
-
-    public int? ItemOrder { get; set; }
+    public string Value { get; set; } = null!;
 
     public Guid ItemGuid { get; set; }
 
-    public string? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public string? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
-
-    public virtual TourItemAttribute Attribute { get; set; } = null!;
-
-    public virtual TourPackageItem PackageItem { get; set; } = null!;
+    public DateTime UpdatedOn { get; set; }
 }

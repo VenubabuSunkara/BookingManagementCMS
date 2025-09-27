@@ -9,7 +9,7 @@ public partial class CustomerRelative
 
     public int CustomerId { get; set; }
 
-    public string? FullName { get; set; }
+    public string FullName { get; set; } = null!;
 
     public int Age { get; set; }
 
@@ -19,13 +19,15 @@ public partial class CustomerRelative
 
     public string? PhoneNumber { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
+
+    public Guid ItemGuid { get; set; }
 
     public virtual Customer Customer { get; set; } = null!;
 }

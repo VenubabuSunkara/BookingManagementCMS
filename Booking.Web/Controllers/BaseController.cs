@@ -20,10 +20,19 @@ namespace Booking.Web.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return ""; // or throw an exception if appropriate
+                return "System"; // or throw an exception if appropriate
             }
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            return userIdClaim?.Value ?? "";
+            return userIdClaim?.Value ?? "System";
+        }
+        public string GetUserName()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return "System"; // or throw an exception if appropriate
+            }
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return userIdClaim?.Value ?? "System";
         }
     }
 }

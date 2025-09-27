@@ -88,7 +88,7 @@ namespace Booking.Web.Controllers
             {
                 return View(model);
             }
-            var userdto = await _accountService.Register(new UserEntity()
+            var userdto = await _accountService.Register(new UserDto()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -100,6 +100,8 @@ namespace Booking.Web.Controllers
                 TenantId = Guid.NewGuid(),
                 IsActive = true,
                 RoleId = model.SelectedRoleId,
+                CreatedBy = base.GetUserName(),
+                UpdatedBy = base.GetUserName()
             });
             var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = userdto.Id, userdto.RegistrationToken }, Request.Scheme);
             var msg = new IEmailService.EmailMessage(model.Email, "Confirm your email", "", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");

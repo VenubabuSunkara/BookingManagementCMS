@@ -1,4 +1,14 @@
-﻿DELETE FROM [dbo].[__EFMigrationsHistory];
+﻿ALTER TABLE CouponCodes
+ADD CONSTRAINT DF_CouponCodes_CreatedBy
+DEFAULT 'System' FOR [CreatedBy]
+
+
+
+
+
+
+
+DELETE FROM [dbo].[__EFMigrationsHistory];
 DELETE FROM [dbo].[AddressType];
 DELETE FROM [dbo].[AspNetRoleClaims];
 DELETE FROM [dbo].[AspNetRoles];

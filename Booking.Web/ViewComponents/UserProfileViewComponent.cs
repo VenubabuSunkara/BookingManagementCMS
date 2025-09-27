@@ -18,7 +18,7 @@ namespace Booking.Web.ViewComponents
                 var userData = HttpContext.User.FindFirstValue(ClaimTypes.UserData);
                 using var stream = new MemoryStream(Encoding.UTF8.GetBytes(userData));
                 var userEntity = await JsonSerializer.DeserializeAsync<UserEntity>(stream);
-                return View(new UserDto()
+                return View(new UserDto() 
                 {
                     Username = userEntity.Username,
                     FirstName = userEntity.FirstName,
@@ -31,7 +31,6 @@ namespace Booking.Web.ViewComponents
                     Id = userEntity.Id,
                     FullName = userEntity.FullName,
                     ProfilePhoto = userEntity.ProfilePhoto
-
                 });
             }
             return View("Guest");

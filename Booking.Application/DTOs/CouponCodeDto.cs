@@ -8,26 +8,41 @@ namespace Booking.Application.DTOs;
 
 public class CouponCodeDto
 {
-    public int CouponCodeId { get; set; }
-    [Required(ErrorMessage = "This field is required.")]
-    [StringLength(200, ErrorMessage = "You have exceeded the maximum allowed characters.")]
-    [Remote(action: "VerifyCouponCode", controller: "CouponCode", AdditionalFields = nameof(CouponCodeId))]
-    public string? Code { get; set; }
-    [Required(ErrorMessage = "This field is required.")]
-    public DateOnly? ValidityFrom { get; set; }
-    [Required(ErrorMessage = "This field is required.")]
-    [DateComparisonAttribute("ValidityFrom", ErrorMessage = "End date must be greater than the start date.")]
-    public DateOnly? ValidityTo { get; set; }
-    public decimal? PriceRangeMin { get; set; }
-    public decimal? PriceRangeMax { get; set; }
-    public string? DiscountType { get; set; }
-    public string? DiscountValue { get; set; }
-    public DateTime? CreatedOn { get; set; }
-    public DateTime? UpdatedOn { get; set; }
-    public int? CreatedBy { get; set; }
-    public int? UpdatedBy { get; set; }
-    public string? MediaUrl { get; set; }
-    public IFormFile? FileUpload { get; set; }
+    public int Id { get; set; }
+
+    public string Code { get; set; } = null!;
+
+    public string? Description { get; set; }
+
+    public string DiscountType { get; set; } = null!;
+
+    public decimal DiscountValue { get; set; }
+
+    public decimal MinimumAmount { get; set; }
+
+    public decimal MaximumDiscount { get; set; }
+
+    public DateTime StartDate { get; set; }
+
+    public DateTime EndDate { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public int? UsageLimit { get; set; }
+
+    public int? UsageCount { get; set; }
+
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime UpdatedOn { get; set; }
+
+    public string CreatedBy { get; set; } = null!;
+
+    public string UpdatedBy { get; set; } = null!;
+
+    public bool? IsDeleted { get; set; }
+
+    public Guid ItemGuid { get; set; }
 }
 
 public class CouponCodeDataTableDto

@@ -13,7 +13,9 @@
             <h5>Pramotion Information</h5>
         </div>
         <div class="card-body">
-            <form asp-controller="CouponCode" asp-action="Create" asp-antiforgery="true" enctype="multipart/form-data" method="post" id="promotionCreateForm" class="theme-form mega-form">
+            <form asp-controller="CouponCode" asp-action="Create" asp-antiforgery="true" enctype="application/x-www-form-urlencoded" method="post" id="promotionCreateForm" class="theme-form mega-form">
+                @Html.AntiForgeryToken();
+                <input type="hidden" asp-for="Id" />
                 <div class="row">
                     <div class="col-sm-12">
                         <label class="form-label-title mt-3">Couponcode</label>
@@ -27,14 +29,14 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <label class="form-label-title mt-3">
+                        <label asp-for="StartDate" class="form-label-title mt-3">
                             Start Date
                         </label>
                         <div class="input-group date"
                              id="dt-date"
                              data-target-input="nearest">
                             <div class="input-group">
-                                <input asp-for="ValidityFrom"
+                                <input asp-for="StartDate"
                                        autocomplete="off"
                                        id="startDate"
                                        class="datepicker-here form-control"
@@ -49,18 +51,18 @@
                                 </div>
                             </div>
                         </div>
-                        <span asp-validation-for="ValidityFrom" id="startDate-Error" class="text-danger"></span>
+                        <span asp-validation-for="StartDate" id="startDate-Error" class="text-danger"></span>
                     </div>
 
                     <div class="col-sm-6">
-                        <label class="form-label-title mt-3">
+                        <label asp-for="EndDate" class="form-label-title mt-3">
                             End Date
                         </label>
                         <div class="input-group date"
                              id="dt-date"
                              data-target-input="nearest">
                             <div class="input-group">
-                                <input asp-for="ValidityTo"
+                                <input asp-for="EndDate"
                                        autocomplete="off"
                                        id="endDate"
                                        class="datepicker-here form-control"
@@ -75,25 +77,25 @@
                                 </div>
                             </div>
                         </div>
-                        <span asp-validation-for="ValidityTo" id="endDate-Error" class="text-danger"></span>
+                        <span asp-validation-for="EndDate" id="endDate-Error" class="text-danger"></span>
                     </div>
 
                     <div class="col-sm-6">
-                        <label class="form-label-title mt-3">Minimum Range</label>
-                        <input asp-for="PriceRangeMin"
+                        <label asp-for="MinimumAmount" class="form-label-title mt-3">Minimum Amount</label>
+                        <input asp-for="MinimumAmount"
                                autocomplete="off"
                                class="form-control"
                                type="text"
-                               placeholder="Minimum Range" />
+                               placeholder="Minimum Amount" />
                     </div>
 
                     <div class="col-sm-6">
-                        <label class="form-label-title mt-3">Maximum Range</label>
-                        <input asp-for="PriceRangeMax"
+                        <label asp-for="MaximumDiscount" class="form-label-title mt-3">Maximum Discount</label>
+                        <input asp-for="MaximumDiscount"
                                autocomplete="off"
                                class="form-control"
                                type="text"
-                               placeholder="Maximum Range" />
+                               placeholder="Maximum Discount" />
                     </div>
 
                     <div class="col-sm-6">
@@ -104,7 +106,7 @@
                                class="form-control"
                                type="text"
                                placeholder="Discount Type" />
-                        @* <span asp-validation-for="DiscountType" class="text-danger" id="discountType-Error"></span> *@
+                        <span asp-validation-for="DiscountType" class="text-danger" id="discountType-Error"></span>
                     </div>
 
                     <div class="col-sm-6">
@@ -115,21 +117,42 @@
                                class="form-control"
                                type="text"
                                placeholder="Discount Value" />
-                        @* <span asp-validation-for="DiscountValue" id="discountValue-Error" class="text-danger"></span> *@
+                        <span asp-validation-for="DiscountValue" id="discountValue-Error" class="text-danger"></span>
                     </div>
 
-                    <div class="mb-3 choose">
-                        <label class="form-label-title">Fileupload</label>
-                        <input asp-for="FileUpload"
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3">Usage Limit</label>
+                        <input asp-for="UsageLimit"
+                               autocomplete="off"
                                class="form-control"
-                               type="file"
-                               data-bs-original-title=""
-                               title="" />
+                               type="text"
+                               placeholder="Usage Limit" />
+                        <span asp-validation-for="UsageLimit" class="text-danger" id="discountType-Error"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label-title mt-3 checkbox">Activate</label>
+                        <input asp-for="IsActive"
+                               autocomplete="off"
+                               type="checkbox"
+                               placeholder="Discount Value" />
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="form-label-title mt-3">Description</label>
+                        <textarea asp-for="Description"
+                                  autocomplete="off"
+                                  class="form-control"
+                                  type="text" cols="10" role="5"
+                                  placeholder="Description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
 
                 </div>
-                <button id="couponCodeFieldsClear" class="btn btn-primary mt-3">Clear Fields</button>
-                <button id="couponCodeSubmit" class="btn btn-primary mt-3">Save Change</button>
+                <button id="couponCodeFieldsClear" type="reset" class="btn btn-primary mt-3">Clear Fields</button>
+                <button id="couponCodeSubmit" type="submit" class="btn btn-primary mt-3">Save Change</button>
                 <a asp-controller="CouponCode" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
             </form>
         </div>

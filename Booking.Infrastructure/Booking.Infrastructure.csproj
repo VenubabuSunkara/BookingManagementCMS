@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Models_Backup\**" />
+    <EmbeddedResource Remove="Data\Models_Backup\**" />
+    <None Remove="Data\Models_Backup\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Identity\Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
     <Compile Remove="Identity\Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
     <Compile Remove="Identity\Data\Migrations\20250816074902_application.cs" />

@@ -13,19 +13,21 @@ public partial class CompanyUser
 
     public string? LastName { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
     public bool? IsActive { get; set; }
 
     public string? Address { get; set; }
 
-    public string? UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
-    public virtual AspNetUser? User { get; set; }
+    public Guid ItemGuid { get; set; }
+
+    public virtual AspNetUser User { get; set; } = null!;
 }

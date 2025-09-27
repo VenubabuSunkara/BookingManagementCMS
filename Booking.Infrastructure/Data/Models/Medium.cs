@@ -13,17 +13,17 @@ public partial class Medium
 
     public string MediaType { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public string? ThumbnailUrl { get; set; }
 
-    public Guid? ItemGuid { get; set; }
+    public Guid ItemGuid { get; set; }
 
     public virtual ICollection<DriverMediaMapping> DriverMediaMappings { get; set; } = new List<DriverMediaMapping>();
 

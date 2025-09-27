@@ -15,15 +15,13 @@ public partial class TourPackageCategory
 
     public bool? IsActive { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
-
-    public int? ItemOrder { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public virtual ICollection<TourPackage> TourPackages { get; set; } = new List<TourPackage>();
 }

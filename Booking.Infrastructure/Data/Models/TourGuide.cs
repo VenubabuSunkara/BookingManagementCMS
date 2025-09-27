@@ -7,21 +7,21 @@ public partial class TourGuide
 {
     public int ItemId { get; set; }
 
-    public string? FirstName { get; set; }
+    public string FirstName { get; set; } = null!;
 
-    public string? LastName { get; set; }
+    public string LastName { get; set; } = null!;
 
-    public string? PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = null!;
 
     public string? Email { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public Guid ItemGuid { get; set; }
 

@@ -77,14 +77,19 @@
                             <table class="all-cars-table table table-striped w-100" id="tblCouponCode">
                                 <thead>
                                     <tr>
-                                        <th>Couponcode</th>
+                                        <th>Coupon Code</th>
                                         <th>Start Date</th>
                                         <th>End Date</th>
-                                        <th>MinRange</th>
-                                        <th>MaxRange</th>
-                                        <th>View</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
+                                        <th>Discount Type</th>
+                                        <th>Discount Value</th>
+                                        <th>
+                                            Minimum Amount
+                                        </th>
+                                        <th>
+                                            Maximum Discount
+                                        </th>
+                                        <th>Usage Limit</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -140,7 +145,7 @@
             }
         };
 
-        //Data table 
+        //Data table
         var couponCodeListVM = {
             CouponCodedt: null,
             init: function () {
@@ -210,50 +215,36 @@
                                 console.error("DataTable error: ", xhr.responseText);
                             }
                         },
-                        // layout: {
-                        //     bottomStart: {
-                        //                info: {
-                        //                    empty: 'No entries to show'
-                        //                }
-                        //            }
-                        // },
                         columns: [
                             { data: 'code', autoWidth: true },
-                            { data: 'validityFrom', autoWidth: true },
-                            { data: 'validityTo', autoWidth: true },
-                            { data: 'priceRangeMin', autoWidth: true },
-                            { data: 'priceRangeMax', autoWidth: true },
+                            { data: 'startDate', autoWidth: true },
+                            { data: 'endDate', autoWidth: true },
+                            { data: 'discountType', autoWidth: true },
+                            { data: 'discountValue', autoWidth: true },
+                            { data: 'minimumAmount', autoWidth: true },
+                            { data: 'maximumDiscount', autoWidth: true },
+                            { data: 'usageLimit', autoWidth: true },
                             {
                                 data: 'couponCodeId',
                                 render: function (data, type, row) {
-                                    return `
-                                        <form method="post" action="/CouponCode/Details" style="display:inline;">
-                                            <input type="hidden" name="id" value="${data}" />
-                                            <button type="submit" class="btn btn-link p-0" title="View" style="border: none; background: none;">
-                                                <i class="fa fa-eye" aria-hidden="true" style="color: #747dc6;"></i>
-                                            </button>
-                                        </form>`;
-                                }
-                            },
-                            {
-                                data: 'couponCodeId',
-                                render: function (data, type, row) {
-                                    return `
-                                        <form method="post" action="/CouponCode/Edit" style="display:inline;">
-                                            <input type="hidden" name="id" value="${data}" />
-                                            <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
-                                                <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
-                                            </button>
-                                        </form>`;
-                                }
-                            },
-                            {
-                                data: 'couponCodeId',
-                                render: function (data, type, row) {
-                                    return `<a class="delete-promotion" href="javascript:void(0);" data-id="${data}">
+                                    var actions=`
+                                            <form method="post" action="/CouponCode/Details" style="display:inline;">
+                                                <input type="hidden" name="id" value="${data}" />
+                                                <button type="submit" class="btn btn-link p-0" title="View" style="border: none; background: none;">
+                                                    <i class="fa fa-eye" aria-hidden="true" style="color: #747dc6;"></i>
+                                                </button>
+                                            </form>`;
+                                    action+= ` ||
+                                            <form method="post" action="/CouponCode/Edit" style="display:inline;">
+                                                <input type="hidden" name="id" value="${data}" />
+                                                <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
+                                                </button>
+                                            </form>`;
+                                    action+= `|| <a class="delete-promotion" href="javascript:void(0);" data-id="${data}">
                                                 <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                            </a>`;
-                                    //return `<a onclick=DeleteData(${data})><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                             </a>`;
+                                    return actions;
                                 }
                             }
                         ],
@@ -277,7 +268,7 @@
         };
 
         //Document ready
-        $(() => 
+        $(() =>
         {
             //Bind couponcode list to data table
              couponCodeListVM.init();

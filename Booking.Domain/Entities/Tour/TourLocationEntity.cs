@@ -34,17 +34,17 @@ namespace Booking.Domain.Entities.Tour
 
         public string? PointImage { get; set; }
 
-        public int? RouteDistance { get; set; }
+        public int RouteDistance { get; set; }
 
-        public int? RouteDuration { get; set; }
+        public int RouteDuration { get; set; }
 
-        public string? CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = null!;
 
-        public DateTime? CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
 
-        public string? UpdatedBy { get; set; }
+        public string UpdatedBy { get; set; } = null!;
 
-        public DateTime? UpdatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }
 
         public int PackageId { get; set; }
 

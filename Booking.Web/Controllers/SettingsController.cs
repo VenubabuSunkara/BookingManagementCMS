@@ -31,9 +31,9 @@ namespace Booking.Web.Controllers
                 {
                     x.Name,
                     x.Value,
-                    CreatedOn = x.CreatedOn.HasValue ? x.CreatedOn.Value.ToShortDateString() : "N/A",
+                    CreatedOn = x.CreatedOn.ToShortDateString(),
                     x.Id,
-                    UpdatedOn = x.UpdatedOn.HasValue ? x.UpdatedOn.Value.ToShortDateString() : "N/A",
+                    UpdatedOn = x.UpdatedOn.ToShortDateString(),
                 }).ToArray()
             });
         }

@@ -10,6 +10,6 @@ namespace Booking.Domain.Entities
     {
         public int VehicleId { get; set; }
         public int DriverId { get; set; }
-        public int CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = null!;
     }
 }

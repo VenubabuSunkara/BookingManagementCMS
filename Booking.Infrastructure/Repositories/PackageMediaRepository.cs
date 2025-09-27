@@ -36,7 +36,7 @@ namespace Booking.Infrastructure.Repositories
                 MediaUrl = mediaEntity.MediaUrl ?? string.Empty,
                 ThumbnailUrl = mediaEntity.ThumbnailImage,
                 CreatedBy = mediaEntity.CreatedBy,
-                CreatedOn = mediaEntity.CreatedAt ?? DateTime.UtcNow,
+                CreatedOn = mediaEntity.CreatedAt,
                 Caption = mediaEntity.Filename,
                 UpdatedBy = mediaEntity.UpdatedBy,
                 UpdatedOn = mediaEntity.UpdatedAt,
@@ -46,14 +46,14 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<int> SavePackageMediaList(IEnumerable<PackageMediaEntity> mediaEntitys, CancellationToken token)
         {
-           await _context.TourPackageMedia.AddRangeAsync(mediaEntitys.Select(mediaEntity => new Data.Models.TourPackageMedium()
+            await _context.TourPackageMedia.AddRangeAsync(mediaEntitys.Select(mediaEntity => new Data.Models.TourPackageMedium()
             {
                 PackageId = mediaEntity.PackageId,
                 MediaType = mediaEntity.MediaType,
                 MediaUrl = mediaEntity.MediaUrl ?? string.Empty,
                 ThumbnailUrl = mediaEntity.ThumbnailImage,
                 CreatedBy = mediaEntity.CreatedBy,
-                CreatedOn = mediaEntity.CreatedAt ?? DateTime.UtcNow,
+                CreatedOn = mediaEntity.CreatedAt,
                 Caption = mediaEntity.Filename,
                 UpdatedBy = mediaEntity.UpdatedBy,
                 UpdatedOn = mediaEntity.UpdatedAt,

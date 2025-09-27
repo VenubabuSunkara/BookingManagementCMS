@@ -22,7 +22,7 @@ namespace Booking.Application.Services
                 Latitude = Locationdto.Latitude,
                 Longitude = Locationdto.Longitude,
                 CreatedBy = Locationdto.CreatedBy,
-                CreatedOn = Locationdto.CreatedOn ?? DateTime.UtcNow,
+                CreatedOn = Locationdto.CreatedOn,
                 UpdatedBy = Locationdto.UpdatedBy,
                 UpdatedOn = Locationdto.UpdatedOn,
                 Description = Locationdto.Description,

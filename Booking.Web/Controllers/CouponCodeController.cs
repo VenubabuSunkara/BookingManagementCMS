@@ -33,21 +33,16 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoadData([FromBody] DataTableAjaxPostModel request, CancellationToken cancellationToken)
         {
-            var couponCodesList = await _couponCodeService.GetCouponCodeListAsync(request.start, request.length, request.search.value ?? string.Empty, cancellationToken);
+            string search = string.Empty;
+            if (!String.IsNullOrEmpty(request.search?.value))
+                search = request.search?.value ?? string.Empty;
+            var couponCodesList = await _couponCodeService.GetCouponCodeListAsync(request.start, request.length, search, cancellationToken);
             return Json(new
             {
                 draw = request.draw == 0 ? 1 : request.draw,
                 recordsFiltered = couponCodesList.FilterRecords,
                 recordsTotal = couponCodesList.TotalRecords,
-                data = couponCodesList.CouponCode.Select(x => new
-                {
-                    Code = x.Code,
-                    ValidityFrom = x.ValidityFrom,
-                    ValidityTo = x.ValidityTo,
-                    priceRangeMin = x.PriceRangeMin,
-                    priceRangeMax = x.PriceRangeMax,
-                    CouponCodeId = x.CouponCodeId
-                }).AsParallel().ToArray()
+                data = couponCodesList.CouponCode.ToArray()
             });
         }
 
@@ -107,11 +102,6 @@ namespace Booking.Web.Controllers
                 {
                     return View();
                 }, token);
-
-            //upload the file and bind url
-            couponCodeDto.MediaUrl = couponCodeDto.FileUpload != null && couponCodeDto.FileUpload.Length > 0
-                ? await FileUpload.UploadFileAsync(couponCodeDto.FileUpload, "CouponCode", token)
-                : string.Empty;
             couponCodeDto.CreatedOn = DateTime.Now;
             couponCodeDto.UpdatedOn = DateTime.Now;
 
@@ -174,10 +164,7 @@ namespace Booking.Web.Controllers
                     return View();
                 }, token);
 
-            //upload file and bind the url
-            couponCodeDto.MediaUrl = couponCodeDto.FileUpload != null && couponCodeDto.FileUpload.Length > 0
-                ? await FileUpload.UploadFileAsync(couponCodeDto.FileUpload, "CouponCode", token)
-                : couponCodeDto.MediaUrl ?? string.Empty;
+
             couponCodeDto.UpdatedOn = DateTime.Now;
 
             var promotionUpdateStatus = await _couponCodeService.UpdateCouponCodeAsync(couponCodeDto, token);

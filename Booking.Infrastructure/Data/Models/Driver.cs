@@ -31,17 +31,17 @@ public partial class Driver
 
     public bool? ApproveDriver { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public Guid? TenantId { get; set; }
+    public Guid TenantId { get; set; }
 
-    public Guid? ItemGuid { get; set; }
+    public Guid ItemGuid { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -49,9 +49,9 @@ public partial class Driver
 
     public virtual ICollection<DriverMediaMapping> DriverMediaMappings { get; set; } = new List<DriverMediaMapping>();
 
-    public virtual ICollection<DriverRating> DriverRatings { get; set; } = new List<DriverRating>();
-
     public virtual DriverVehicle? DriverVehicle { get; set; }
 
     public virtual ICollection<DriverVehicleAvailability> DriverVehicleAvailabilities { get; set; } = new List<DriverVehicleAvailability>();
+
+    public virtual ICollection<ReviewComment> ReviewComments { get; set; } = new List<ReviewComment>();
 }

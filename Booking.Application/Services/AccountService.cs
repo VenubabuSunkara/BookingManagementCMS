@@ -1,13 +1,7 @@
-﻿using Amazon.Runtime.Internal.UserAgent;
-using Booking.Application.DTOs;
+﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
 using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
@@ -112,9 +106,24 @@ namespace Booking.Application.Services
             await _accountRepository.LogOut(UserId);
         }
 
-        public async Task<UserDto?> Register(UserEntity userEntity)
+        public async Task<UserDto?> Register(UserDto userDto)
         {
-            var userentity = await accountRepository.Register(userEntity);
+            var userEntity = await _accountRepository.Register(new UserEntity()
+            {
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Email = userDto.Email,
+                RegistrationToken = userDto.RegistrationToken,
+                Password = userDto.Password,
+                Contact = userDto.Contact,
+                RoleId = userDto.RoleId,
+                ProfilePhoto = userDto.ProfilePhoto,
+                Roles = userDto.Roles,
+                TenantId = userDto.TenantId,
+                Username = userDto.Username,
+                CreatedBy = userDto.CreatedBy,
+                UpdatedBy = userDto.UpdatedBy
+            });
             return new UserDto()
             {
                 Id = userEntity.Id,
@@ -127,7 +136,7 @@ namespace Booking.Application.Services
                 ProfilePhoto = userEntity.ProfilePhoto,
                 Roles = userEntity.Roles,
                 TenantId = userEntity.TenantId,
-                Username = userentity.Username
+                Username = userEntity.Username
             };
         }
 

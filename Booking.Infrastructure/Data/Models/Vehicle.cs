@@ -25,17 +25,17 @@ public partial class Vehicle
 
     public string? OtherInformation { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public string? DefaultImage { get; set; }
+    public string DefaultImage { get; set; } = null!;
 
-    public Guid? ItemGuid { get; set; }
+    public Guid ItemGuid { get; set; }
 
     public bool? IsActive { get; set; }
 
@@ -50,6 +50,4 @@ public partial class Vehicle
     public virtual ICollection<VehicleFeatureMapping> VehicleFeatureMappings { get; set; } = new List<VehicleFeatureMapping>();
 
     public virtual ICollection<VehicleMediaMapping> VehicleMediaMappings { get; set; } = new List<VehicleMediaMapping>();
-
-    public virtual ICollection<VehicleRating> VehicleRatings { get; set; } = new List<VehicleRating>();
 }

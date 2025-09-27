@@ -149,7 +149,7 @@ namespace Booking.Infrastructure.Repositories
                 UserName = userEntity.Username,
                 Email = userEntity.Email,
                 PhoneNumber = userEntity.Contact,
-                EmailConfirmed = false,  // Let email confirmation happen via token
+                EmailConfirmed = true,  // Let email confirmation happen via token
                 PhoneNumberConfirmed = true
             };
 
@@ -170,7 +170,6 @@ namespace Booking.Infrastructure.Repositories
 
             // Use a transaction for consistency
             using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
                 var companyUser = new CompanyUser
@@ -183,13 +182,12 @@ namespace Booking.Infrastructure.Repositories
                     CreatedOn = DateTime.UtcNow,
                     UpdatedOn = DateTime.UtcNow,
                     TenantId = userEntity.TenantId,
+                    CreatedBy = userEntity.CreatedBy,
+                    UpdatedBy = userEntity.UpdatedBy
                 };
-
                 await _context.CompanyUsers.AddAsync(companyUser);
                 await _context.SaveChangesAsync();
-
                 await _userManager.AddToRoleAsync(user, userEntity.RoleId);
-
                 await transaction.CommitAsync();
             }
             catch

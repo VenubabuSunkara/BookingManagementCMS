@@ -21,7 +21,7 @@ namespace Booking.Infrastructure.Repositories
                 Latitude = LocationEntity.Latitude,
                 Longitude = LocationEntity.Longitude,
                 CreatedBy = LocationEntity.CreatedBy,
-                CreatedOn = LocationEntity.CreatedOn ?? DateTime.UtcNow,
+                CreatedOn = LocationEntity.CreatedOn,
                 UpdatedBy = LocationEntity.UpdatedBy,
                 UpdatedOn = LocationEntity.UpdatedOn,
                 Description = LocationEntity.Description,

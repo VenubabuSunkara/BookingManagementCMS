@@ -12,9 +12,7 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<TourPackageTable> GetPackages(int Skip, int Take, string searchKey, int CategoryId)
         {
-            IQueryable<TourPackage> query = _context.TourPackages
-                .Include(x => x.TourDestinations)
-                .ThenInclude(x => x.Location);
+            IQueryable<TourPackage> query = _context.TourPackages.Include(x => x.TourLocations).AsNoTracking();
             var total = await query.CountAsync();
             if (CategoryId > 0)
             {
@@ -33,11 +31,13 @@ namespace Booking.Infrastructure.Repositories
                 BannerImage = x.BannerImage,
                 FullDescription = x.Description,
                 ShortDescription = x.ShortDescription,
-                Location = x.TourDestinations.Any() && x.TourDestinations.FirstOrDefault()!.Location != null ? new TourLocationEntity()
-                {
-                    LocationName = x.TourDestinations.FirstOrDefault()!.Location!.Name,
-                    LocationId = x.TourDestinations.FirstOrDefault()!.Location!.LocationId,
-                } : new TourLocationEntity(),
+                Location = x.TourLocations.Any() &&
+                    x.TourLocations != null ?
+                    new TourLocationEntity()
+                    {
+                        LocationName = x.TourLocations.FirstOrDefault().LocationName,
+                        LocationId = x.TourLocations.FirstOrDefault().LocationId,
+                    } : new TourLocationEntity(),
             }).ToListAsync();
             return new TourPackageTable()
             {
@@ -52,7 +52,7 @@ namespace Booking.Infrastructure.Repositories
             var entity = new TourPackage
             {
                 PackageName = tourPackage.PackageName,
-                DurationDays = int.Parse(tourPackage.DurationDays),
+                DurationDays = tourPackage.DurationDays,
                 BasePrice = tourPackage.BasePrice,
                 BannerImage = tourPackage.BannerImage,
                 Description = tourPackage.FullDescription,

@@ -21,14 +21,14 @@ namespace Booking.Application.DTOs.Tour
     {
         public int Id { get; set; }
         public int PackageId { get; set; }
-        public string? MediaUrl { get; set; }
-        public string? MediaType { get; set; }
+        public string MediaUrl { get; set; } = null!;
+        public string MediaType { get; set; } = null!;
         public bool? IsDefault { get; set; }
-        public string? ThumbnailImage { get; set; }
-        public string? FileName { get; set; }
-        public string? CreatedBy { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public string? UpdatedBy { get; set; }
-        public DateTime? UpdatedAt { get; set; }
+        public string ThumbnailImage { get; set; } = null!;
+        public string FileName { get; set; } = null!;
+        public string CreatedBy { get; set; } = null!;
+        public DateTime CreatedAt { get; set; }
+        public string UpdatedBy { get; set; } = null!;
+        public DateTime UpdatedAt { get; set; }
     }
 }

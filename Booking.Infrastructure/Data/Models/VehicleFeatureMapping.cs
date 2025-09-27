@@ -9,15 +9,15 @@ public partial class VehicleFeatureMapping
 
     public int FeatureId { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public Guid? ItemGuid { get; set; }
+    public Guid ItemGuid { get; set; }
 
     public virtual VehicleFeature Feature { get; set; } = null!;
 

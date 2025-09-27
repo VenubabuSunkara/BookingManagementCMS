@@ -2,6 +2,7 @@
 using Booking.Application.Interfaces;
 using Booking.Domain.Interfaces;
 using System.Runtime.InteropServices;
+using static Azure.Core.HttpHeader;
 
 namespace Booking.Application.Services;
 
@@ -18,18 +19,21 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     {
         return await _couponCodeRepository.CreateCouponCodeAsync(new()
         {
-            Code = couponCodeDto.Code ?? string.Empty,
-            ValidityFrom = couponCodeDto.ValidityFrom,
-            ValidityTo = couponCodeDto.ValidityTo,
-            PriceRangeMin = couponCodeDto.PriceRangeMin,
-            PriceRangeMax = couponCodeDto.PriceRangeMax,
-            DiscountType = couponCodeDto.DiscountType ?? string.Empty,
-            DiscountValue = couponCodeDto.DiscountValue ?? string.Empty,
+            Code = couponCodeDto.Code,
+            StartDate = couponCodeDto.StartDate,
+            EndDate = couponCodeDto.EndDate,
+            DiscountType = couponCodeDto.DiscountType,
+            DiscountValue = couponCodeDto.DiscountValue,
             CreatedOn = couponCodeDto.CreatedOn,
             UpdatedOn = couponCodeDto.UpdatedOn,
             CreatedBy = couponCodeDto.CreatedBy,
             UpdatedBy = couponCodeDto.UpdatedBy,
-            MediaUrl = couponCodeDto.MediaUrl ?? string.Empty
+            Description = couponCodeDto.Description,
+            UsageCount = couponCodeDto.UsageCount,
+            MaximumDiscount = couponCodeDto.MaximumDiscount,
+            MinimumAmount = couponCodeDto.MinimumAmount,
+            UsageLimit = couponCodeDto.UsageLimit,
+            IsActive = couponCodeDto.IsActive
         }, cancellationToken);
     }
 
@@ -43,19 +47,21 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     {
         return await _couponCodeRepository.UpdateCouponCodeAsync(new()
         {
-            Id = couponCodeDto.CouponCodeId,
             Code = couponCodeDto.Code,
-            ValidityFrom = couponCodeDto.ValidityFrom,
-            ValidityTo = couponCodeDto.ValidityTo,
-            PriceRangeMin = couponCodeDto.PriceRangeMin,
-            PriceRangeMax = couponCodeDto.PriceRangeMax,
+            StartDate = couponCodeDto.StartDate,
+            EndDate = couponCodeDto.EndDate,
             DiscountType = couponCodeDto.DiscountType,
             DiscountValue = couponCodeDto.DiscountValue,
             CreatedOn = couponCodeDto.CreatedOn,
             UpdatedOn = couponCodeDto.UpdatedOn,
             CreatedBy = couponCodeDto.CreatedBy,
             UpdatedBy = couponCodeDto.UpdatedBy,
-            MediaUrl = couponCodeDto.MediaUrl
+            Description = couponCodeDto.Description,
+            UsageCount = couponCodeDto.UsageCount,
+            MaximumDiscount = couponCodeDto.MaximumDiscount,
+            MinimumAmount = couponCodeDto.MinimumAmount,
+            UsageLimit = couponCodeDto.UsageLimit,
+            IsActive = couponCodeDto.IsActive
         }, cancellationToken);
     }
 
@@ -93,27 +99,28 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     public async Task<CouponCodeDataTableDto> GetCouponCodeListAsync(int Skip, int Take, string searchKey, CancellationToken cancellationToken)
     {
         var couponCodeList = await _couponCodeRepository.GetCouponCodeListAsync(Skip, Take, searchKey, cancellationToken);
-
         return new()
         {
             TotalRecords = couponCodeList.Total,
             FilterRecords = couponCodeList.Filtered,
-            CouponCode = [.. couponCodeList.CouponCode.Select(s => new CouponCodeDto()
+            CouponCode = [.. couponCodeList.CouponCode.Select(coupon => new CouponCodeDto()
             {
-                CouponCodeId = s.Id,
-                Code = s.Code ?? string.Empty,
-                ValidityFrom = s.ValidityFrom,
-                ValidityTo = s.ValidityTo,
-                PriceRangeMin = s.PriceRangeMin,
-                PriceRangeMax = s.PriceRangeMax,
-                DiscountType = s.DiscountType ?? string.Empty,
-                DiscountValue = s.DiscountValue ?? string.Empty,
-                CreatedOn = s.CreatedOn,
-                UpdatedOn = s.UpdatedOn,
-                CreatedBy = s.CreatedBy,
-                UpdatedBy = s.UpdatedBy,
-                MediaUrl = s.MediaUrl ?? string.Empty
-            }).AsParallel()]
+                Code = coupon.Code,
+                StartDate = coupon.StartDate,
+                EndDate = coupon.EndDate,
+                DiscountType = coupon.DiscountType,
+                DiscountValue = coupon.DiscountValue,
+                CreatedOn = coupon.CreatedOn,
+                UpdatedOn = coupon.UpdatedOn,
+                CreatedBy = coupon.CreatedBy,
+                UpdatedBy = coupon.UpdatedBy,
+                Description = coupon.Description,
+                UsageCount = coupon.UsageCount,
+                MaximumDiscount = coupon.MaximumDiscount,
+                MinimumAmount = coupon.MinimumAmount,
+                UsageLimit = coupon.UsageLimit,
+                IsActive = coupon.IsActive
+            })]
         };
     }
 
@@ -125,19 +132,23 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     {
         var couponCodeExportData = await _couponCodeRepository.ExportAllAsync();
 
-        return couponCodeExportData.Select(s => new CouponCodeExporDto()
+        return couponCodeExportData.Select(coupon => new CouponCodeExporDto()
         {
-            Code = s.Code ?? string.Empty,
-            ValidityFrom = s.ValidityFrom,
-            ValidityTo = s.ValidityTo,
-            PriceRangeMin = s.PriceRangeMin,
-            PriceRangeMax = s.PriceRangeMax,
-            DiscountType = s.DiscountType ?? string.Empty,
-            DiscountValue = s.DiscountValue ?? string.Empty,
-            CreatedOn = s.CreatedOn,
-            UpdatedOn = s.UpdatedOn,
-            CreatedBy = s.CreatedBy,
-            UpdatedBy = s.UpdatedBy
+            Code = coupon.Code,
+            StartDate = coupon.StartDate,
+            EndDate = coupon.EndDate,
+            DiscountType = coupon.DiscountType,
+            DiscountValue = coupon.DiscountValue,
+            CreatedOn = coupon.CreatedOn,
+            UpdatedOn = coupon.UpdatedOn,
+            CreatedBy = coupon.CreatedBy,
+            UpdatedBy = coupon.UpdatedBy,
+            Description = coupon.Description,
+            UsageCount = coupon.UsageCount,
+            MaximumDiscount = coupon.MaximumDiscount,
+            MinimumAmount = coupon.MinimumAmount,
+            UsageLimit = coupon.UsageLimit,
+            IsActive = coupon.IsActive
         }).AsParallel();
     }
 
@@ -149,25 +160,27 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     /// <returns></returns>
     public async Task<CouponCodeDto?> GetCouponCodeByIdAsync(int couponCodeId, CancellationToken cancellationToken)
     {
-        var couponCode = await _couponCodeRepository.GetCouponCodeByIdAsync(couponCodeId, cancellationToken);
+        var coupon = await _couponCodeRepository.GetCouponCodeByIdAsync(couponCodeId, cancellationToken);
 
-        if (couponCode == null) throw new NullReferenceException();
+        if (coupon == null) throw new NullReferenceException();
 
         return new()
         {
-            CouponCodeId = couponCode.Id,
-            Code = couponCode.Code,
-            ValidityFrom = couponCode.ValidityFrom,
-            ValidityTo = couponCode.ValidityTo,
-            PriceRangeMin = couponCode.PriceRangeMin,
-            PriceRangeMax = couponCode.PriceRangeMax,
-            DiscountType = couponCode.DiscountType,
-            DiscountValue = couponCode.DiscountValue,
-            CreatedOn = couponCode.CreatedOn,
-            UpdatedOn = couponCode.UpdatedOn,
-            CreatedBy = couponCode.CreatedBy,
-            UpdatedBy = couponCode.UpdatedBy,
-            MediaUrl = couponCode.MediaUrl
+            Code = coupon.Code,
+            StartDate = coupon.StartDate,
+            EndDate = coupon.EndDate,
+            DiscountType = coupon.DiscountType,
+            DiscountValue = coupon.DiscountValue,
+            CreatedOn = coupon.CreatedOn,
+            UpdatedOn = coupon.UpdatedOn,
+            CreatedBy = coupon.CreatedBy,
+            UpdatedBy = coupon.UpdatedBy,
+            Description = coupon.Description,
+            UsageCount = coupon.UsageCount,
+            MaximumDiscount = coupon.MaximumDiscount,
+            MinimumAmount = coupon.MinimumAmount,
+            UsageLimit = coupon.UsageLimit,
+            IsActive = coupon.IsActive
         };
     }
 
@@ -179,21 +192,23 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
     {
         var couponCodeQuarable = _couponCodeRepository.GetQuarableCouponCodeData();
         return couponCodeQuarable
-            .Select(s => new CouponCodeDto()
+            .Select(coupon => new CouponCodeDto()
             {
-                CouponCodeId = s.Id,
-                Code = s.Code,
-                ValidityFrom = s.ValidityFrom,
-                ValidityTo = s.ValidityTo,
-                PriceRangeMin = s.PriceRangeMin,
-                PriceRangeMax = s.PriceRangeMax,
-                DiscountType = s.DiscountType,
-                DiscountValue = s.DiscountValue,
-                CreatedOn = s.CreatedOn,
-                UpdatedOn = s.UpdatedOn,
-                CreatedBy = s.CreatedBy,
-                UpdatedBy = s.UpdatedBy,
-                MediaUrl = s.MediaUrl
-            }).AsParallel().AsQueryable();
+                Code = coupon.Code,
+                StartDate = coupon.StartDate,
+                EndDate = coupon.EndDate,
+                DiscountType = coupon.DiscountType,
+                DiscountValue = coupon.DiscountValue,
+                CreatedOn = coupon.CreatedOn,
+                UpdatedOn = coupon.UpdatedOn,
+                CreatedBy = coupon.CreatedBy,
+                UpdatedBy = coupon.UpdatedBy,
+                Description = coupon.Description,
+                UsageCount = coupon.UsageCount,
+                MaximumDiscount = coupon.MaximumDiscount,
+                MinimumAmount = coupon.MinimumAmount,
+                UsageLimit = coupon.UsageLimit,
+                IsActive = coupon.IsActive
+            }).AsQueryable();
     }
 }

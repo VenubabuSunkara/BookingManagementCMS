@@ -11,17 +11,17 @@ public partial class TourActivate
 
     public int PackageId { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public string? FromDate { get; set; }
+    public DateTime FromDate { get; set; }
 
-    public string? ToDate { get; set; }
+    public DateTime ToDate { get; set; }
 
     public string? Description { get; set; }
 
