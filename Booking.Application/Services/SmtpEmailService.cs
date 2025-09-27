@@ -8,12 +8,12 @@ using SmtpClient = System.Net.Mail.SmtpClient;
 
 namespace Booking.Application.Services
 {
-    public class SmtpEmailService(IOptions<EmailSettings> options, ILogger<SmtpEmailService> logger) : IEmailService
+    public class SmtpEmailService(IOptions<EmailSettings> options, ILogger<SmtpEmailService> logger) : ISmtpEmailService
     {
         private readonly EmailSettings _settings = options.Value;
         private readonly ILogger<SmtpEmailService> _logger = logger;
 
-        public async Task SendEmailAsync(IEmailService.EmailMessage message)
+        public async Task SendEmailAsync(ISmtpEmailService.EmailMessage message)
         {
             try
             {

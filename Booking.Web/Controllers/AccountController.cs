@@ -166,7 +166,7 @@ namespace Booking.Web.Controllers
             if (res == null)
                 return RedirectToAction("ForgotPasswordConfirmation");
             var resetLink = Url.Action("ResetPassword", "Account", new { res.Token, email = model.Email }, Request.Scheme);
-            await _emailService.SendEmailAsync(new IEmailService.EmailMessage(model.Email, "Reset Password", "", $"Reset your password by <a href='{resetLink}'>clicking here</a>."));
+            await _emailService.SendEmailAsync(new ISmtpEmailService.EmailMessage(model.Email, "Reset Password", "", $"Reset your password by <a href='{resetLink}'>clicking here</a>."));
             return RedirectToAction("ForgotPasswordConfirmation");
         }
         [AllowAnonymous]

@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
-    public class SendGridEmailService(ISendGridClient client, IConfiguration config, ILogger<SendGridEmailService> logger) : IEmailService
+    public class SendGridEmailService(ISendGridClient client, IConfiguration config, ILogger<SendGridEmailService> logger) : IEmailEmailQueueService
     {
         private readonly ISendGridClient _client = client;
         private readonly string _fromEmail = config["SendGrid:FromEmail"]!;
         private readonly string _fromName = config["SendGrid:FromName"]!;
         private readonly ILogger<SendGridEmailService> _logger = logger;
 
-        public async Task SendEmailAsync(IEmailService.EmailMessage msg)
+        public async Task SendEmailAsync(IEmailEmailQueueService.EmailMessage msg)
         {
             try
             {
