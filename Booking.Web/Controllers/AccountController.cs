@@ -104,7 +104,7 @@ namespace Booking.Web.Controllers
                 UpdatedBy = base.GetUserName()
             });
             var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = userdto.Id, userdto.RegistrationToken }, Request.Scheme);
-            var msg = new IEmailService.EmailMessage(model.Email, "Confirm your email", "", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
+            var msg = new ISmtpEmailService.EmailMessage(model.Email, "Confirm your email", "", $"Please confirm your account by <a href='{confirmationLink}'>clicking here</a>.");
             await _emailService.SendEmailAsync(msg);
             return RedirectToAction("Index");
         }

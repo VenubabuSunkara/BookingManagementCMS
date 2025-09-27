@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Vehicle List";
+    ViewData["Title"] = "Email Template List";
 }
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
@@ -10,7 +10,7 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Email's</h5>
+                        <h5>All Email Templates</h5>
                     </div>
                 </div>
 
@@ -18,7 +18,7 @@
                     <div>
                         <div class="table-desi">
                             @Html.AntiForgeryToken()
-                            <table class="all-cars-table table table-striped w-100" id="tblvehicledriver">
+                            <table class="all-cars-table table table-striped w-100" id="tblemailtemplate">
                                 <thead>
                                     <tr>
                                         <th>Id</th>
@@ -26,11 +26,8 @@
                                         <th>Email Subject</th>
                                         <th>Email Body</th>
                                         <th>Created On</th>
-                                        <th>Updated On</th>
-                                        <th>Created By</th>
-                                        <th>Updated By</th>
                                         <th>Mail Status</th>
-                                        <th>Sender Email</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -64,12 +61,11 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
-
-         var  VehicleListVM = {
-                 Vehicledt: null,
+         var  EmailTemplateListVM = {
+                 emailtemplatedt: null,
                  init: function () {
                       const token = $('input[name="__RequestVerificationToken"]').val();
-                      this.Vehicledt = $('#tblvehicledriver').DataTable({
+                      this.emailtemplatedt = $('#tblemailtemplate').DataTable({
                       processing: true,
                       serverSide: true,
                       info: false,
@@ -92,7 +88,7 @@
                                             setTimeout(function(){
                                                $(node).removeClass('processing');
                                             },500)
-                                           window.location = '/EmailQueue/Index';
+                                           window.location = '/EmailTemplate/Index';
                                          }
                                        },
                                        'copy',
@@ -111,7 +107,7 @@
                      },
 
                       ajax: {
-                             url: '/EmailQueue/LoadEmailQueueData',
+                             url: '/EmailTemplate/LoadEmailTemplateData',
                              type: 'POST',
                              contentType: 'application/json; charset=utf-8',
                              dataType: 'json',
@@ -131,26 +127,14 @@
                                      { data: 'emailSubject' },
                                      { data: 'emailBody' },
                                      { data: 'createdOn'},
-                                     { data: 'updatedOn'},
-                                     { data: 'createdBy' },
-                                     { data: 'updatedBy' },
-                                     { 
-                                        data: 'isEnabled',
-                                        render: function (data, type, full, meta) {
-                                            if (!data) {
-                                                // false show Send link
-                                                return `<a href="javascript:void(0)" 
-                                                            title="Send Mail" 
-                                                            onclick='sendMail(${JSON.stringify(full)})'>
-                                                            <i class="fa fa-envelope"></i> Send
-                                                        </a>`;
-                                            } else {
-                                                // true show status
-                                                return `<span title="Already Sent"><i class="fa fa-check text-success"></i> Sent</span>`;
-                                            }
-                                        }
-                                     },
-                                     { data: 'senderEmail' }                                    
+                                     { data: 'isEnabled'},
+                                     { data: null, orderable: false, searchable: false, render: function (data, type, row) {
+                                         return `
+                                             <div class="btn-group" role="group">
+                                                 <a href="/EmailTemplate/Edit/${row.id}" class="btn btn-sm btn-primary" title="Edit"><i class="fa fa-edit"></i></a>
+                                                 <a href="javascript:void(0)" title="Delete" onclick="rejectDriver(${row.id}"><i class="fa fa-trash-o"></i></a>
+                                             </div>`;
+                                     }  }
                          ],
                            language: {
                                  emptyTable: "No entries to show"
@@ -159,7 +143,7 @@
                      });
                  },
                  renderPagination: function() {
-                          const info = this.Vehicledt.page.info();
+                          const info = this.emailtemplatedt.page.info();
                           const total = info.pages;
                           const current = info.page + 1;
 
@@ -197,26 +181,26 @@
 
                             $a.on('click', (e) => {
                               e.preventDefault();
-                              if (idx === 0) this.Vehicledt.page('previous').draw(false);
-                              else if (idx === total + 1) this.Vehicledt.page('next').draw(false);
-                              else this.Vehicledt.page(idx - 1).draw(false);
+                              if (idx === 0) this.emailtemplatedt.page('previous').draw(false);
+                              else if (idx === total + 1) this.emailtemplatedt.page('next').draw(false);
+                              else this.emailtemplatedt.page(idx - 1).draw(false);
                             });
                           });
                         },
                  refresh: function () {
-                     if (this.Vehicledt) {
-                         this.Vehicledt.ajax.reload();
+                     if (this.emailtemplatedt) {
+                         this.emailtemplatedt.ajax.reload();
                      }
                  },
                  draw:function(){
-                     if (this.Vehicledt) {
-                        this.Vehicledt.on('draw', renderPagination(this.Vehicledt));
+                     if (this.emailtemplatedt) {
+                        this.emailtemplatedt.on('draw', renderPagination(this.emailtemplatedt));
                      }
                  }
 
              };
              $(document).ready(function () {
-                 VehicleListVM.init();
+                 EmailTemplateListVM.init();
          });
 
 
@@ -271,11 +255,10 @@
                  contentType: 'application/json',
                  data: JSON.stringify(rowData),
                 success: function (response) {
-                if (response.success) 
+                if (response.success)
                 {
                   alert("Mail sent successfully!");
-                  $('#tblvehicledriver').DataTable().ajax.reload(null, false);
-                } 
+                }
                 else
                 {
                   alert("Error: " + response.message);

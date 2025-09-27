@@ -1,14 +1,7 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
-using Booking.Application.Services;
-using Booking.Domain.Entities;
-using Booking.Domain.Interfaces;
 using Booking.Web.Models;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Configuration;
-using System.Net;
-using System.Net.Mail;
 
 namespace Booking.Web.Controllers
 {
@@ -76,52 +69,38 @@ namespace Booking.Web.Controllers
                 }, token);
             return await Task.Run(() =>
             {
-                RoleDto dto = new()
-                {
-                    isEdit = false
-                };
-                return View("Create", dto);
+                return View("Create");
             }, token);
         }
-        /// <summary>
-        /// Fetching Data for edit
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Edit(string id, CancellationToken token)
+        public async Task<IActionResult> Edit(int TemplateId, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
                 {
                     return View("Index");
                 }, token);
-            var role = await _roleService.GetByIdAsync(id, token);
-            if (role == null) return NotFound();
-            role.isEdit = true;
-            return View("Create", role);
+            var emailTemplate = await _emailTemplateService.GetEmailTemplateByIdAsync(TemplateId, token);
+            if (emailTemplate == null)
+            {
+                return await Task.Run(() =>
+                {
+                    return View("Index");
+                }, token);
+            }
+            return View("Create", emailTemplate);
         }
-        /// <summary>
-        /// AJAX call for role name uniqueness check
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
+
         [HttpGet]
-        public async Task<JsonResult> IsRoleNameAvailable(string name, CancellationToken token, int id = 0)
+        public async Task<JsonResult> IsEmailTemplateAvailable(string TemplateName, CancellationToken token)
         {
-            var exists = await _roleService.ExistsByNameAsync(name, token, id);
+            var exists = await _emailTemplateService.ExistsByNameAsync(TemplateName, token);
             return Json(!exists);
         }
-        /// <summary>
-        /// Create or Update Role
-        /// </summary>
-        /// <param name="rolePayload"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(RoleDto role, CancellationToken token)
+        public async Task<IActionResult> Save(EmailTemplateDto emailtemplate, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
@@ -129,34 +108,28 @@ namespace Booking.Web.Controllers
                     return View("Index");
                 }, token);
             if (!ModelState.IsValid)
-                return View("Create", role);
-            //bool exists = await _roleService.ExistsByNameAsync(role.Name, token);
-            if (role.isEdit == true)
+                return View("Create", emailtemplate);
+            if (emailtemplate.Id == 0)
             {
-                await _roleService.UpdateAsync(role, token);
+                await _emailTemplateService.UpdateAsync(emailtemplate, token);
             }
             else
             {
-                await _roleService.CreateAsync(role, token);
+                await _emailTemplateService.CreateAsync(emailtemplate, token);
             }
             return RedirectToAction("Index");
         }
-        /// <summary>
-        /// Deleting Role by RoleId
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id, CancellationToken token)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int TemplateId, CancellationToken token)
         {
             if (token.IsCancellationRequested)
                 return await Task.Run(() =>
                 {
                     return View("Index");
                 }, token);
-            await _roleService.DeleteAsync(id, token);
-            TempData["SuccessMessage"] = "Role deleted successfully!";
+            await _emailTemplateService.DeleteAsync(TemplateId, token);
+            TempData["SuccessMessage"] = "Template deleted successfully!";
             return RedirectToAction("Index");
         }
     }
