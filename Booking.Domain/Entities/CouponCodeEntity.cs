@@ -26,7 +26,7 @@ public class CouponCodeEntity
 
     public DateTime EndDate { get; set; }
 
-    public bool? IsActive { get; set; }
+    public bool IsActive { get; set; }
 
     public int? UsageLimit { get; set; }
 

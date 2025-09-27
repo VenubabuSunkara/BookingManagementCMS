@@ -227,24 +227,21 @@
                             {
                                 data: 'couponCodeId',
                                 render: function (data, type, row) {
-                                    var actions=`
+                                    return `
                                             <form method="post" action="/CouponCode/Details" style="display:inline;">
                                                 <input type="hidden" name="id" value="${data}" />
                                                 <button type="submit" class="btn btn-link p-0" title="View" style="border: none; background: none;">
                                                     <i class="fa fa-eye" aria-hidden="true" style="color: #747dc6;"></i>
                                                 </button>
-                                            </form>`;
-                                    action+= ` ||
+                                            </form> ||
                                             <form method="post" action="/CouponCode/Edit" style="display:inline;">
                                                 <input type="hidden" name="id" value="${data}" />
                                                 <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
                                                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
                                                 </button>
-                                            </form>`;
-                                    action+= `|| <a class="delete-promotion" href="javascript:void(0);" data-id="${data}">
+                                            </form> || <a class="delete-promotion" href="javascript:void(0);" data-id="${data}">
                                                 <i class="fa fa-trash-o" aria-hidden="true"></i>
                                              </a>`;
-                                    return actions;
                                 }
                             }
                         ],

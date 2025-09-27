@@ -14,11 +14,11 @@
         </div>
         <div class="card-body">
             <form asp-controller="CouponCode" asp-action="Create" asp-antiforgery="true" enctype="application/x-www-form-urlencoded" method="post" id="promotionCreateForm" class="theme-form mega-form">
-                @Html.AntiForgeryToken();
+                @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Id" />
                 <div class="row">
                     <div class="col-sm-12">
-                        <label class="form-label-title mt-3">Couponcode</label>
+                        <label asp-for="Code"  class="form-label-title mt-3">Coupon Code</label>
                         <input asp-for="Code"
                                autocomplete="off"
                                id="couponcode"
@@ -131,7 +131,7 @@
                     </div>
 
                     <div class="col-sm-6">
-                        <label class="form-label-title mt-3 checkbox">Activate</label>
+                        <label asp-for="IsActive" class="form-label-title mt-3 checkbox">Activate</label>
                         <input asp-for="IsActive"
                                autocomplete="off"
                                type="checkbox"

@@ -196,7 +196,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive
+                IsActive = coupon.IsActive ?? false
             }).FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -223,7 +223,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive
+                IsActive = coupon.IsActive ?? false
             }).AsQueryable();
     }
 }

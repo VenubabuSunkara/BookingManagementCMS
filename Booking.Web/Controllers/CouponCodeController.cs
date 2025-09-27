@@ -1,10 +1,8 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
-using Booking.Web.Helper;
 using Booking.Web.Models;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
-using System.Formats.Asn1;
 using System.Text;
 
 namespace Booking.Web.Controllers
@@ -69,12 +67,6 @@ namespace Booking.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(CancellationToken token)
         {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return View("Index");
-                }, token);
-
             return await Task.Run(() =>
             {
                 return View("Create", new CouponCodeDto());
@@ -91,12 +83,6 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CouponCodeDto couponCodeDto, CancellationToken token)
         {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return RedirectToAction(nameof(Index));
-                }, token);
-
             if (!ModelState.IsValid)
                 return await Task.Run(() =>
                 {
