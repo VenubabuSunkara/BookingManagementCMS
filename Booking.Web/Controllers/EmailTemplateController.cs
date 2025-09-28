@@ -62,17 +62,11 @@ namespace Booking.Web.Controllers
 
         public async Task<IActionResult> Create(CancellationToken token)
         {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return View("Index");
-                }, token);
             return await Task.Run(() =>
             {
-                return View("Create");
+                return PartialView("_EmailTemplateFormPartial", new EmailTemplateDto());
             }, token);
         }
-        [HttpPost]
         public async Task<IActionResult> Edit(int TemplateId, CancellationToken token)
         {
             if (token.IsCancellationRequested)
@@ -102,14 +96,13 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(EmailTemplateDto emailtemplate, CancellationToken token)
         {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return View("Index");
-                }, token);
             if (!ModelState.IsValid)
-                return View("Create", emailtemplate);
-            if (emailtemplate.Id == 0)
+                return PartialView("_EmailTemplateFormPartial", emailtemplate);
+            emailtemplate.UpdatedBy = base.GetUserName();
+            emailtemplate.UpdatedOn = DateTime.UtcNow;
+            emailtemplate.CreatedBy = base.GetUserName();
+            emailtemplate.CreatedOn = DateTime.UtcNow;
+            if (emailtemplate.Id != 0)
             {
                 await _emailTemplateService.UpdateAsync(emailtemplate, token);
             }
@@ -117,20 +110,15 @@ namespace Booking.Web.Controllers
             {
                 await _emailTemplateService.CreateAsync(emailtemplate, token);
             }
-            return RedirectToAction("Index");
+            return Ok();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int TemplateId, CancellationToken token)
         {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return View("Index");
-                }, token);
             await _emailTemplateService.DeleteAsync(TemplateId, token);
             TempData["SuccessMessage"] = "Template deleted successfully!";
-            return RedirectToAction("Index");
+            return Ok();
         }
     }
 }

@@ -20,7 +20,6 @@
     <div class="loader-wrapper">
         <img src="~/wecare_logo.svg" width="100px" alt="loader gif" />
         <img src="~/images/loader.gif" width="100px" alt="loader gif" />
-        <!-- <img src="load.gif" alt="loader gif" width="100px" /> -->
     </div>
     <!-- pre-loader End -->
     <!-- tap on top starts-->
@@ -75,7 +74,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Logout -->
     <div class="modal fade"
          id="staticBackdrop"
          data-bs-backdrop="static"
@@ -134,7 +133,6 @@
             </div>
         </div>
     </div>
-
     <!--Approve  Click-->
     <div class="modal fade"
          id="approveConfirmModal"
@@ -159,6 +157,37 @@
                         </button>
                         <button type="button" class="btn btn--yes btn-primary" onclick="ApproveConfirm()" id="confirmApproveBtn">
                             Yes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--POPUP model forms-->
+    <div class="modal fade"
+         id="fromModel"
+         data-bs-backdrop="static"
+         data-bs-keyboard="false"
+         tabindex="-1"
+         aria-labelledby="staticBackdropLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="formmodelheading"></h5>
+                    <div id="fromModalBody">
+                        <!-- Partial view will be loaded here -->
+                    </div>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    <div class="button-box mt-3">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">
+                            No
+                        </button>
+                        <button type="button" id="btnformSave" class="btn btn--yes btn-primary">
+                            Save
                         </button>
                     </div>
                 </div>

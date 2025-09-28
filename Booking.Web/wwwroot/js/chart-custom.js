@@ -575,8 +575,8 @@ var options = {
     }],
     chart: {
         type: 'area',
-        height: 90,
-        width: 90,
+        height: 300,
+        width: 300,
         zoom: {
             enabled: false
         }

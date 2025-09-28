@@ -93,9 +93,10 @@
         </ul>
     </li>
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title link-nav"
-           href="@Url.Action("Index", "Settings")"><i data-feather="settings"> </i><span>Setting</span></a>
+        <a class="sidebar-link sidebar-title link-nav" asp-action="Index" asp-controller="Settings"><i data-feather="settings"> </i><span>Setting</span></a>
+
     </li>
+    <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" asp-action="Index" asp-controller="EmailTemplate"><i data-feather="mail"> </i><span> Email Templates</span></a></li>
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title link-nav"
            href="@Url.Action("LogOut", "Account")"><i data-feather="log-out"> </i><span>Log Out</span></a>

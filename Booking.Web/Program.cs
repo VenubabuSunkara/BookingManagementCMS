@@ -69,8 +69,11 @@ builder.Services.AddScoped<IDriverVehicleService, DriverVehicleService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IPackageMediaService, PackageMediaService>();
 builder.Services.AddScoped<IPackageLocationService, PackageLocationService>();
-
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+builder.Services.AddScoped<ISmtpEmailService, SmtpEmailService>();
+builder.Services.AddScoped<ISendGridEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient<IGooglePlacesService, GooglePlacesService>();
+
 builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
 builder.Services.AddSingleton<FileReaderService>();
 builder.Services.AddSendGrid(options =>
@@ -136,7 +139,7 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
-   
+
 
 }
 else

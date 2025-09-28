@@ -9,9 +9,19 @@ namespace Booking.Application.Services
     {
         private readonly IEmailTemplateRepository _templateRepository = templateRepository;
 
-        public Task<int> CreateAsync(EmailTemplateDto req, CancellationToken token)
+        public async Task<int> CreateAsync(EmailTemplateDto req, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return await _templateRepository.CreateAsync(new EmailTemplateEntity()
+            {
+                EmailBody = req.EmailBody,
+                EmailSubject = req.EmailSubject,
+                IsEnabled = req.IsEnabled,
+                Name = req.Name,
+                CreatedBy = req.CreatedBy,
+                CreatedOn = req.CreatedOn,
+                UpdatedBy = req.UpdatedBy,
+                UpdatedOn = req.UpdatedOn,
+            }, token);
         }
 
         public async Task<int> DeleteAsync(int TemplateId, CancellationToken token)

@@ -38,6 +38,8 @@ namespace Booking.Infrastructure
             services.AddScoped<IDriverVehicleRepository,DriverVehicleRepository>();
             services.AddScoped<IPackageMediaRepository, PackageMediaRepository>();
             services.AddScoped<IPackageLocationRepository, PackageLocationRepository>();
+            services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
+
             return services;
         }
 

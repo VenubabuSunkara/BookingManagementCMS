@@ -95,6 +95,9 @@
     <Content Remove="wwwroot\images\tray.png" />
     <Content Remove="wwwroot\images\verified.png" />
     <Content Remove="wwwroot\images\wifi.png" />
+    <Content Remove="wwwroot\js\typeahead\typeahead-custom.js" />
+    <Content Remove="wwwroot\js\typeahead\typeahead.bundle.js" />
+    <Content Remove="wwwroot\js\typeahead\typeahead.custom.js" />
     <Content Remove="wwwroot\load.gif" />
     <Content Remove="wwwroot\wecare_logo.svg" />
   </ItemGroup>
@@ -207,6 +210,9 @@
     <None Include="wwwroot\images\tray.png" />
     <None Include="wwwroot\images\verified.png" />
     <None Include="wwwroot\images\wifi.png" />
+    <None Include="wwwroot\js\typeahead\typeahead-custom.js" />
+    <None Include="wwwroot\js\typeahead\typeahead.bundle.js" />
+    <None Include="wwwroot\js\typeahead\typeahead.custom.js" />
     <None Include="wwwroot\load.gif" />
     <None Include="wwwroot\wecare_logo.svg" />
   </ItemGroup>

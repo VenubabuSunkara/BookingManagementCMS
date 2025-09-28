@@ -12,6 +12,14 @@
                     <div>
                         <h5>All Email Templates</h5>
                     </div>
+                    <div class="d-flex gap-2">
+                        <button id="btnAdd" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </button>
+                        <button id="btnImport" class="btn btn-theme">
+                            <i data-feather="file-plus"></i>Import
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -59,215 +67,288 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.0/classic/ckeditor.js"></script>
+
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
-         var  EmailTemplateListVM = {
-                 emailtemplatedt: null,
-                 init: function () {
-                      const token = $('input[name="__RequestVerificationToken"]').val();
-                      this.emailtemplatedt = $('#tblemailtemplate').DataTable({
-                      processing: true,
-                      serverSide: true,
-                      info: false,
-                      stateSave: true,
-                      paging: true,
-                      pagingType: 'custom',
-                      pageLength: 10,
-                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
-                      layout: {
-                      topStart: {
-                        buttons: [
-                                   {
-                                     extend: 'collection',
-                                     text: 'Export All',
-                                     buttons: [
-                                       {
-                                         extend: 'excel',
-                                         text: 'Excel (Server)',
-                                         action: function (e, dt, node, config) {
-                                            setTimeout(function(){
-                                               $(node).removeClass('processing');
-                                            },500)
-                                           window.location = '/EmailTemplate/Index';
-                                         }
-                                       },
-                                       'copy',
-                                       'csv',
-                                       'pdf',
-                                       'print'
-                                     ]
-                                   }
-                                 ]
-                         },
-                         bottomEnd: {
-                             paging: {
-                                 type: 'simple'
-                             }
-                         }
-                     },
 
-                      ajax: {
-                             url: '/EmailTemplate/LoadEmailTemplateData',
-                             type: 'POST',
-                             contentType: 'application/json; charset=utf-8',
-                             dataType: 'json',
-                             data: function (d) {
-                                 return JSON.stringify(d); // Send as JSON string
-                             },
-                             headers: {
-                                 'RequestVerificationToken': token
-                             },
-                             error: function (xhr, error, thrown) {
-                                 console.error("DataTable error: ", xhr.responseText);
-                             }
-                         },
-                      columns: [
-                                     { data: 'id' },
-                                     { data: 'name' },
-                                     { data: 'emailSubject' },
-                                     { data: 'emailBody' },
-                                     { data: 'createdOn'},
-                                     { data: 'isEnabled'},
-                                     { data: null, orderable: false, searchable: false, render: function (data, type, row) {
-                                         return `
-                                             <div class="btn-group" role="group">
-                                                 <a href="/EmailTemplate/Edit/${row.id}" class="btn btn-sm btn-primary" title="Edit"><i class="fa fa-edit"></i></a>
-                                                 <a href="javascript:void(0)" title="Delete" onclick="rejectDriver(${row.id}"><i class="fa fa-trash-o"></i></a>
-                                             </div>`;
-                                     }  }
-                         ],
-                           language: {
-                                 emptyTable: "No entries to show"
-                             },
-                             drawCallback: () => this.renderPagination()
-                     });
-                 },
-                 renderPagination: function() {
-                          const info = this.emailtemplatedt.page.info();
-                          const total = info.pages;
-                          const current = info.page + 1;
-
-                          const $ul = $('#customPaginate').empty();
-
-                          // Previous button
-                          $ul.append(
-                            `<li class="page-item ${current === 1 ? 'disabled' : ''}">
-                               <button class="page-link" >Previous</button>
-                             </li>`
-                          );
-
-                          // Page numbers
-                          for (let i = 1; i <= total; i++) {
-                            $ul.append(
-                              `<li class="page-item ${i === current ? 'active' : ''}">
-                                 <button  class="page-link" >${i}${i===current ? ' <span class="sr-only">(current)</span>' : ''}</button >
-                               </li>`
-                            );
-                          }
-
-                          // Next button
-                          $ul.append(
-                            `<li class="page-item ${current === total ? 'disabled' : ''}">
-                               <button  class="page-link" >Next</button>
-                             </li>`
-                          );
-
-                          // Click behaviors
-                          $ul.find('li.page-item').each((idx, li) => {
-                            const $li = $(li);
-                            const $a = $li.find('button');
-
-                            if ($li.hasClass('disabled') || $li.hasClass('active')) return;
-
-                            $a.on('click', (e) => {
-                              e.preventDefault();
-                              if (idx === 0) this.emailtemplatedt.page('previous').draw(false);
-                              else if (idx === total + 1) this.emailtemplatedt.page('next').draw(false);
-                              else this.emailtemplatedt.page(idx - 1).draw(false);
-                            });
-                          });
+        var deleteId = 0;
+        var EmailTemplateListVM = {
+            emailtemplatedt: null,
+            init: function() {
+                const token = $('input[name="__RequestVerificationToken"]').val();
+                this.emailtemplatedt = $('#tblemailtemplate').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    info: false,
+                    stateSave: true,
+                    paging: true,
+                    pagingType: 'custom',
+                    pageLength: 10,
+                    lengthMenu: [10, 25, 50, {
+                        label: 'All',
+                        value: -1
+                    }],
+                    layout: {
+                        topStart: {
+                            buttons: [{
+                                extend: 'collection',
+                                text: 'Export All',
+                                buttons: [{
+                                        extend: 'excel',
+                                        text: 'Excel (Server)',
+                                        action: function(e, dt, node, config) {
+                                            setTimeout(function() {
+                                                $(node).removeClass('processing');
+                                            }, 500)
+                                            window.location = '/EmailTemplate/Index';
+                                        }
+                                    },
+                                    'copy',
+                                    'csv',
+                                    'pdf',
+                                    'print'
+                                ]
+                            }]
                         },
-                 refresh: function () {
-                     if (this.emailtemplatedt) {
-                         this.emailtemplatedt.ajax.reload();
-                     }
-                 },
-                 draw:function(){
-                     if (this.emailtemplatedt) {
-                        this.emailtemplatedt.on('draw', renderPagination(this.emailtemplatedt));
-                     }
-                 }
+                        bottomEnd: {
+                            paging: {
+                                type: 'simple'
+                            }
+                        }
+                    },
 
-             };
-             $(document).ready(function () {
-                 EmailTemplateListVM.init();
+                    ajax: {
+                        url: '/EmailTemplate/LoadEmailTemplateData',
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        data: function(d) {
+                            return JSON.stringify(d); // Send as JSON string
+                        },
+                        headers: {
+                            'RequestVerificationToken': token
+                        },
+                        error: function(xhr, error, thrown) {
+                            console.error("DataTable error: ", xhr.responseText);
+                        }
+                    },
+                    columns: [{
+                            data: 'id'
+                        },
+                        {
+                            data: 'name'
+                        },
+                        {
+                            data: 'emailSubject'
+                        },
+                        {
+                            data: 'emailBody', render: function(data, type, row) {
+                                const bodyContent=row.emailBody.toString();
+                                return `<div>${bodyContent}</div>`
+                            }
+                        },
+                        {
+                            data: 'createdOn'
+                        },
+                        {
+                            data: 'isEnabled'
+                        },
+                        {
+                            data: null,
+                            orderable: false,
+                            searchable: false,
+                            render: function(data, type, row) {
+                                 let actions='';
+                                   actions += ` <a href="javascript:void(0)" title="Delete" onclick="rejectTemplate(${row.id})"><i class="fa fa-trash-o"></i></a>`;
+                                   actions += ` <a href="javascript:void(0)" onclick="editTemplate(${row.id})" title="Edit" ><i class="fa fa-edit"></i></a>`;
+                                   return actions;
+                            }
+                        }
+                    ],
+                    language: {
+                        emptyTable: "No entries to show"
+                    },
+                    drawCallback: () => this.renderPagination()
+                });
+            },
+            renderPagination: function() {
+                const info = this.emailtemplatedt.page.info();
+                const total = info.pages;
+                const current = info.page + 1;
+
+                const $ul = $('#customPaginate').empty();
+
+                // Previous button
+                $ul.append(
+                    `<li class="page-item ${current === 1 ? 'disabled' : ''}">
+                                           <button class="page-link" >Previous</button>
+                                         </li>`
+                );
+
+                // Page numbers
+                for (let i = 1; i <= total; i++) {
+                    $ul.append(
+                        `<li class="page-item ${i === current ? 'active' : ''}">
+                                             <button  class="page-link" >${i}${i===current ? ' <span class="sr-only">(current)</span>' : ''}</button >
+                                           </li>`
+                    );
+                }
+
+                // Next button
+                $ul.append(
+                    `<li class="page-item ${current === total ? 'disabled' : ''}">
+                                           <button  class="page-link" >Next</button>
+                                         </li>`
+                );
+
+                // Click behaviors
+                $ul.find('li.page-item').each((idx, li) => {
+                    const $li = $(li);
+                    const $a = $li.find('button');
+
+                    if ($li.hasClass('disabled') || $li.hasClass('active')) return;
+
+                    $a.on('click', (e) => {
+                        e.preventDefault();
+                        if (idx === 0) this.emailtemplatedt.page('previous').draw(false);
+                        else if (idx === total + 1) this.emailtemplatedt.page('next').draw(false);
+                        else this.emailtemplatedt.page(idx - 1).draw(false);
+                    });
+                });
+            },
+            refresh: function() {
+                if (this.emailtemplatedt) {
+                    this.emailtemplatedt.ajax.reload();
+                }
+            },
+            draw: function() {
+                if (this.emailtemplatedt) {
+                    this.emailtemplatedt.on('draw', renderPagination(this.emailtemplatedt));
+                }
+            }
+
+        };
+
+        function editTemplate(id) {
+            $('#fromModalBody').load('/EmailTemplate/Edit?TemplateId=' + id, function() {
+                $('#fromModel').modal('show');
+                $('#formmodelheading').html("Edit Email Template");
+            });
+        }
+
+        function rejectTemplate(templateId) {
+            deleteId = driverid;
+            $("#hdnParam").val(driverid);
+            $('#deleteConfirmModal').modal('show');
+        }
+
+        function DeleteConfirm() {
+            if (deleteId) {
+                $.ajax({
+                    type: "POST",
+                    url: "/EmailTemplate/DeleteConfirmed",
+                    data: {
+                        TemplateId: deleteId
+                    },
+                    dataType: "json",
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    success: function(result) {
+                        EmailTemplateListVM.refresh();
+                    },
+                    error: function(req, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+        }
+                            function renderPagination(table) {
+                        var info = table.page.info();
+                        var totalPages = info.pages;
+                        var currentPage = info.page + 1;
+
+                        var $pag = $('#customPaginate').empty();
+
+                        // Previous button
+                        $pag.append(
+                            `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                           <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === 1 ? '-1' : '0'}">Previous</a>
+                         </li>`
+                        );
+
+                        // Page number buttons
+                        for (var i = 1; i <= totalPages; i++) {
+                            $pag.append(
+                                `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                             <a class="page-link" href="javascript:void(0)">${i}${i === currentPage ? ' <span class="sr-only">(current)</span>' : ''}</a>
+                           </li>`
+                            );
+                        }
+
+                        // Next button
+                        $pag.append(
+                            `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                           <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === totalPages ? '-1' : '0'}">Next</a>
+                         </li>`
+                        );
+
+                        // Bind click events
+                        $pag.find('li.page-item').each(function(index, item) {
+                            if ($(item).hasClass('disabled') || $(item).hasClass('active')) return;
+                            $(item).find('a').on('click', function() {
+                                $pag.find('li.page-item').removeClass('active');
+                                $(item).parent().addClass('active');
+                                if (index === 0) table.page('previous').draw(false); // Previous
+                                else if (index === totalPages + 1) table.page('next').draw(false); // Next
+                                else table.page(index - 1).draw(false); // Specific page
+                            });
+                        });
+                    }
+
+                    function sendMail(rowData) {
+                        $.ajax({
+                            url: '/EmailQueue/SendMail',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(rowData),
+                            success: function(response) {
+                                if (response.success) {
+                                    alert("Mail sent successfully!");
+                                } else {
+                                    alert("Error: " + response.message);
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                alert("Something went wrong: " + error);
+                            }
+                        });
+                    }
+        $(document).ready(function() {
+                    EmailTemplateListVM.init();
+                    $('#btnAdd').click(function(e) {
+                        $('#fromModalBody').load('/EmailTemplate/Create', function() {
+                            $('#fromModel').modal('show');
+                            $('#formmodelheading').html("Add Email Template");
+                        });
+                    });
+                     $('#btnformSave').click(function() {
+                            var form = $('#fromModalBody').find('form');
+                            $.ajax({
+                                url: '/EmailTemplate/Save',
+                                method: 'POST',
+                                data: form.serialize(),
+                                success: function() {
+                                    $('#fromModel').modal('hide');
+                                    EmailTemplateListVM.refresh();
+                                },
+                                error: function(xhr) {
+                                    // handle validation errors, etc.
+                                }
+                            });
+                        });
          });
 
-
-        function renderPagination(table) {
-           var info = table.page.info();
-           var totalPages = info.pages;
-           var currentPage = info.page + 1;
-
-           var $pag = $('#customPaginate').empty();
-
-           // Previous button
-           $pag.append(
-             `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === 1 ? '-1' : '0'}">Previous</a>
-             </li>`
-           );
-
-           // Page number buttons
-           for (var i = 1; i <= totalPages; i++) {
-             $pag.append(
-               `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                 <a class="page-link" href="javascript:void(0)">${i}${i === currentPage ? ' <span class="sr-only">(current)</span>' : ''}</a>
-               </li>`
-             );
-           }
-
-           // Next button
-           $pag.append(
-             `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === totalPages ? '-1' : '0'}">Next</a>
-             </li>`
-           );
-
-           // Bind click events
-           $pag.find('li.page-item').each(function(index, item) {
-             if ($(item).hasClass('disabled') || $(item).hasClass('active')) return;
-             $(item).find('a').on('click', function() {
-                $pag.find('li.page-item').removeClass('active');
-                $(item).parent().addClass('active');
-               if (index === 0) table.page('previous').draw(false);              // Previous
-               else if (index === totalPages + 1) table.page('next').draw(false); // Next
-               else table.page(index - 1).draw(false);                           // Specific page
-             });
-           });
-         }
-         function sendMail(rowData)
-         {
-             $.ajax(
-             {
-                 url:'/EmailQueue/SendMail',
-                 type: 'POST',
-                 contentType: 'application/json',
-                 data: JSON.stringify(rowData),
-                success: function (response) {
-                if (response.success)
-                {
-                  alert("Mail sent successfully!");
-                }
-                else
-                {
-                  alert("Error: " + response.message);
-                }
-               },
-                    error: function (xhr, status, error) {
-                        alert("Something went wrong: " + error);
-                    }
-             });
-         }
     </script>
 }
