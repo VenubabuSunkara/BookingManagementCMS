@@ -1,0 +1,69 @@
+﻿@using Booking.Application.DTOs;
+
+@model EmailTemplateDto;
+
+@{
+    ViewData["Title"] = "Create New Email Template";
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            @if (Model.Id != 0)
+            {
+                <h5>Edit Email Template</h5>
+            }
+            else
+            {
+                <h5>Create New Email Template</h5>
+            }
+        </div>
+        <div class="card-body">
+            <form asp-controller="EmailTemplate" asp-action="Create" asp-antiforgery="true" enctype="application/x-www-form-urlencoded" method="post" id="templateForm" class="theme-form mega-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label asp-for="Name" class="form-label-title mt-3">Template Name</label>
+                        <input asp-for="Name"
+                               autocomplete="off"
+                               class="form-control"
+                               type="text"
+                               placeholder="Template Name" />
+                        <span asp-validation-for="Name" id="templatename-Error" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label asp-for="EmailSubject" class="form-label-title mt-3">Email Subject</label>
+                        <input asp-for="EmailSubject"
+                               autocomplete="off"
+                               class="form-control"
+                               type="text"
+                               placeholder="Email subject" />
+                        <span asp-validation-for="Name" id="emailsubject-Error" class="text-danger"></span>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label asp-for="EmailBody" class="form-label-title mt-3">Email Body</label>
+                        <textarea asp-for="EmailBody"
+                                  autocomplete="off"
+                                  class="form-control"
+                                  type="text" cols="10" role="5"
+                                  placeholder="Description"></textarea>
+                        <span asp-validation-for="EmailBody" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <button id="btnclearForm" type="reset" class="btn btn-primary mt-3">Clear Fields</button>
+                <button id="btnsaveTemplate" type="submit" class="btn btn-primary mt-3">Save Change</button>
+                <a asp-controller="CouponCode" asp-action="Cancel" class="btn btn-primary mt-3">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+}
