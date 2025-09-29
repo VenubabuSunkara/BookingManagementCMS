@@ -10,7 +10,7 @@ namespace Booking.Web.Controllers
         {
             base.OnActionExecuting(context);
 
-            if (User.Identity.IsAuthenticated)
+            if (User?.Identity?.IsAuthenticated == true)
             {
                 var userData = User.FindFirst(ClaimTypes.UserData)?.Value;
                 ViewData["UserDto"] = userData;
@@ -18,7 +18,7 @@ namespace Booking.Web.Controllers
         }
         public string GetUserId()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User?.Identity?.IsAuthenticated == false)
             {
                 return "System"; // or throw an exception if appropriate
             }
@@ -27,7 +27,7 @@ namespace Booking.Web.Controllers
         }
         public string GetUserName()
         {
-            if (!User.Identity.IsAuthenticated)
+            if (!User?.Identity?.IsAuthenticated == false)
             {
                 return "System"; // or throw an exception if appropriate
             }

@@ -7,6 +7,48 @@ namespace Booking.Infrastructure.Data;
 
 public partial class BookingCmsContext : DbContext
 {
+    //private readonly ICurrentUserService _currentUser;
+    //// A service to get e.g. the user id or username of the user performing the operation
+
+    //public MyDbContext(DbContextOptions<MyDbContext> options, ICurrentUserService currentUser)
+    //    : base(options)
+    //{
+    //    _currentUser = currentUser;
+    //}
+
+    //public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    //{
+    //    ApplyAuditInformation();
+    //    return base.SaveChanges(acceptAllChangesOnSuccess);
+    //}
+
+    //public override Task<int> SaveChangesAsync(
+    //    bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    //{
+    //    ApplyAuditInformation();
+    //    return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    //}
+
+    //private void ApplyAuditInformation()
+    //{
+    //    var entries = ChangeTracker
+    //        .Entries<IAuditable>()
+    //        .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+    //    var now = DateTime.UtcNow; // or however you prefer
+    //    var user = _currentUser.UserId ?? "Unknown";
+
+    //    foreach (var entry in entries)
+    //    {
+    //        if (entry.State == EntityState.Added)
+    //        {
+    //            entry.Entity.CreatedOn = now;
+    //            entry.Entity.CreatedBy = user;
+    //        }
+    //        // whether Added or Modified, set updated
+    //        entry.Entity.UpdatedOn = now;
+    //        entry.Entity.UpdatedBy = user;
+    //    }
     public BookingCmsContext()
     {
     }
