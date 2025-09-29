@@ -1,11 +1,8 @@
 ﻿using Booking.Application.DTOs;
 using Booking.Application.Interfaces;
-using Booking.Application.Services;
-using Booking.Infrastructure.Data.Models;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 
 namespace Booking.Web.Controllers
@@ -97,7 +94,10 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<ActionResult> DriverVehicleRoutes(int DriverId, int VehicleId, CancellationToken token)
         {
-            return null;
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
         }
 
         public async Task<IActionResult> Create(CancellationToken token)

@@ -14,10 +14,11 @@
                     </div>
                     <!-- Add this hidden file input and form -->
                     <form id="importForm" method="post" enctype="multipart/form-data" asp-controller="PackageCategory" asp-action="ImportCategory">
+                        @Html.AntiForgeryToken()
                         <input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv" style="display: none;" />
                     </form>
                     <div class="d-flex gap-2">
-                        <a href="@Url.ActionLink("AddCategory", "PackageCategory")" class="btn btn-theme">
+                        <a asp-controller="PackageCategory" asp-action="AddCategory" class="btn btn-theme">
                             <i data-feather="file-plus"></i>Add New Category
                         </a>
                         <a href="javascript:void(0)" class="btn btn-theme" onclick="document.getElementById('fileInput').click()">

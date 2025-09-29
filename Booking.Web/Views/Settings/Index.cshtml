@@ -1,8 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Settings List";
 }
-<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+@section Styles {
+    <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+    <style>
+        #paging_simple {
+            display: none;
+        }
+    </style>
+}
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
@@ -10,20 +17,20 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Settings</h5>
+                        <h5>Settings</h5>
                     </div>
-                    <form class="d-inline-flex">
-                        <div class="d-flex gap-2">
-                            <a asp-controller="Driver" asp-action="Create" class="btn btn-theme">
-                                <i data-feather="plus-square"></i>Add New
-                            </a>
-
-                            <a href="@Url.ActionLink("Import", "Settings")" class="btn btn-theme">
-                                <i data-feather="file-plus"></i>Import
-                            </a>
-                        </div>
-
+                    <form id="Import" method="post" enctype="multipart/form-data" asp-controller="Settings" asp-action="ImportCategory">
+                        @Html.AntiForgeryToken()
+                        <input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv" style="display: none;" />
                     </form>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Settings" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-theme" onclick="document.getElementById('fileInput').click()">
+                            <i data-feather="file-plus"></i>Import
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -68,25 +75,49 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                // Option 1: Auto submit form when file is selected
+                document.getElementById('importForm').submit();
+
+                // OR Option 2: Use AJAX to upload
+                var formData = new FormData();
+                formData.append('file', e.target.files[0]);
+
+                fetch('@Url.Action("ImportCategory", "Settings")', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Import successful!');
+                        packageCatListVM.refresh();
+                    } else {
+                        alert('Import failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during import');
+                });
+            }
+        });
+    </script>
+    <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
         var deleteId = null;
-                // Edit
-        $(document).on("click", ".edit-link", function (e) {
-            e.preventDefault();
-            let url = $(this).attr("href");
-            window.location.href = url;   // or AJAX load form
-        });
-         function rejectDriver(driverid){
-             deleteId=driverid;
-             $("#hdnParam").val(driverid);
+         function rejectsetting(settingid){
+             deleteId=settingid;
+             $("#hdnParam").val(deleteId);
              $('#deleteConfirmModal').modal('show');
          }
          function DeleteConfirm(){
              if (deleteId) {
                 $.ajax({
                      type: "POST",
-                     url: "/Settings/Rejectsetting",
-                     data: { DriverId:deleteId },
+                     url: "/Settings/DeleteConfirmed",
+                     data: { Id:deleteId },
                      dataType: "json",
                      headers: {
                        'RequestVerificationToken': token
@@ -164,7 +195,7 @@
                              {data:'id'},
                              { data: 'name', autoWidth: true },
                              { data: 'value', autoWidth: true },
-                             { data: 'createdOn', autoWidth: true,
+                             { data: 'updatedOn', autoWidth: true,
                                  render: function (data, type, row) {
                                     return moment(data).format('YYYY-MM-DD'); // Formats the date
                                  }
@@ -172,9 +203,16 @@
                              {
                                  data: 'id',
                                  render: function (data, type, full, meta) {
-                              return `<a class="edit-link" title="Edit Setting"  href="@Url.Action("Edit", "Settings")?DriverId=${data}"><i class="fa fa-pencil-square-o"></i></a>
-                                 | <a href="javascript:void(0)" title="Delete Setting" onclick="rejectDriver(${data})"><i class="fa fa-trash-o"></i></a>`;
-                                 
+                                      return `
+                                            <form method="post" action="/Settings/Edit" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="${data}" />
+                                                <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
+                                                </button>
+                                            </form>
+                                          <a href="javascript:void(0)" title="Delete Setting" onclick="rejectSetting(${data})"><i class="fa fa-trash-o"></i></a>`;
+
                                  }
                              }
                          ],

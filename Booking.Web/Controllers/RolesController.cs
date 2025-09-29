@@ -118,7 +118,7 @@ namespace Booking.Web.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id, CancellationToken token)
         {
             if (token.IsCancellationRequested)

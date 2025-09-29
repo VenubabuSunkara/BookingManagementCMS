@@ -104,6 +104,8 @@ namespace Booking.Web.Controllers
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         "DriversList.xlsx");
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportCategory(IFormFile file, CancellationToken token)
         {
             if (file == null || file.Length == 0)
@@ -128,7 +130,7 @@ namespace Booking.Web.Controllers
                 return BadRequest("Unsupported file format. Only CSV or Excel allowed.");
             }
 
-            await _packageCategoryService.ImportPackageCategoriesAsync(null, token);
+            await _packageCategoryService.ImportPackageCategoriesAsync(categories, token);
 
             return RedirectToAction("Index");
         }

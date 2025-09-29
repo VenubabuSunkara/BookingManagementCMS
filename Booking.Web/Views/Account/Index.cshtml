@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="card-body">
-                    <div class="form-group">
+                    @* <div class="form-group">
                         @Html.LabelFor(m => m.RoleId, "Roles")
                         @if (Model.Roles.Any())
                         {
@@ -48,7 +48,7 @@
                             <input class="form-control" type="text" asp-for="RoleId" value="Admin" readonly="readonly" />
                             <span asp-validation-for="RoleId"></span>
                         }
-                    </div>
+                    </div> *@
                     <div>
                         <div class="table-desi">
                             @Html.AntiForgeryToken()
@@ -153,7 +153,7 @@
                                             setTimeout(function(){
                                                $(node).removeClass('processing');
                                             },500)
-                                           window.location = '/Driver/ExportAll';
+                                           window.location = '/Account/ExportAll';
                                          }
                                        },
                                        'copy',
@@ -320,9 +320,9 @@
              $(item).find('a').on('click', function() {
                 $pag.find('li.page-item').removeClass('active');
                 $(item).parent().addClass('active');
-               if (index === 0) table.page('previous').draw(false);              // Previous
-               else if (index === totalPages + 1) table.page('next').draw(false); // Next
-               else table.page(index - 1).draw(false);                           // Specific page
+               if (index === 0) table.page('previous').draw(false);
+               else if (index === totalPages + 1) table.page('next').draw(false); 
+               else table.page(index - 1).draw(false);
              });
            });
          }

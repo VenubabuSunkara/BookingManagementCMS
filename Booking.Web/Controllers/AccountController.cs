@@ -6,6 +6,7 @@ using Booking.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using StackExchange.Profiling.Internal;
 using System.Security.Claims;
 
 namespace Booking.Web.Controllers
@@ -42,7 +43,7 @@ namespace Booking.Web.Controllers
                 Password = loginDto.Password,
                 RememberMe = loginDto.RememberMe
             });
-            
+
             if (UserData == null)
             {
                 ModelState.AddModelError("", "Invalid login attempt.");
@@ -54,8 +55,9 @@ namespace Booking.Web.Controllers
 
         public async Task<IActionResult> LogOut()
         {
-            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            await _accountService.LogOut(userId);
+            string userId = User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(userId))
+                await _accountService.LogOut(userId);
             return RedirectToAction("Login");
         }
         [AllowAnonymous]
@@ -107,12 +109,12 @@ namespace Booking.Web.Controllers
         }
         public async Task<IActionResult> Index(CancellationToken token)
         {
-            UserDto account = new();
-            var roles = await _roleService.GetAllRoles(token);
-            account.Roles = [.. roles.Select(x => x.Name)];
+            //UserDto account = new();
+            // var roles = await _roleService.GetAllRoles(token);
+            // account.Roles = [.. roles.Select(x => x.Name)];
             return await Task.Run(() =>
             {
-                return View(account);
+                return View();
             }, token);
         }
         [HttpGet]

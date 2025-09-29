@@ -2,38 +2,33 @@
 using Booking.Application.Interfaces;
 using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
     public class SettingService(ISettingRepository settingRepository) : ISettingService
     {
         private readonly ISettingRepository _settingRepository = settingRepository;
-        public async Task<int> CreateSetting(SettingsDto setting)
+        public async Task<int> CreateSetting(SettingsDto setting, CancellationToken token)
         {
             return await _settingRepository.CreateSetting(new Domain.Entities.SettingEntity()
             {
                 Name = setting.Name,
                 Value = setting.Value,
-                CreatedBy = setting.CreatedBy,
-                UpdatedBy = setting.UpdatedBy,
-                CreatedOn = setting.CreatedOn,
-                UpdatedOn = setting.UpdatedOn,
-            });
+                CreatedBy = setting.CreatedBy ?? string.Empty,
+                UpdatedBy = setting.UpdatedBy ?? string.Empty,
+                CreatedOn = setting.CreatedOn ?? DateTime.UtcNow,
+                UpdatedOn = setting.UpdatedOn ?? DateTime.UtcNow,
+            }, token);
         }
 
-        public async Task DeleteSetting(int Id)
+        public async Task DeleteSetting(int Id, CancellationToken token)
         {
-            await _settingRepository.DeleteSetting(Id);
+            await _settingRepository.DeleteSetting(Id, token);
         }
 
-        public async Task<IEnumerable<SettingsDto>> GetAllSettings()
+        public async Task<IEnumerable<SettingsDto>> GetAllSettings(CancellationToken token)
         {
-            var settings = await _settingRepository.GetAllSettings();
+            var settings = await _settingRepository.GetAllSettings(token);
             return settings.Select(x => new SettingsDto()
             {
                 Name = x.Name,
@@ -46,9 +41,10 @@ namespace Booking.Application.Services
             }).AsParallel();
         }
 
-        public async Task<SettingsDto> GetSettingById(int Id)
+        public async Task<SettingsDto?> GetSettingById(int Id, CancellationToken token)
         {
-            var setting = await _settingRepository.GetSettingById(Id);
+            var setting = await _settingRepository.GetSettingById(Id, token);
+            if (setting is null) return null;
             return new SettingsDto()
             {
                 Name = setting.Name,
@@ -62,15 +58,16 @@ namespace Booking.Application.Services
             };
         }
 
-        public async Task UpdateSetting(SettingsDto setting)
+        public async Task UpdateSetting(SettingsDto setting, CancellationToken token)
         {
-            await _settingRepository.UpdateSetting(new Domain.Entities.SettingEntity()
+            await _settingRepository.UpdateSetting(new SettingEntity()
             {
                 Name = setting.Name,
                 Value = setting.Value,
-                UpdatedBy = setting.UpdatedBy,
-                UpdatedOn = setting.UpdatedOn
-            });
+                UpdatedBy = setting.UpdatedBy ?? string.Empty,
+                UpdatedOn = setting.UpdatedOn ?? DateTime.UtcNow,
+                Id = setting.Id ?? 0,
+            }, token);
         }
     }
 }
