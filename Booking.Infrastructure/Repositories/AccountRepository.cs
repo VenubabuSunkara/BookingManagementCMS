@@ -104,31 +104,30 @@ namespace Booking.Infrastructure.Repositories
                 UserName = loginEntity.Email,
                 PasswordHash = loginEntity.Password
             };
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, loginEntity.Password, loginEntity.RememberMe, lockoutOnFailure: false);
 
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, loginEntity.Password, loginEntity.RememberMe, lockoutOnFailure: false);
             if (!result.Succeeded) { return null; }
 
             var userinfo = await _userManager.FindByEmailAsync(loginEntity.Email);
             if (userinfo == null) return null;
-            var userinrole = await _userManager.IsInRoleAsync(userinfo, "Admin");
-            if (!userinrole) return null;
+
             var userEntity = await _context.CompanyUsers.Where(x => x.UserId == userinfo.Id).FirstOrDefaultAsync();
+            if (userEntity == null) return null;
             var roles = await _userManager.GetRolesAsync(user);
             /*Add Claims*/
             var finalUserdata = new UserEntity()
             {
                 Username = user.UserName,
                 Id = user.Id,
-                Email = user.Email,
+                Email = user.Email ?? string.Empty,
                 FirstName = userEntity.FirstName,
-                LastName = userEntity.LastName,
-                Contact = user.PhoneNumber,
+                LastName = userEntity.LastName ?? string.Empty,
+                Contact = user.PhoneNumber ?? string.Empty,
                 Address = userEntity.Address,
                 Roles = [.. roles]
             };
             string userdata = JsonSerializer.Serialize(finalUserdata);
-            await _userManager.AddClaimAsync(userinfo, new Claim(ClaimTypes.UserData, userdata));
-
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.UserData, userdata));
             return finalUserdata;
         }
         public async Task LogOut(string UserId)

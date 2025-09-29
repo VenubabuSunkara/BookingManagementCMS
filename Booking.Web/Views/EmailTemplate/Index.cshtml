@@ -309,7 +309,7 @@
 
                     function sendMail(rowData) {
                         $.ajax({
-                            url: '/EmailQueue/SendMail',
+                            url: '/EmailTemplate/SendMail',
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(rowData),

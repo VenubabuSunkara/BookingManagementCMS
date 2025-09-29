@@ -18,7 +18,7 @@ namespace Booking.Application.DTOs
         public List<SelectListItem> VehicleType { get; set; } = [];
         public List<SelectListItem> TripType { get; set; } = [];
         public List<DriverRouteDto> Routes { get; set; } = [];
-        public List<SelectListItem> Drivers { get; set; }
-        public List<SelectListItem> Vehicles { get; set; }
+        public List<SelectListItem> Drivers { get; set; } = [];
+        public List<SelectListItem> Vehicles { get; set; } = [];
     }
 }

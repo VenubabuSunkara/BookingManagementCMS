@@ -42,6 +42,7 @@ namespace Booking.Web.Controllers
                 Password = loginDto.Password,
                 RememberMe = loginDto.RememberMe
             });
+            
             if (UserData == null)
             {
                 ModelState.AddModelError("", "Invalid login attempt.");

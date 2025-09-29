@@ -4,7 +4,7 @@ namespace Booking.Domain.Interfaces
 {
     public interface IAccountRepository
     {
-        Task<UserEntity> Login(LoginEntity loginEntity);
+        Task<UserEntity?> Login(LoginEntity loginEntity);
         Task<UserEntity> Register(UserEntity userEntity);
         Task<UserEntity?> GetUserById(UserEntity user);
         Task<ForgotPasswordEntity> ForgotPassword(ForgotPasswordEntity model, CancellationToken cancellation);

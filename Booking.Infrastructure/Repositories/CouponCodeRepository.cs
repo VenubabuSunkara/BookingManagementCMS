@@ -5,7 +5,6 @@ using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
-using static Azure.Core.HttpHeader;
 
 namespace Booking.Infrastructure.Repositories;
 
@@ -132,6 +131,7 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
             MaximumDiscount = coupon.MaximumDiscount,
             MinimumAmount = coupon.MinimumAmount,
             UsageLimit = coupon.UsageLimit,
+            Id=coupon.Id,
         }).Skip(Skip).Take(Take).ToListAsync(cancellationToken);
 
         //Final Result
@@ -166,7 +166,8 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive
+                IsActive = coupon.IsActive,
+                Id = coupon.Id
             }).ToListAsync();
     }
 
@@ -196,7 +197,8 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive ?? false
+                IsActive = coupon.IsActive ?? false,
+                Id=coupon.Id
             }).FirstOrDefaultAsync(cancellationToken);
     }
 
@@ -223,7 +225,8 @@ public sealed class CouponCodeRepository(BookingCmsContext context) : ICouponCod
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive ?? false
+                IsActive = coupon.IsActive ?? false,
+                Id = coupon.Id
             }).AsQueryable();
     }
 }

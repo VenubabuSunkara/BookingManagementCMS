@@ -3,22 +3,32 @@
 @model CouponCodeDto;
 
 @{
-    ViewData["Title"] = "Create CouponCode";
+    if (Model.Id == 0)
+        ViewData["Title"] = "Create CouponCode";
+    else
+        ViewData["Title"] = "Update CouponCode";
 }
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <h5>Pramotion Information</h5>
+            @if (Model.Id == 0)
+            {
+                <h5>Add Coupon</h5>
+            }
+            else
+            {
+                <h5>Update Coupon</h5>
+            }
         </div>
         <div class="card-body">
-            <form asp-controller="CouponCode" asp-action="Create" asp-antiforgery="true" enctype="application/x-www-form-urlencoded" method="post" id="promotionCreateForm" class="theme-form mega-form">
+            <form asp-controller="CouponCode" asp-action="Save" asp-antiforgery="true" enctype="application/x-www-form-urlencoded" method="post" id="promotionCreateForm" class="theme-form mega-form">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Id" />
                 <div class="row">
                     <div class="col-sm-12">
-                        <label asp-for="Code"  class="form-label-title mt-3">Coupon Code</label>
+                        <label asp-for="Code" class="form-label-title mt-3">Coupon Code</label>
                         <input asp-for="Code"
                                autocomplete="off"
                                id="couponcode"

@@ -61,7 +61,8 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
             MaximumDiscount = couponCodeDto.MaximumDiscount,
             MinimumAmount = couponCodeDto.MinimumAmount,
             UsageLimit = couponCodeDto.UsageLimit,
-            IsActive = couponCodeDto.IsActive
+            IsActive = couponCodeDto.IsActive,
+            Id=couponCodeDto.Id
         }, cancellationToken);
     }
 
@@ -119,7 +120,8 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive
+                IsActive = coupon.IsActive,
+                Id=coupon.Id
             })]
         };
     }
@@ -148,7 +150,8 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
             MaximumDiscount = coupon.MaximumDiscount,
             MinimumAmount = coupon.MinimumAmount,
             UsageLimit = coupon.UsageLimit,
-            IsActive = coupon.IsActive
+            IsActive = coupon.IsActive,
+            Id = coupon.Id
         }).AsParallel();
     }
 
@@ -180,7 +183,8 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
             MaximumDiscount = coupon.MaximumDiscount,
             MinimumAmount = coupon.MinimumAmount,
             UsageLimit = coupon.UsageLimit,
-            IsActive = coupon.IsActive
+            IsActive = coupon.IsActive,
+            Id = coupon.Id
         };
     }
 
@@ -208,7 +212,8 @@ public sealed class CouponCodeService(ICouponCodeRepository couponCodeRepository
                 MaximumDiscount = coupon.MaximumDiscount,
                 MinimumAmount = coupon.MinimumAmount,
                 UsageLimit = coupon.UsageLimit,
-                IsActive = coupon.IsActive
+                IsActive = coupon.IsActive,
+                Id = coupon.Id
             }).AsQueryable();
     }
 }

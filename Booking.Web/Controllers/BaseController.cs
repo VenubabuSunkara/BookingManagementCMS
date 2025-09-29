@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Booking.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 
@@ -18,21 +19,27 @@ namespace Booking.Web.Controllers
         }
         public string GetUserId()
         {
-            if (!User?.Identity?.IsAuthenticated == false)
+            if (User?.Identity?.IsAuthenticated == false)
             {
                 return "System"; // or throw an exception if appropriate
             }
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            return userIdClaim?.Value ?? "System";
+            var userData = User?.FindFirst(ClaimTypes.UserData)?.Value;
+            if (string.IsNullOrWhiteSpace(userData)) return "System";
+            var userDto = System.Text.Json.JsonSerializer.Deserialize<UserEntity>(userData);
+            if (userData is null) return "System";
+            return $"{userDto?.Id}";
         }
         public string GetUserName()
         {
-            if (!User?.Identity?.IsAuthenticated == false)
+            if (User?.Identity?.IsAuthenticated == false)
             {
                 return "System"; // or throw an exception if appropriate
             }
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            return userIdClaim?.Value ?? "System";
+            var userData = User?.FindFirst(ClaimTypes.UserData)?.Value;
+            if (string.IsNullOrWhiteSpace(userData)) return "System";
+            var userDto = System.Text.Json.JsonSerializer.Deserialize<UserEntity>(userData);
+            if (userData is null) return "System";
+            return $"{userDto?.FirstName} {userDto?.LastName}";
         }
     }
 }

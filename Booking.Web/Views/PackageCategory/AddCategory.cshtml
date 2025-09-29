@@ -1,6 +1,14 @@
 ﻿@model Booking.Application.DTOs.Tour.TourPackageCategoryDto
 @{
-    ViewData["Title"] = "Add/Update Package Category";
+    if (Model is null)
+    {
+        ViewData["Title"] = "Add Package Category";
+    }
+    else
+    {
+        ViewData["Title"] = "Update Package Category";
+    }
+   // bool isCategoryActive = Model?.IsActive ?? false;
 }
 
 <!-- Container-fluid starts-->
@@ -9,31 +17,38 @@
         <div class="col-12">
             <div class="row">
                 <div class="col-sm-12">
-                    <form asp-action="SaveCategory" asp-controller="Packages" method="post" enctype="multipart/form-data">
+                    <form asp-action="SaveCategory" asp-controller="PackageCategory" method="post" enctype="multipart/form-data">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Add/Update Package Category</h5>
+                                @if (Model is null)
+                                {
+                                    <h5>Add Package Category</h5>
+                                }
+                                else
+                                {
+                                    <h5>Update Package Category</h5>
+                                }
                             </div>
                             <div class="card-body">
                                 <div class="theme-form mega-form">
                                     <input type="hidden" asp-for="Id" />
                                     <div class="mb-3">
                                         <label asp-for="CategoryName" class="form-label-title">Category Name</label>
-                                        <input class="form-control" type="text" placeholder="Tour name" asp-for="CategoryName" />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label asp-for="NoOfPackages" class="form-label-title">Tour Places</label>
-                                        <input class="form-control" type="number" asp-for="NoOfPackages" />
+                                        <input class="form-control" type="text" placeholder="Category name" asp-for="CategoryName" />
                                     </div>
                                     <div class="mb-3">
                                         <label asp-for="Description" class="form-label-title">Description</label>
-                                        <textarea id="editor1" asp-for="Description" class="form-control" cols="30" rows="10"></textarea>
+                                        <textarea asp-for="Description" class="form-control" placeholder="Category Description"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label asp-for="IsActive" class="form-label-title">Is Active</label>
+                                        <input type="checkbox" asp-for="IsActive" />
                                     </div>
                                 </div>
                             </div>
                             <div class="card-footer text-end">
-                                <button class="btn btn-primary me-3">Submit</button>
-                                <button class="btn btn-outline-primary">Cancel</button>
+                                <button class="btn btn-primary me-3" type="submit">Submit</button>
+                                <button class="btn btn-outline-primary" type="reset">Reset</button>
                             </div>
                         </div>
                     </form>

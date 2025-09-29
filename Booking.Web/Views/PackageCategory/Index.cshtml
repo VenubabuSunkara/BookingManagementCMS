@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "All Packages Categories";
+    ViewData["Title"] = "Packages Categories";
 }
 <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
@@ -10,19 +10,20 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Package Categories</h5>
+                        <h5>Package Categories</h5>
                     </div>
-                    <form class="d-inline-flex">
-                        <div class="d-flex gap-2">
-                            <a href="@Url.ActionLink("AddCategory", "PackageCategory")" class="btn btn-theme">
-                                <i data-feather="file-plus"></i>Add New Category
-                            </a>
-                            <a href="@Url.ActionLink("ImportCategory", "PackageCategory")" class="btn btn-theme">
-                                <i data-feather="file-plus"></i>Import
-                            </a>
-                        </div>
-
+                    <!-- Add this hidden file input and form -->
+                    <form id="importForm" method="post" enctype="multipart/form-data" asp-controller="PackageCategory" asp-action="ImportCategory">
+                        <input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv" style="display: none;" />
                     </form>
+                    <div class="d-flex gap-2">
+                        <a href="@Url.ActionLink("AddCategory", "PackageCategory")" class="btn btn-theme">
+                            <i data-feather="file-plus"></i>Add New Category
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-theme" onclick="document.getElementById('fileInput').click()">
+                            <i data-feather="file-plus"></i>Import
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -62,20 +63,60 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                // Option 1: Auto submit form when file is selected
+                document.getElementById('importForm').submit();
+
+                // OR Option 2: Use AJAX to upload
+                var formData = new FormData();
+                formData.append('file', e.target.files[0]);
+
+                fetch('@Url.Action("ImportCategory", "PackageCategory")', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Import successful!');
+                        packageCatListVM.refresh();
+                    } else {
+                        alert('Import failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during import');
+                });
+            }
+        });
+    </script>
+
     <script type="text/javascript">
-        function deletePackage(categoryId){
-             $.ajax({
+         var deleteId=0;
+         //Delere promotion post event handeler
+         function DeleteConfirm(){
+             if (deleteId) {
+                 $.ajax({
                     type: "GET",
                     url: "/PackageCategory/DeletePackageCategory",
                     data: { CategoryId:categoryId },
                     dataType: "json",
                     success: function(result) {
-                    console.log("Sum is:", result);
+                    packageCatListVM.refresh();
                     },
                     error: function(req, status, error) {
                     console.error(error);
                     }
                 });
+             }
+        };
+        function deletePackage(categoryId){
+             deleteId=categoryId;
+             $("#deleteParam").val(deleteId);
+             $('#deleteConfirmModal').modal('show');
         }
         var  packageCatListVM = {
                 packagecatdt: null,
@@ -144,14 +185,20 @@
                             },
                             {
                                 data: 'id', align:'center',autoWidth: true,
-                                render: function (data, type, full, meta) {
-                                    return `<a href="/PackageCategory/EditPackageCategory?CategoryId=${data}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>`
+                                render: function (data, type, row) {
+                                    return ` <form method="post" action="/PackageCategory/EditPackageCategory" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="CategoryId" value="${data}" />
+                                                <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
+                                                </button>
+                                            </form> `
                                 }
                             },
                                {
                                 data: 'id', align:'center',autoWidth: true,
-                                render: function (data, type, full, meta) {
-                                    return `<a href="javascript:void(0)" onclick="deletePackage(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                render: function (data, type, row) {
+                                    return `<a href="javascript:void(0)" onclick="deletePackage(${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                                 }
                             }
                         ],

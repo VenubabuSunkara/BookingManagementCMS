@@ -1,4 +1,5 @@
-﻿using Booking.Application.DTOs.Tour;
+﻿using Booking.Application.DTOs;
+using Booking.Application.DTOs.Tour;
 using Booking.Application.Enums;
 using Booking.Application.Interfaces;
 using Booking.Application.Services;
@@ -22,6 +23,15 @@ namespace Booking.Web.Controllers
                 return View();
             }, token);
         }
+        public async Task<IActionResult> AddCategory(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View("AddCategory");
+            }, token);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPackageCategory(int CategoryId, CancellationToken token)
         {
             var CategoryModel = await _packageCategoryService.GetCategoryAsync(CategoryId, token);
@@ -34,14 +44,13 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveCategory(TourPackageCategoryDto category, CancellationToken token)
         {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return View("Index");
-                }, token);
             if (!ModelState.IsValid)
                 return View("AddCategory", category);
-            if (category.Id != 0)
+            category.CreatedOn = DateTime.Now;
+            category.UpdatedOn = DateTime.Now;
+            category.CreatedBy = base.GetUserName();
+            category.UpdatedBy = base.GetUserName();
+            if (category.Id.HasValue)
             {
                 await _packageCategoryService.UpdateCategoryAsync(category, token);
             }
@@ -73,9 +82,10 @@ namespace Booking.Web.Controllers
                 recordsTotal = tourPackages.Count(),
                 data = tourPackages.Select(x => new
                 {
-                    Id = x.Id,
+                    x.Id,
                     x.CategoryName,
-                    x.NoOfPackages
+                    x.NoOfPackages,
+                    x.IsActive
                 }).ToArray()
             });
 

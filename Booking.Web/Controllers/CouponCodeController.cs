@@ -81,19 +81,25 @@ namespace Booking.Web.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CouponCodeDto couponCodeDto, CancellationToken token)
+        public async Task<IActionResult> Save(CouponCodeDto couponCodeDto, CancellationToken token)
         {
-            if (!ModelState.IsValid)
-                return await Task.Run(() =>
-                {
-                    return View();
-                }, token);
             couponCodeDto.CreatedOn = DateTime.Now;
             couponCodeDto.UpdatedOn = DateTime.Now;
+            couponCodeDto.CreatedBy = base.GetUserName();
+            couponCodeDto.UpdatedBy = base.GetUserName();
+            if (couponCodeDto.Id == 0)
+            {
+                var promotionCreationStatus = await _couponCodeService.CreateCouponCodeAsync(couponCodeDto, token);
+                TempData["couponCodeSuccessMessage"] = promotionCreationStatus ? "Coupon code created successfully."
+                                                                              : "Unable to create Coupon code.Please try again after some time.";
+            }
+            else
+            {
+                var promotionUpdateStatus = await _couponCodeService.UpdateCouponCodeAsync(couponCodeDto, token);
+                TempData["couponCodeSuccessMessage"] = promotionUpdateStatus ? "Coupn Code updated successfully."
+                                                                              : "Unable to updated Coupon Code.Please try again after some time.";
+            }
 
-            var promotionCreationStatus = await _couponCodeService.CreateCouponCodeAsync(couponCodeDto, token);
-            TempData["couponCodeSuccessMessage"] = promotionCreationStatus ? "Coupon code created successfully."
-                                                                          : "Unable to create Coupon code.Please try again after some time.";
             return await Task.Run(() =>
             {
                 return RedirectToAction(nameof(Index));
@@ -107,6 +113,7 @@ namespace Booking.Web.Controllers
         /// <param name="token"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CancellationToken token)
         {
             if (token.IsCancellationRequested)
@@ -125,41 +132,7 @@ namespace Booking.Web.Controllers
                 }, token);
             }
 
-            return await Task.Run(() => View(nameof(Edit), couponCodeInfo), token);
-        }
-
-        /// <summary>
-        /// Update the promotion details
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="collection"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(CouponCodeDto couponCodeDto, CancellationToken token)
-        {
-            if (token.IsCancellationRequested)
-                return await Task.Run(() =>
-                {
-                    return RedirectToAction(nameof(Index));
-                }, token);
-
-            if (!ModelState.IsValid)
-                return await Task.Run(() =>
-                {
-                    return View();
-                }, token);
-
-
-            couponCodeDto.UpdatedOn = DateTime.Now;
-
-            var promotionUpdateStatus = await _couponCodeService.UpdateCouponCodeAsync(couponCodeDto, token);
-            TempData["couponCodeSuccessMessage"] = promotionUpdateStatus ? "Coupn Code updated successfully."
-                                                                          : "Unable to updated Coupon Code.Please try again after some time.";
-            return await Task.Run(() =>
-            {
-                return RedirectToAction(nameof(Index));
-            }, token);
+            return await Task.Run(() => View(nameof(Create), couponCodeInfo), token);
         }
 
         /// <summary>

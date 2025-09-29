@@ -59,7 +59,7 @@
             <div class="card">
                 <div class="card-header card-header--2">
                     <div>
-                        <h5>All Driver Vehicles</h5>
+                        <h5>All Promotions</h5>
                     </div>
                     <form class="d-inline-flex">
                         <div class="d-flex gap-2">
@@ -116,6 +116,7 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
+        var deleteId = 0;
         //Hide promotion successs message
         const HidePromotionMessageLabel = () =>
         {
@@ -125,24 +126,28 @@
                 $('#couponCodeAlertMessage').hide();
             },3000);
         }
+        const rejectcoupen = (promotionId) => {
+            deleteId=promotionId;
+             $("#deleteParam").val(deleteId);
+             $('#deleteConfirmModal').modal('show');
+        };
         //Delere promotion post event handeler
-        const DeleteCouponCode = (promotionId) => {
-            try {
+         function DeleteConfirm(){
+             if (deleteId) {
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Content("~/")' + "CouponCode/Delete",
-                    data: { id: promotionId },
+                    url: "/CouponCode/Delete",
+                    data: { id: deleteId },
                     dataType: "json",
                     success: function (result) {
-                        console.log(result);
+                        $('#deleteConfirmModal').modal('hide');
+                        couponCodeListVM.refresh();
                     },
                     error: function (req, status, error) {
                         console.error(error);
                     }
                 });
-            } catch (ex) {
-                console.error("Exception occurred:", ex);
-            }
+             }
         };
 
         //Data table
@@ -225,23 +230,24 @@
                             { data: 'maximumDiscount', autoWidth: true },
                             { data: 'usageLimit', autoWidth: true },
                             {
-                                data: 'couponCodeId',
+                                data: null,
                                 render: function (data, type, row) {
                                     return `
                                             <form method="post" action="/CouponCode/Details" style="display:inline;">
-                                                <input type="hidden" name="id" value="${data}" />
+                                             @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="${row.id}" />
                                                 <button type="submit" class="btn btn-link p-0" title="View" style="border: none; background: none;">
                                                     <i class="fa fa-eye" aria-hidden="true" style="color: #747dc6;"></i>
                                                 </button>
                                             </form> ||
                                             <form method="post" action="/CouponCode/Edit" style="display:inline;">
-                                                <input type="hidden" name="id" value="${data}" />
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="${row.id}" />
                                                 <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
                                                     <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
                                                 </button>
-                                            </form> || <a class="delete-promotion" href="javascript:void(0);" data-id="${data}">
-                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                             </a>`;
+                                            </form> ||
+                                            <a href="javascript:void(0)" title="Delete" onclick="rejectcoupen(${row.id})"><i class="fa fa-trash-o"></i></a>`;
                                 }
                             }
                         ],

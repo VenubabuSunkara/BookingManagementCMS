@@ -105,6 +105,7 @@
                        'RequestVerificationToken': token
                      },
                      success: function(result) {
+                        $('#deleteConfirmModal').modal('hide');
                         driverListVM.refresh();
                      },
                      error: function(req, status, error) {
@@ -115,7 +116,6 @@
          }
 
          function submitReviewForm(url,vehicleId, driverId){
-             debugger;
                const form = $('<form>', {
                                 method: 'post',
                                 action: url
