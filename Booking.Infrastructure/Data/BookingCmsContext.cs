@@ -547,7 +547,6 @@ public partial class BookingCmsContext : DbContext
                 .HasColumnName("ItemGUID");
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.LicenseNumber).HasMaxLength(50);
-            entity.Property(e => e.PasswordHash).HasMaxLength(128);
             entity.Property(e => e.PhoneNumber).HasMaxLength(15);
             entity.Property(e => e.UpdatedBy)
                 .HasMaxLength(450)

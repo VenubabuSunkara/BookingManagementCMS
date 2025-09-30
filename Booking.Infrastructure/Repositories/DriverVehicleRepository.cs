@@ -1,8 +1,10 @@
 ﻿using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Generic;
 
 namespace Booking.Infrastructure.Repositories
 {
@@ -167,13 +169,93 @@ namespace Booking.Infrastructure.Repositories
             }
             return cached!;
         }
-
         public async Task<int> RejectDriverVehicleAsync(int DriverId, int VehicleId, CancellationToken token)
         {
             await _context.DriverVehicles.Where(u => u.DriverId == DriverId).ExecuteDeleteAsync(token);
             var rejectedCount = await _context.Drivers.Where(d => d.DriverId == DriverId)
             .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             return rejectedCount;
+        }
+
+        private bool VerifyPassword(string hashedPassword, string providedPassword)
+        {
+            var hasher = new PasswordHasher<object>();
+            var result = hasher.VerifyHashedPassword(null, hashedPassword, providedPassword);
+            return result == PasswordVerificationResult.Success;
+        }
+        public async Task<int> CreateDriverVehicle(CreateDriverVehicleEntity entity, CancellationToken token)
+        {
+            var hasher = new PasswordHasher<object>();
+            string hashed = hasher.HashPassword(null, entity.DriverEntity.Password);
+            var driverTable = new Data.Models.Driver()
+            {
+                PhoneNumber = entity.DriverEntity.PhoneNumber,
+                FirstName = entity.DriverEntity.FirstName,
+                LastName = entity.DriverEntity.LastName,
+                Email = entity.DriverEntity.Email,
+                AboutOn = entity.DriverEntity.AboutOn,
+                Address = entity.DriverEntity.Address,
+                DateOfBirth = entity.DriverEntity.DateOfBirth,
+                UpdatedOn = entity.DriverEntity.UpdatedOn,
+                UpdatedBy = entity.DriverEntity.UpdatedBy,
+                CreatedBy = entity.DriverEntity.CreatedBy,
+                CreatedOn = entity.DriverEntity.CreatedOn,
+                UserName = entity.DriverEntity.UserName,
+                Gender = entity.DriverEntity.Gender,
+                AvailabilityStatus = entity.DriverEntity.AvailabilityStatus,
+                ApproveDriver = entity.DriverEntity.ApproveDriver,
+                IsActive = entity.DriverEntity.IsActive,
+                Photo = entity.DriverEntity.Photo,
+                TenantId = entity.DriverEntity.TenantId,
+                PasswordHash = hashed,
+                LicenseNumber = entity.DriverEntity.LicenseNumber,
+            };
+            await _context.Drivers.AddAsync(driverTable, token);
+            await _context.SaveChangesAsync(token);
+
+            var vehicleTable = new Data.Models.Vehicle()
+            {
+                VehicleNumber = entity.VehicleEntity.VehicleNumber,
+                Model = entity.VehicleEntity.Model,
+                Color = entity.VehicleEntity.Color,
+                Fare = entity.VehicleEntity.Fare,
+                CarName = entity.VehicleEntity.CarName,
+                AverageMileage = entity.VehicleEntity.AverageMileage,
+                Fecility = entity.VehicleEntity.Fecility,
+                PollucationCertificationNumber = entity.VehicleEntity.PollucationCertificationNumber,
+                InsurenceValidUntil = entity.VehicleEntity.InsurenceValidUntil,
+                InsurnceNumber = entity.VehicleEntity.InsurnceNumber,
+                VehicleTypeId = entity.VehicleEntity.VehicleTypeId,
+                AboutOnVehicle = entity.VehicleEntity.AboutOnVehicle,
+                DefaultImage = entity.VehicleEntity.DefaultImage,
+                UpdatedOn = entity.VehicleEntity.UpdatedOn,
+                UpdatedBy = entity.VehicleEntity.UpdatedBy,
+                CreatedBy = entity.VehicleEntity.CreatedBy,
+                CreatedOn = entity.VehicleEntity.CreatedOn,
+            };
+            await _context.Vehicles.AddAsync(vehicleTable,token);
+            await _context.SaveChangesAsync(token);
+            await _context.DriverVehicles.AddAsync(new Data.Models.DriverVehicle()
+            {
+                DriverId = driverTable.DriverId,
+                VehicleId = vehicleTable.VehicleId,
+                CreatedBy = entity.DriverEntity.CreatedBy,
+                CreatedOn = entity.DriverEntity.CreatedOn,
+                UpdatedBy = entity.DriverEntity.UpdatedBy,
+                UpdatedOn = entity.DriverEntity.UpdatedOn,
+            }, token);
+            var result = await _context.SaveChangesAsync(token);
+            return result;
+        }
+
+        public Task<int> UpdateDriverVehicle(CreateDriverVehicleEntity entity, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CreateDriverVehicleEntity?> GetDriverVehicleById(int DriverId, int VehicleId, CancellationToken token)
+        {
+            throw new NotImplementedException();
         }
     }
 }

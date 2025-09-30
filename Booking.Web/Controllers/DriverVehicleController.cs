@@ -132,6 +132,7 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveDriverVehicle(CreateDriverVehicleDto model, CancellationToken token)
         {
+
             return await Task.Run(() =>
             {
                 return RedirectToAction("Index");

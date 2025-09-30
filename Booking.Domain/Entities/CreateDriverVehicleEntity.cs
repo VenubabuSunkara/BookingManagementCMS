@@ -1,13 +1,12 @@
-﻿using Amazon.S3.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Booking.Application.DTOs
+namespace Booking.Domain.Entities
 {
-    public class CreateDriverDto
+    public class CreateDriverEntity
     {
         public int DriverId { get; set; }
 
@@ -52,7 +51,7 @@ namespace Booking.Application.DTOs
 
         public string? DateOfBirth { get; set; }
     }
-    public class CreateVehicleDto
+    public class CreateVehicleEntity
     {
         public int VehicleId { get; set; }
 
@@ -92,11 +91,12 @@ namespace Booking.Application.DTOs
 
         public int? VehicleTypeId { get; set; }
     }
-    public class CreateDriverVehicleDto
+    public class CreateDriverVehicleEntity
     {
         public string DriverPhotojson { get; set; } = string.Empty;
         public string VehicleDefaultImagejson { get; set; } = string.Empty;
-        public CreateDriverDto DriverDto { get; set; } = new CreateDriverDto();
-        public CreateVehicleDto VehicleDto { get; set; } = new CreateVehicleDto();
+        public CreateDriverEntity DriverEntity { get; set; } = new CreateDriverEntity();
+        public CreateVehicleEntity VehicleEntity { get; set; } = new CreateVehicleEntity();
     }
+
 }
