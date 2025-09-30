@@ -2,7 +2,8 @@
 ADD CONSTRAINT DF_CouponCodes_CreatedBy
 DEFAULT 'System' FOR [CreatedBy]
 
-
+ALTER TABLE dbo.Driver
+ALTER COLUMN PasswordHash nvarchar(max) NOT NULL
 
 
 
