@@ -9,6 +9,7 @@ namespace Booking.Application.DTOs
 {
     public class CreateDriverVehicleDto
     {
+        public string SingleMediajson { get; set; } = string.Empty;
         #region Driver
         public int DriverId { get; set; }
         public string DriverFirstName { get; set; } = string.Empty;

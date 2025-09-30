@@ -2,6 +2,12 @@
 @{
     ViewData["Title"] = "Create New Driver";
 }
+@section Styles {
+    <!--MultiSelect-->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <!--Drop zon-->
+    <link rel="stylesheet" type="text/css" href="~/css/dropzone.css" />
+}
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
@@ -12,15 +18,12 @@
                     <!--driver detail start-->
                     <div class="card">
                         <div class="card-header">
-                            <h5>Add New Driver</h5>
+                            <h5>Add Driver Details</h5>
                         </div>
                         <div class="card-body">
                             <form class="theme-form mega-form" method="post" asp-action="SaveDriverVehiclee" asp-controller="DriverVehicle" enctype="multipart/form-data">
-
-
                                 <div class="mb-3">
                                     <label class="form-label-title" asp-for="DefaultImage">Upload Driver Image here</label>
-
                                     <div class="dropzone" id="singleFileUpload" data-url="@Url.Action("Single", "DriverVehicles")">
                                         <div class="dz-message needsclick">
                                             <i class="icon-cloud-up"></i>
@@ -32,13 +35,11 @@
                                             </span>
                                         </div>
                                     </div>
-
+                                    <input type="hidden" asp-for="SingleMediajson" />
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label-title" asp-for="UserName">
-                                        UserName
-                                        <input class="form-control" asp-for="UserName" type="text" placeholder="Username" />
-                                    </label>
+                                @*   <div class="mb-3">
+                                    <label class="form-label-title" asp-for="UserName"> UserName</label>
+                                    <input class="form-control" asp-for="UserName" type="text" placeholder="Username" />
                                     <span asp-validation-for="UserName" class="text-danger"></span>
                                 </div>
                                 <div class="mb-3">
@@ -54,31 +55,59 @@
                                         <input class="form-control" asp-for="ConfirmPassword" type="password" placeholder="ConfirmPassword" />
                                     </label>
                                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div> *@
+                                <div class="mt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="UserName"> UserName</label>
+                                            <input class="form-control" asp-for="UserName" type="text" placeholder="Username" />
+                                            <span asp-validation-for="UserName" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="Password">
+                                                Password
+                                            </label>
+                                            <input class="form-control" asp-for="Password" type="password" placeholder="Password" />
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="ConfirmPassword">
+                                                Confirm Password
+                                            </label>
+                                            <input class="form-control" asp-for="ConfirmPassword" type="password" placeholder="ConfirmPassword" />
+                                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label-title" asp-for="DriverFirstName" id="DriverFirstName">
-                                        Driver First Name
-                                        <input class="form-control" asp-for="DriverFirstName" type="text" placeholder="Driver First Name" />
-                                    </label>
-                                    <span asp-validation-for="DriverFirstName" class="text-danger" id="NameValidation"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label-title" asp-for="DriverLastName" id="DriverLastName">
-                                        Driver Last Name
-                                        <input class="form-control" asp-for="DriverLastName" type="text" placeholder="Driver Last Name" />
-                                    </label>
-                                    <span asp-validation-for="DriverLastName" class="text-danger" id="NameValidation"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="gender" asp-for="Gender" class="form-label-title">
-                                        Gender
-                                        <select asp-for="Gender"
-                                                class="form-control js-example-basic-single col-sm-12">
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
-                                        </select>
-                                    </label>
+                                <div class="mt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="DriverFirstName" id="DriverFirstName">
+                                                Driver First Name
+                                            </label>
+                                            <input class="form-control" asp-for="DriverFirstName" type="text" placeholder="Driver First Name" />
+                                            <span asp-validation-for="DriverFirstName" class="text-danger" id="NameValidation"></span>
+
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="DriverLastName" id="DriverLastName">
+                                                Driver Last Name
+                                            </label>
+                                            <input class="form-control" asp-for="DriverLastName" type="text" placeholder="Driver Last Name" />
+                                            <span asp-validation-for="DriverLastName" class="text-danger" id="NameValidation"></span>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label for="gender" asp-for="Gender" class="form-label-title">
+                                                Gender
+                                            </label>
+                                            <select asp-for="Gender"
+                                                    class="form-control js-example-basic-single col-sm-12">
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 @*  <div class="mb-3">
@@ -101,61 +130,105 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div> *@
-                                <div class="mb-3 choose">
+                                </div> 
+                                 <div class="mb-3 choose">
                                     <label class="form-label-title">ID Document </label>
                                     <input class="form-control"
                                            type="file"
                                            data-bs-original-title=""
                                            title="" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label-title" asp-for="LicenseNumber">
-                                        Contact Number
-                                        <input class="form-control" asp-for="LicenseNumber" type="text" placeholder="License Number" />
-                                    </label>
-                                    <span asp-validation-for="LicenseNumber" class="text-danger"></span>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label-title" asp-for="PhoneNumber">
-                                        Contact Number
-                                        <input class="form-control" asp-for="PhoneNumber" type="tel" placeholder="Contact Number" />
-                                    </label>
-                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                                </div>
+                                </div> *@
+                                <div class="mt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="PhoneNumber">
+                                                Contact Number
+                                            </label>
+                                            <input class="form-control" asp-for="PhoneNumber" type="tel" placeholder="Contact Number" />
 
-                                <div class="mb-3">
-                                    <label class="form-label-title" asp-for="EmailId">
-                                        Email Address
-                                        <input class="form-control" asp-for="EmailId" type="email" placeholder=" Email address" />
-                                    </label>
-                                    <span asp-validation-for="EmailId" class="text-danger"></span>
+                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="EmailId">
+                                                Email Address
+                                            </label>
+                                            <input class="form-control" asp-for="EmailId" type="email" placeholder=" Email address" />
+
+                                            <span asp-validation-for="EmailId" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="LicenseNumber">
+                                                License Number
+                                            </label>
+                                            <input class="form-control" asp-for="LicenseNumber" type="text" placeholder="License Number" />
+
+                                            <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label-title" asp-for="Address">
                                         Address
-                                        <textarea asp-for="Address" class="form-control"></textarea>
                                     </label>
+                                    <textarea asp-for="Address" class="form-control"></textarea>
                                     <span asp-validation-for="Address" class="text-danger"></span>
                                 </div>
+
                                 <div class="mb-3">
                                     <label class="form-label-title" asp-for="AboutOnDriver">
                                         About On Driver
-                                        <textarea asp-for="AboutOnDriver" class="form-control"></textarea>
                                     </label>
+                                    <textarea asp-for="AboutOnDriver" class="form-control"></textarea>
+
                                     <span asp-validation-for="AboutOnDriver" class="text-danger"></span>
                                 </div>
                                 <br />
+                                @*  Vehicle Details *@
+                                <h5>Add Vehicle Details:</h5>
                                 <div class="mb-3">
-                                    <label class="form-label-title">Car Name</label>
-                                    <input class="form-control" type="text" placeholder="Car Name" />
+                                    <label class="form-label-title">
+                                        Upload Car Image here
+                                    </label>
+                                    <div class="dropzone" id="singleFileUpload">
+                                        <div class="dz-message needsclick">
+                                            <i class="icon-cloud-up"></i>
+                                            <h6>Drop files here or click to upload.</h6>
+                                            <span class="note needsclick">
+                                                (This is just a demo dropzone. Selected files
+                                                are <strong>not</strong> actually
+                                                uploaded.)
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="mt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="ModelName">
+                                                Model Name
+                                            </label>
+                                            <input class="form-control" type="text" asp-for="ModelName" placeholder="Model Name" />
 
-                                <div class="mb-3">
-                                    <label class="form-label-title">Model</label>
-                                    <input class="form-control" type="text" placeholder="Car Model" />
+                                            <span asp-validation-for="ModelName" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="Make">
+                                                Make
+                                            </label>
+                                            <input class="form-control" type="text" asp-for="Make" placeholder="Make" />
+
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label-title" asp-for="Color">
+                                                Color
+                                            </label>
+                                            <input class="form-control" asp-for="Color" type="text" placeholder="Color" />
+
+                                            <span asp-validation-for="ModelName" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
-
+                                @* 
                                 <div class="mb-3">
                                     <label class="form-label-title">Seating Capacity</label>
                                     <input class="form-control" type="number" placeholder="Seating Capacity" />
@@ -164,9 +237,9 @@
                                 <div class="mb-3">
                                     <label class="form-label-title">Average Mileage</label>
                                     <input class="form-control" type="number" placeholder="Average Mileage" />
-                                </div>
+                                </div> *@
 
-                                <div class="mb-3">
+                                @*  <div class="mb-3">
                                     <label class="form-label-title">Registration Number</label>
                                     <input class="form-control" type="number" placeholder="Registration Number" />
                                 </div>
@@ -184,65 +257,49 @@
                                 <div class="mb-3">
                                     <label class="form-label-title">Pollution Certificate Number</label>
                                     <input class="form-control" type="text" placeholder="Pollution Certificate Number" />
-                                </div>
+                                </div> *@
 
-                                <div class="mb-3">
-                                    <label class="form-label-title">Color</label>
-                                    <input class="form-control" type="text" placeholder="Color" />
-                                </div>
+                                <div class="mt-3">
+                                    <div class="row mb-3">
+                                        <div class="col-12 col-md-6">
+                                            <label asp-for="FualType" class="form-label-title">
+                                                Fuel Typ
+                                            </label>
+                                            <select asp-for="FualType" class="js-example-basic-single col-sm-12">
+                                                <option value="Petrol">Petrol</option>
+                                                <option value="Diesel">Diesel</option>
+                                                <option value="Electric">Electric</option>
+                                            </select>
 
-                                <div class="mb-3">
-                                    <label for="car-type" class="form-label-title">Fuel Typ</label>
-                                    <select id="car-type" class="js-example-basic-single col-sm-12">
-                                        <option value="MI">Petrol</option>
-                                        <option value="ME">Diesel</option>
-                                        <option value="DU">Electric</option>
-                                    </select>
-                                </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label class="form-label-title" asp-for="BasePrice">
+                                                Fare/km
+                                            </label>
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text">$ </span>
+                                                <input class="form-control" asp-for="BasePrice" placeholder="20" type="text"
+                                                       aria-label="Amount (to the nearest dollar)" />
+                                            </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label-title">Owner Name</label>
-                                    <input class="form-control" type="text" placeholder="Owner Name" />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label-title">Ownership</label>
-                                    <input class="form-control" type="number" placeholder="Ownership e.g(1,2)" />
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label-title">
-                                        Upload Car Image here
-                                    </label>
-                                    <div class="dropzone" id="singleFileUpload">
-                                        <div class="dz-message needsclick">
-                                            <i class="icon-cloud-up"></i>
-                                            <h6>Drop files here or click to upload.</h6>
-                                            <span class="note needsclick">
-                                                (This is just a demo dropzone. Selected files
-                                                are <strong>not</strong> actually
-                                                uploaded.)
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
+                                @*  <div class="mb-3">
                                     <label class="form-label-title">Facility</label>
                                     <input class="form-control" type="text" name="tags" value="pfTag1,pfTag2,pfTag3"
                                            data-role="tagsinput" />
                                 </div>
+ *@
 
-                                <div class="mb-3">
-                                    <label class="form-label-title">Fare/km</label>
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text">$ </span>
-                                        <input class="form-control" placeholder="20" type="text"
-                                               aria-label="Amount (to the nearest dollar)" />
-                                    </div>
+                                <div class="mt-3">
+                                    <label class="form-label-title" asp-for="AboutOnVehicle">
+                                        About On Vehicle
+                                    </label>
+                                    <textarea asp-for="AboutOnVehicle" class="form-control"></textarea>
+                                    <span asp-validation-for="AboutOnVehicle" class="text-danger"></span>
                                 </div>
-
-                                <div class="mb-3">
+                                @*  <div class="mb-3">
                                     <label for="car-type" class="form-label-title">Car Type</label>
                                     <select id="car-type" class="js-example-basic-single col-sm-12">
                                         <option value="MI">Mini</option>
@@ -253,7 +310,8 @@
                                         <option value="TA">Tempo Travel</option>
                                         <option value="DE">Mini Bus</option>
                                     </select>
-                                </div>
+                                </div> *@
+
                             </form>
                         </div>
                         <div class="card-footer text-end">
@@ -267,4 +325,13 @@
         </div>
     </div>
 </div>
+
 <!-- Container-fluid Ends-->
+@section Scripts {
+    <!--Searchable dropdown-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <!--Dropzon start-->
+    <script src="~/js/dropzone.js" type="text/javascript"></script>
+    <script src="~/js/dropzone-script.js" type="text/javascript"></script>
+}
