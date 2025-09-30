@@ -204,32 +204,32 @@ namespace Booking.Web.Controllers
             model.TourPackage.UpdatedOn = DateTime.UtcNow;
             model.TourPackage.CreatedBy = base.GetUserName();
             model.TourPackage.UpdatedBy = base.GetUserName();
-            var packageId = await _packageService.SavePackage(model.TourPackage, token);
+            await _packageService.SavePackage(model.TourPackage, token);
 
-            if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
-            {
-                List<TourPackageMediaDto> gallary = JsonConvert.DeserializeObject<List<TourPackageMediaDto>>(model.MultipleMediajson) ?? [];
-                List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
-                {
-                   PackageId = packageId,
-                   MediaType= x.FileType,
-                   MediaUrl=x.FilePath,
-                   FileName=x.FileName,
-                   IsDefault=false,
-                   ThumbnailImage=x.ThumbnailPath,
-                   CreatedAt=DateTime.UtcNow,
-                   CreatedBy=base.GetUserName(),
-                   UpdatedAt=DateTime.UtcNow,
-                   UpdatedBy=base.GetUserName()
-                })];
-                await _packageMediaService.SavePackageMediaList(PackageMedia, token);
-            }
-            model.Location.PackageId = packageId;
-            model.Location.CreatedOn = DateTime.UtcNow;
-            model.Location.UpdatedOn = DateTime.UtcNow;
-            model.Location.CreatedBy = base.GetUserName();
-            model.Location.UpdatedBy = base.GetUserName();
-            await _packageLocationService.SavePackageLocation(model.Location, token);
+            //if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
+            //{
+            //    List<TourPackageMediaDto> gallary = JsonConvert.DeserializeObject<List<TourPackageMediaDto>>(model.MultipleMediajson) ?? [];
+            //    List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
+            //    {
+            //       PackageId = packageId,
+            //       MediaType= x.FileType,
+            //       MediaUrl=x.FilePath,
+            //       FileName=x.FileName,
+            //       IsDefault=false,
+            //       ThumbnailImage=x.ThumbnailPath,
+            //       CreatedAt=DateTime.UtcNow,
+            //       CreatedBy=base.GetUserName(),
+            //       UpdatedAt=DateTime.UtcNow,
+            //       UpdatedBy=base.GetUserName()
+            //    })];
+            //    await _packageMediaService.SavePackageMediaList(PackageMedia, token);
+            //}
+            //model.Location.PackageId = packageId;
+            //model.Location.CreatedOn = DateTime.UtcNow;
+            //model.Location.UpdatedOn = DateTime.UtcNow;
+            //model.Location.CreatedBy = base.GetUserName();
+            //model.Location.UpdatedBy = base.GetUserName();
+            //await _packageLocationService.SavePackageLocation(model.Location, token);
 
             return RedirectToAction("Index");
         }

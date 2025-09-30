@@ -7,8 +7,6 @@
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 	<!--Drop zon-->
 	<link rel="stylesheet" type="text/css" href="~/css/dropzone.css" />
-
-
 }
 
 <!-- Container-fluid starts-->
@@ -157,7 +155,7 @@
 									<label class="form-label-title" asp-for="DriverDto.Address">
 										Address
 									</label>
-									<textarea asp-for="DriverDto.Address" id="descriptionOf" class="form-control"></textarea>
+									<textarea asp-for="DriverDto.Address"  class="form-control descriptionOf"></textarea>
 									<span asp-validation-for="DriverDto.Address" class="text-danger"></span>
 								</div>
 
@@ -165,7 +163,7 @@
 									<label class="form-label-title" asp-for="DriverDto.AboutOn">
 										About On Driver
 									</label>
-									<textarea asp-for="DriverDto.AboutOn" id="descriptionOf" class="form-control"></textarea>
+									<textarea asp-for="DriverDto.AboutOn"  class="form-control descriptionOf"></textarea>
 
 									<span asp-validation-for="DriverDto.AboutOn" class="text-danger"></span>
 								</div>
@@ -285,7 +283,7 @@
 									<label class="form-label-title" asp-for="VehicleDto.AboutOnVehicle">
 										About On Vehicle
 									</label>
-									<textarea asp-for="VehicleDto.AboutOnVehicle" id="descriptionOf" class="form-control"></textarea>
+									<textarea asp-for="VehicleDto.AboutOnVehicle" class="form-control descriptionOf"></textarea>
 									<span asp-validation-for="VehicleDto.AboutOnVehicle" class="text-danger"></span>
 								</div>
 
