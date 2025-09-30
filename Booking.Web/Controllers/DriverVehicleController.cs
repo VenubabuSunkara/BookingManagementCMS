@@ -67,6 +67,11 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<IActionResult> LoadDriverVehicleData([FromBody] DataTableAjaxPostModel request, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Invalid request data." });
+            }
+
             try
             {
                 string search = "";
@@ -123,6 +128,15 @@ namespace Booking.Web.Controllers
             }, token);
         }
 
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveDriverVehicle(CreateDriverVehicleDto model, CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return RedirectToAction("Index");
+            }, token);
+        }
+
         public async Task<IActionResult> Create(CancellationToken token)
         {
             return await Task.Run(() =>
@@ -131,7 +145,28 @@ namespace Booking.Web.Controllers
             }, token);
         }
         [HttpPost]
-        public async Task<IActionResult> Single(IFormFile file, CancellationToken token)
+        public async Task<IActionResult> SaveDriverPhoto(IFormFile file, CancellationToken token)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Invalid file upload request." });
+            }
+            try
+            {
+                var uploadedFiles = new List<TourPackageMediaDto>
+                {
+                    await ProcessAndSaveFile(file, token)
+                };
+                return Json(new { success = true, files = uploadedFiles });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading file");
+                return Json(new { success = false, message = "An error occurred while uploading files." });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> SaveVehicleImage(IFormFile file, CancellationToken token)
         {
             if (!ModelState.IsValid)
             {

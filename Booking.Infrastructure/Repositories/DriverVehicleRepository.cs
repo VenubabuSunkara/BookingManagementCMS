@@ -140,6 +140,7 @@ namespace Booking.Infrastructure.Repositories
             {
                 var driverVehicleQuery = GetDriverVehicleTableQuery();
                 var total = await driverVehicleQuery.CountAsync(cancellationToken: token);
+                var FilterRecords = total;
                 if (!string.IsNullOrEmpty(SearchValue))
                 {
                     var term = $"%{SearchValue}%";
@@ -148,8 +149,8 @@ namespace Booking.Infrastructure.Repositories
                         EF.Functions.Like(x.Driver.LastName, term) ||
                         EF.Functions.Like(x.Driver.LicenseNumber, term) ||
                         EF.Functions.Like(x.Vehicle.VehicleNumber, term));
+                    FilterRecords = await driverVehicleQuery.CountAsync(cancellationToken: token);
                 }
-                var FilterRecords = await driverVehicleQuery.CountAsync(cancellationToken: token);
                 var driverVehiclesList = await driverVehicleQuery.Skip(Skip).Take(Take).ToListAsync(cancellationToken: token);
                 // Cache for 5 minutes (absolute)
 
