@@ -26,14 +26,12 @@ var options = {
     },
     responsive: [
         {
-
             breakpoint: 1835,
             options: {
                 chart: {
                     height: 245,
                 },
                 legend: {
-
                     position: 'bottom',
 
                     itemMargin: {
@@ -41,49 +39,30 @@ var options = {
                         vertical: 1
                     },
                 },
-
             },
-
-
-
         }, {
-
             breakpoint: 1388,
             options: {
                 chart: {
                     height: 330,
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
-
-
-
         },
         {
-
             breakpoint: 1275,
             options: {
                 chart: {
                     height: 300,
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
-
-
-
         },
         {
-
             breakpoint: 1158,
             options: {
                 chart: {
@@ -95,25 +74,14 @@ var options = {
                     position: 'bottom',
                     offsetY: 10,
                 },
-
-
-
             },
-
-
-
         },
         {
-
             breakpoint: 598,
             options: {
                 chart: {
                     height: 280,
                 },
-
-
-
-
 
                 legend: {
                     fontSize: '12px',
@@ -121,34 +89,23 @@ var options = {
                     offsetX: 5,
                     offsetY: -5,
 
-
                     markers: {
                         width: 10,
                         height: 10,
-
-
                     },
 
                     itemMargin: {
-
                         vertical: 1
                     },
                 },
             },
-
-
-
         },
 
     ],
-
-
 };
 
 var chart = new ApexCharts(document.querySelector("#pie-chart-visitors"), options);
 chart.render();
-
-
 
 // //basic area char visiter
 // var options = {
@@ -272,11 +229,8 @@ chart.render();
 //             offsetX: 10,
 //         },
 
-
 //         range: undefined,
 //         axisBorder: {
-
-
 //             show: false,
 //         },
 //         axisTicks: {
@@ -284,7 +238,6 @@ chart.render();
 //         },
 
 //     },
-
 
 //     tooltip: {
 //         formatter: undefined,
@@ -300,7 +253,6 @@ chart.render();
 
 // var chart = new ApexCharts(document.querySelector("#basic-line-chart-visiters"), options);
 // chart.render();
-
 
 ////bar chart
 var options = {
@@ -362,14 +314,10 @@ var options = {
             options: {
                 chart: {
                     height: 323,
-
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
         },
         {
@@ -377,101 +325,65 @@ var options = {
             options: {
                 chart: {
                     height: 318,
-
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
         },
         {
-
             breakpoint: 1525,
             options: {
                 chart: {
                     height: 345,
-
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
         },
         {
-
             breakpoint: 1463,
             options: {
                 chart: {
                     height: 368,
-
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
         },
         {
-
             breakpoint: 1387,
             options: {
                 chart: {
                     height: 343,
-
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
         },
         {
-
             breakpoint: 1275,
             options: {
                 chart: {
                     height: 312,
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
-
             },
-
-
-
         },
         {
-
             breakpoint: 650,
             options: {
                 chart: {
                     height: 250,
-
                 },
-
-
-
-
             },
-
-
-
         },
         {
-
             breakpoint: 584,
             options: {
                 chart: {
@@ -489,11 +401,7 @@ var options = {
                     markers: {
                         width: 10,
                         height: 10,
-
-
                     },
-
-
                 },
 
                 yaxis: {
@@ -502,33 +410,17 @@ var options = {
                         offsetX: 0,
                     },
                 }
-
-
             },
-
-
-
         },
         {
-
             breakpoint: 438,
             options: {
                 chart: {
                     height: 200,
-
-
                 },
-
-
-
-
             },
-
-
-
         },
         {
-
             breakpoint: 371,
             options: {
                 chart: {
@@ -538,29 +430,12 @@ var options = {
                 },
 
                 legend: {
-
                     offsetY: -5,
-
-
-
                 },
-
-
             },
-
-
-
         },
 
-
-
-
-
     ],
-
-
-
-
 };
 
 var chart = new ApexCharts(document.querySelector("#bar-chart-earning"), options);
@@ -592,12 +467,9 @@ var options = {
     xaxis: {
         labels: {
             show: false,
-
         },
         type: 'datetime',
         axisBorder: {
-
-
             show: false,
         },
         axisTicks: {
@@ -607,7 +479,6 @@ var options = {
     yaxis: {
         labels: {
             show: false,
-
         },
         opposite: true
     },
@@ -617,14 +488,12 @@ var options = {
                 borderColor: 'transparent',
                 show: false
             }
-
         },
         yaxis: {
             lines: {
                 borderColor: 'transparent',
                 show: false,
             }
-
         },
         padding: {
             right: 0,
@@ -636,7 +505,6 @@ var options = {
     legend: {
         horizontalAlign: 'left'
     },
-
 };
 
 var chart = new ApexCharts(document.querySelector("#total-earnings-chart"), options);
@@ -657,9 +525,6 @@ var generateDayWiseTimeSeries = function (baseval, count, yrange) {
     }
     return series;
 }
-
-
-
 
 var options = {
     series: [
@@ -686,7 +551,6 @@ var options = {
         colors: undefined,
 
         dashArray: 0,
-
     },
     markers: {
         size: 6,
@@ -714,7 +578,6 @@ var options = {
         enabled: false
     },
     grid: {
-
         padding: {
             right: 0,
             bottom: 0,
@@ -748,22 +611,17 @@ var options = {
                     height: 210,
                     width: "120%",
                     offsetX: -45,
-
                 },
                 legend: {
-
                     position: 'bottom',
-
                 },
                 dataLabels: {
                     textAnchor: 'left',
 
                     style: {
                         fontSize: '10px',
-
                     },
                 }
-
             },
         },
         {
@@ -773,10 +631,7 @@ var options = {
                     height: 210,
                     width: "100%",
                     offsetX: 0,
-
                 },
-
-
             },
         },
         {
@@ -787,36 +642,23 @@ var options = {
                     width: "105%",
                     offsetX: -20,
                     offsetY: 10,
-
                 },
-
-
             },
         },
         {
             breakpoint: 430,
             options: {
                 chart: {
-
                     width: "108%",
-
-
                 },
-
-
             },
         },
         {
             breakpoint: 330,
             options: {
                 chart: {
-
                     width: "112%",
-
-
                 },
-
-
             },
         },
     ],

@@ -27,6 +27,7 @@ namespace Booking.Domain.Entities.Tour
         public string? Inclusions { get; set; }
         public TourPackageCategoryEntity Category { get; set; } = new TourPackageCategoryEntity();
         public TourLocationEntity Location { get; set; } = new TourLocationEntity();
+        public List<PackageMediaEntity> PackageMedia { get; set; } = [];
     }
 
     public class TourPackageTable

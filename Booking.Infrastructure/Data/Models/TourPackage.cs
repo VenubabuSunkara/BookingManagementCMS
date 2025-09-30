@@ -30,6 +30,8 @@ public partial class TourPackage
     public string BannerImage { get; set; } = null!;
 
     public string? ShortDescription { get; set; }
+    public string? ThingsToNote { get; set; }
+    public string? Inclusions { get; set; }
 
     public virtual TourPackageCategory Category { get; set; } = null!;
 

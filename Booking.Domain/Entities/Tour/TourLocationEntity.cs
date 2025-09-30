@@ -12,17 +12,17 @@ namespace Booking.Domain.Entities.Tour
 
         public string? ViaLocations { get; set; }
 
-        public string? LocationHeadLine { get; set; }
+        public string LocationHeadLine { get; set; } = null!;
 
-        public string? LocationName { get; set; }
+        public string LocationName { get; set; } = null!;
 
-        public string? Country { get; set; }
+        public string Country { get; set; } = null!;
 
-        public string? State { get; set; }
+        public string State { get; set; } = null!;
 
         public string? City { get; set; }
 
-        public string? ZipCode { get; set; }
+        public string ZipCode { get; set; } = null!;
 
         public string? Address { get; set; }
 

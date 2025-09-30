@@ -103,7 +103,7 @@
                  $.ajax({
                     type: "GET",
                     url: "/PackageCategory/DeletePackageCategory",
-                    data: { CategoryId:categoryId },
+                    data: { CategoryId:deleteId },
                     dataType: "json",
                     success: function(result) {
                     packageCatListVM.refresh();
@@ -114,7 +114,7 @@
                 });
              }
         };
-        function deletePackage(categoryId){
+        function deletePackageCategory(categoryId){
              deleteId=categoryId;
              $("#deleteParam").val(deleteId);
              $('#deleteConfirmModal').modal('show');
@@ -199,7 +199,7 @@
                                {
                                 data: 'id', align:'center',autoWidth: true,
                                 render: function (data, type, row) {
-                                    return `<a href="javascript:void(0)" onclick="deletePackage(${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                    return `<a href="javascript:void(0)" onclick="deletePackageCategory(${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                                 }
                             }
                         ],

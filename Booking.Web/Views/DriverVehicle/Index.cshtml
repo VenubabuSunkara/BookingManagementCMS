@@ -14,18 +14,15 @@
                     <div>
                         <h5>All Driver Vehicles</h5>
                     </div>
-                    <form class="d-inline-flex">
-                        <div class="d-flex gap-2">
-                            <a asp-controller="DriverVehicle" asp-action="Create" class="btn btn-theme">
-                                <i data-feather="plus-square"></i>Add New
-                            </a>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="DriverVehicle" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
 
-                            <a asp-controller="DriverVehicle" asp-action="Import" class="btn btn-theme">
-                                <i data-feather="file-plus"></i>Import
-                            </a>
-                        </div>
-
-                    </form>
+                        <a asp-controller="DriverVehicle" asp-action="Import" class="btn btn-theme">
+                            <i data-feather="file-plus"></i>Import
+                        </a>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -38,13 +35,11 @@
                                         <th>Vehicle Media</th>
                                         <th>Driver FullName</th>
                                         <th>License Number</th>
-                                        @*  <th>Email</th> *@
                                         <th>Phone Number</th>
                                         <th>Model Name</th>
                                         <th>Make</th>
                                         <th>Vehicle Number</th>
                                         <th>Base Price</th>
-                                        @* <th>Tax Rate</th> *@
                                         <th>Fuel Type</th>
                                         <th>Action</th>
                                     </tr>

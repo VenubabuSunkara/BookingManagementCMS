@@ -117,6 +117,7 @@
     <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
     <script type="text/javascript">
         var deleteId = 0;
+         const token = $('input[name="__RequestVerificationToken"]').val();
         //Hide promotion successs message
         const HidePromotionMessageLabel = () =>
         {
@@ -138,6 +139,9 @@
                     type: "POST",
                     url: "/CouponCode/Delete",
                     data: { id: deleteId },
+                     headers: {
+                                'RequestVerificationToken': token
+                            },
                     dataType: "json",
                     success: function (result) {
                         $('#deleteConfirmModal').modal('hide');

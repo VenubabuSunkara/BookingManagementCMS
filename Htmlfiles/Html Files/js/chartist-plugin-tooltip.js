@@ -178,5 +178,4 @@
   function text(element) {
     return element.innerText || element.textContent;
   }
-
 } (window, document, Chartist));

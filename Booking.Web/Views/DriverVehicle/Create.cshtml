@@ -1,77 +1,270 @@
-﻿@model Booking.Application.DTOs.NewDriverVehicleDto
+﻿@model Booking.Application.DTOs.CreateDriverVehicleDto
 @{
-    ViewData["Title"] = "AddVehicle";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create New Driver";
 }
 
 <!-- Container-fluid starts-->
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <h5>Driver Vehicle Details</h5>
-        </div>
-        <div class="card-body">
-            <form class="theme-form mega-form" id="frmDrivervehicleinfo" method="post">
-                @Html.AntiForgeryToken()
-                <div class="personal-info">
-                    <div class="personal-info__img">
-                        <img src="@Model.Driver.Photo" alt="@(Model.Driver.FullName)" />
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!--driver detail start-->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Add New Driver</h5>
+                        </div>
+                        <div class="card-body">
+                            <form class="theme-form mega-form" method="post" asp-action="SaveDriverVehiclee" asp-controller="DriverVehicle" enctype="multipart/form-data">
+
+
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="DefaultImage">Upload Driver Image here</label>
+
+                                    <div class="dropzone" id="singleFileUpload" data-url="@Url.Action("Single", "DriverVehicles")">
+                                        <div class="dz-message needsclick">
+                                            <i class="icon-cloud-up"></i>
+                                            <h6>Drop files here or click to upload.</h6>
+                                            <span class="note needsclick">
+                                                (This is just a demo dropzone. Selected files
+                                                are <strong>not</strong> actually
+                                                uploaded.)
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="UserName">
+                                        UserName
+                                        <input class="form-control" asp-for="UserName" type="text" placeholder="Username" />
+                                    </label>
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="Password">
+                                        Password
+                                        <input class="form-control" asp-for="Password" type="password" placeholder="Password" />
+                                    </label>
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="ConfirmPassword">
+                                        Confirm Password
+                                        <input class="form-control" asp-for="ConfirmPassword" type="password" placeholder="ConfirmPassword" />
+                                    </label>
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="DriverFirstName" id="DriverFirstName">
+                                        Driver First Name
+                                        <input class="form-control" asp-for="DriverFirstName" type="text" placeholder="Driver First Name" />
+                                    </label>
+                                    <span asp-validation-for="DriverFirstName" class="text-danger" id="NameValidation"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="DriverLastName" id="DriverLastName">
+                                        Driver Last Name
+                                        <input class="form-control" asp-for="DriverLastName" type="text" placeholder="Driver Last Name" />
+                                    </label>
+                                    <span asp-validation-for="DriverLastName" class="text-danger" id="NameValidation"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gender" asp-for="Gender" class="form-label-title">
+                                        Gender
+                                        <select asp-for="Gender"
+                                                class="form-control js-example-basic-single col-sm-12">
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                @*  <div class="mb-3">
+                                    <label class="form-label-title">
+                                        Date of Birthdate
+                                    </label>
+                                    <div class="input-group date"
+                                         id="dt-date"
+                                         data-target-input="nearest">
+                                        <div class="input-group">
+                                            <input class="datepicker-here form-control digits"
+                                                   type="text"
+                                                   data-language="en"
+                                                   data-target="#dt-date" />
+
+                                            <div class="input-group-text"
+                                                 data-target="#dt-date"
+                                                 data-toggle="datetimepicker">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> *@
+                                <div class="mb-3 choose">
+                                    <label class="form-label-title">ID Document </label>
+                                    <input class="form-control"
+                                           type="file"
+                                           data-bs-original-title=""
+                                           title="" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="LicenseNumber">
+                                        Contact Number
+                                        <input class="form-control" asp-for="LicenseNumber" type="text" placeholder="License Number" />
+                                    </label>
+                                    <span asp-validation-for="LicenseNumber" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="PhoneNumber">
+                                        Contact Number
+                                        <input class="form-control" asp-for="PhoneNumber" type="tel" placeholder="Contact Number" />
+                                    </label>
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="EmailId">
+                                        Email Address
+                                        <input class="form-control" asp-for="EmailId" type="email" placeholder=" Email address" />
+                                    </label>
+                                    <span asp-validation-for="EmailId" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="Address">
+                                        Address
+                                        <textarea asp-for="Address" class="form-control"></textarea>
+                                    </label>
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-title" asp-for="AboutOnDriver">
+                                        About On Driver
+                                        <textarea asp-for="AboutOnDriver" class="form-control"></textarea>
+                                    </label>
+                                    <span asp-validation-for="AboutOnDriver" class="text-danger"></span>
+                                </div>
+                                <br />
+                                <div class="mb-3">
+                                    <label class="form-label-title">Car Name</label>
+                                    <input class="form-control" type="text" placeholder="Car Name" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Model</label>
+                                    <input class="form-control" type="text" placeholder="Car Model" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Seating Capacity</label>
+                                    <input class="form-control" type="number" placeholder="Seating Capacity" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Average Mileage</label>
+                                    <input class="form-control" type="number" placeholder="Average Mileage" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Registration Number</label>
+                                    <input class="form-control" type="number" placeholder="Registration Number" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Insurance Number</label>
+                                    <input class="form-control" type="number" placeholder="Insurance  Number" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Insurance Valid Until</label>
+                                    <input class="form-control" type="text" placeholder="Insurance Valid Until" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Pollution Certificate Number</label>
+                                    <input class="form-control" type="text" placeholder="Pollution Certificate Number" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Color</label>
+                                    <input class="form-control" type="text" placeholder="Color" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="car-type" class="form-label-title">Fuel Typ</label>
+                                    <select id="car-type" class="js-example-basic-single col-sm-12">
+                                        <option value="MI">Petrol</option>
+                                        <option value="ME">Diesel</option>
+                                        <option value="DU">Electric</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Owner Name</label>
+                                    <input class="form-control" type="text" placeholder="Owner Name" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Ownership</label>
+                                    <input class="form-control" type="number" placeholder="Ownership e.g(1,2)" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">
+                                        Upload Car Image here
+                                    </label>
+                                    <div class="dropzone" id="singleFileUpload">
+                                        <div class="dz-message needsclick">
+                                            <i class="icon-cloud-up"></i>
+                                            <h6>Drop files here or click to upload.</h6>
+                                            <span class="note needsclick">
+                                                (This is just a demo dropzone. Selected files
+                                                are <strong>not</strong> actually
+                                                uploaded.)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Facility</label>
+                                    <input class="form-control" type="text" name="tags" value="pfTag1,pfTag2,pfTag3"
+                                           data-role="tagsinput" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label-title">Fare/km</label>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text">$ </span>
+                                        <input class="form-control" placeholder="20" type="text"
+                                               aria-label="Amount (to the nearest dollar)" />
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="car-type" class="form-label-title">Car Type</label>
+                                    <select id="car-type" class="js-example-basic-single col-sm-12">
+                                        <option value="MI">Mini</option>
+                                        <option value="ME">Medium</option>
+                                        <option value="DU">Standard</option>
+                                        <option value="CY">Sadan</option>
+                                        <option value="TA">Luxury</option>
+                                        <option value="TA">Tempo Travel</option>
+                                        <option value="DE">Mini Bus</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer text-end">
+                            <button type="submit" class="btn btn-primary me-3">Submit</button>
+                            <button class="btn btn-outline-primary">Cancel</button>
+                        </div>
                     </div>
+                    <!--driver detail end-->
                 </div>
-
-                <div class="row">
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Driver.FirstName</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Driver.LastName</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Driver.Email</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Driver.PhoneNumber</label>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Driver.LicenseNumber</label>
-                    </div>
-
-                    <div class="col-sm-6">
-                        <p class="form-label-title mt-3">@Html.Raw(Model.Driver.AboutOn)</p>
-                    </div>
-                </div>
-
-                <div class="personal-info">
-                    <div class="personal-info__img">
-                        <img src="@(Model.VehicleMedia.ThumbnailUrl)" alt="@(Model.Vehicle.ModelName)" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Vehicle.ModelName</label>
-                    </div>
-                    <div class="col-sm-3">
-                        <p class="form-label-title mt-3">@Model.Vehicle.AboutOnVehicle</p>
-                    </div>
-                    <div class="col-sm-3">
-                        <label class="form-label-title mt-3">@Model.Vehicle.VehicleNumber</label>
-                    </div>
-                </div>
-                <input type="submit" id="btnSubmit" value="Approve" />
-                <input type="reset" id="btnReject" value="Reject" />
-            </form>
+            </div>
         </div>
     </div>
-    <
 </div>
 <!-- Container-fluid Ends-->
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

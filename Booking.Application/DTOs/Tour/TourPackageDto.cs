@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Booking.Domain.Entities.Tour;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -16,7 +17,6 @@ namespace Booking.Application.DTOs.Tour
         public string? FullDescription { get; set; }
         public string? Source { get; set; }
         public string BannerImage { get; set; } = null!;
-        public string Destination { get; set; } = null!;
         [MaxLength(50)]
         public string DurationDays { get; set; } = null!;
         public decimal Price { get; set; }
@@ -28,5 +28,8 @@ namespace Booking.Application.DTOs.Tour
         public DateTime UpdatedOn { get; set; }
         public int CategoryId { get; set; }
         public Guid ItemGuid { get; set; } = Guid.NewGuid();
+        public TourPackageCategoryDto Category { get; set; } = new TourPackageCategoryDto();
+        public TourLocationDto Location { get; set; } = new TourLocationDto();
+        public List<PackageMediaDto> PackageMedia { get; set; } = [];
     }
 }

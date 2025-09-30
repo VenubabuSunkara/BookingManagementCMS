@@ -83,8 +83,8 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(CouponCodeDto couponCodeDto, CancellationToken token)
         {
-            couponCodeDto.CreatedOn = DateTime.Now;
-            couponCodeDto.UpdatedOn = DateTime.Now;
+            couponCodeDto.CreatedOn = DateTime.UtcNow;
+            couponCodeDto.UpdatedOn = DateTime.UtcNow;
             couponCodeDto.CreatedBy = base.GetUserName();
             couponCodeDto.UpdatedBy = base.GetUserName();
             if (couponCodeDto.Id == 0)
