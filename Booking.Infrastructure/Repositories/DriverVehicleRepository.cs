@@ -13,8 +13,7 @@ namespace Booking.Infrastructure.Repositories
         private IQueryable<DriverVehicleFullEntity> GetDriverVehicleFullQuery()
         {
             return _context.DriverVehicles
-                             .Where(dv => dv.Driver.AvailabilityStatus == true
-                                    && dv.Vehicle.IsActive == true)
+                             .Where(dv => dv.Driver.AvailabilityStatus == true && dv.Driver.IsActive == true)
                              .Select(dv => new DriverVehicleFullEntity
                              {
                                  Driver = new DriverEntity
@@ -33,17 +32,12 @@ namespace Booking.Infrastructure.Repositories
                                  Vehicle = new VehicleEntity
                                  {
                                      Id = dv.Vehicle.VehicleId,
-                                     ModelName = dv.Vehicle.ModelName,
+                                     ModelName = dv.Vehicle.Model,
                                      VehicleNumber = dv.Vehicle.VehicleNumber,
                                      DefaultImage = dv.Vehicle.DefaultImage,
-                                     BasePrice = dv.Vehicle.BasePrice,
+                                     BasePrice = dv.Vehicle.Fare,
                                      AboutOnVehicle = dv.Vehicle.AboutOnVehicle,
                                      Color = dv.Vehicle.Color,
-                                     FuelType = dv.Vehicle.FuelType,
-                                     Make = dv.Vehicle.Make,
-                                     TaxRate = dv.Vehicle.TaxRate,
-                                     OtherInfromation = dv.Vehicle.OtherInformation,
-                                     IsActive = dv.Vehicle.IsActive,
                                  },
                                  VehicleMedia = dv.Vehicle.VehicleMediaMappings.Where(x => x.VehicleId == dv.VehicleId)
                                      .Select(m => new VehicleMedia
@@ -65,7 +59,7 @@ namespace Booking.Infrastructure.Repositories
                                          SlotStart = a.SlotStart,
 
                                      }).ToList(),
-                                 
+
                                  FeatureEntities = dv.Vehicle.VehicleFeatureMappings
                                      .Select(f => new FeatureEntity
                                      {
@@ -108,7 +102,7 @@ namespace Booking.Infrastructure.Repositories
         private IQueryable<DriverVehicleEntity> GetDriverVehicleTableQuery()
         {
             return _context.DriverVehicles.Where(dv => dv.Driver.AvailabilityStatus == true
-                                    && dv.Vehicle.IsActive == true)
+                                    && dv.Driver.IsActive == true)
                              .Select(dv => new DriverVehicleEntity
                              {
                                  Driver = new DriverEntity
@@ -127,17 +121,12 @@ namespace Booking.Infrastructure.Repositories
                                  Vehicle = new VehicleEntity
                                  {
                                      Id = dv.Vehicle.VehicleId,
-                                     ModelName = dv.Vehicle.ModelName,
+                                     ModelName = dv.Vehicle.Model,
                                      VehicleNumber = dv.Vehicle.VehicleNumber,
                                      DefaultImage = dv.Vehicle.DefaultImage,
-                                     BasePrice = dv.Vehicle.BasePrice,
+                                     BasePrice = dv.Vehicle.Fare,
                                      AboutOnVehicle = dv.Vehicle.AboutOnVehicle,
                                      Color = dv.Vehicle.Color,
-                                     FuelType = dv.Vehicle.FuelType,
-                                     Make = dv.Vehicle.Make,
-                                     TaxRate = dv.Vehicle.TaxRate,
-                                     OtherInfromation = dv.Vehicle.OtherInformation,
-                                     IsActive = dv.Vehicle.IsActive,
                                  },
                              }).AsNoTracking()
                              .AsQueryable();
@@ -181,7 +170,6 @@ namespace Booking.Infrastructure.Repositories
         public async Task<int> RejectDriverVehicleAsync(int DriverId, int VehicleId, CancellationToken token)
         {
             await _context.DriverVehicles.Where(u => u.DriverId == DriverId).ExecuteDeleteAsync(token);
-            await _context.Vehicles.Where(d => d.VehicleId == VehicleId).ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             var rejectedCount = await _context.Drivers.Where(d => d.DriverId == DriverId)
             .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             return rejectedCount;

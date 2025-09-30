@@ -13,17 +13,9 @@ public partial class Vehicle
 
     public string Color { get; set; } = null!;
 
-    public string Make { get; set; } = null!;
+    public string Model { get; set; } = null!;
 
-    public string ModelName { get; set; } = null!;
-
-    public string FuelType { get; set; } = null!;
-
-    public decimal BasePrice { get; set; }
-
-    public decimal TaxRate { get; set; }
-
-    public string? OtherInformation { get; set; }
+    public decimal Fare { get; set; }
 
     public string CreatedBy { get; set; } = null!;
 
@@ -37,7 +29,19 @@ public partial class Vehicle
 
     public Guid ItemGuid { get; set; }
 
-    public bool? IsActive { get; set; }
+    public string? CarName { get; set; }
+
+    public int? AverageMileage { get; set; }
+
+    public string? InsurnceNumber { get; set; }
+
+    public string? InsurenceValidUntil { get; set; }
+
+    public string? PollucationCertificationNumber { get; set; }
+
+    public string? Fecility { get; set; }
+
+    public int? VehicleTypeId { get; set; }
 
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 

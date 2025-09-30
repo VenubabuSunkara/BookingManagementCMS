@@ -1,4 +1,5 @@
-﻿using NetTopologySuite.Geometries;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Booking.Infrastructure.Data.Models;
 
@@ -52,6 +53,5 @@ public partial class TourLocation
 
     public string FullAddress { get; set; } = null!;
 
-    //public Point? GeoLocation { get; set; }
     public virtual TourPackage Package { get; set; } = null!;
 }

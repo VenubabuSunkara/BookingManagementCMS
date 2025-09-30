@@ -7,48 +7,6 @@ namespace Booking.Infrastructure.Data;
 
 public partial class BookingCmsContext : DbContext
 {
-    //private readonly ICurrentUserService _currentUser;
-    //// A service to get e.g. the user id or username of the user performing the operation
-
-    //public MyDbContext(DbContextOptions<MyDbContext> options, ICurrentUserService currentUser)
-    //    : base(options)
-    //{
-    //    _currentUser = currentUser;
-    //}
-
-    //public override int SaveChanges(bool acceptAllChangesOnSuccess)
-    //{
-    //    ApplyAuditInformation();
-    //    return base.SaveChanges(acceptAllChangesOnSuccess);
-    //}
-
-    //public override Task<int> SaveChangesAsync(
-    //    bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-    //{
-    //    ApplyAuditInformation();
-    //    return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    //}
-
-    //private void ApplyAuditInformation()
-    //{
-    //    var entries = ChangeTracker
-    //        .Entries<IAuditable>()
-    //        .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-
-    //    var now = DateTime.UtcNow; // or however you prefer
-    //    var user = _currentUser.UserId ?? "Unknown";
-
-    //    foreach (var entry in entries)
-    //    {
-    //        if (entry.State == EntityState.Added)
-    //        {
-    //            entry.Entity.CreatedOn = now;
-    //            entry.Entity.CreatedBy = user;
-    //        }
-    //        // whether Added or Modified, set updated
-    //        entry.Entity.UpdatedOn = now;
-    //        entry.Entity.UpdatedBy = user;
-    //    }
     public BookingCmsContext()
     {
     }
@@ -156,8 +114,9 @@ public partial class BookingCmsContext : DbContext
 
     public virtual DbSet<VehicleMediaMapping> VehicleMediaMappings { get; set; }
 
-    public virtual DbSet<ViewAllBooking> ViewAllBookings { get; set; }
+    public virtual DbSet<VehicleTypeMaster> VehicleTypeMasters { get; set; }
 
+    public virtual DbSet<ViewAllBooking> ViewAllBookings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -572,8 +531,14 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.DateOfBirth)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.FirstName).HasMaxLength(100);
+            entity.Property(e => e.Gender)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.IsActive)
                 .HasDefaultValue(false)
                 .HasColumnName("isActive");
@@ -1180,7 +1145,7 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.UpdatedBy).HasMaxLength(450);
             entity.Property(e => e.UpdatedOn).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.ZipCode).HasMaxLength(20);
-            //entity.Property(x => x.GeoLocation).HasColumnType("geography");
+
             entity.HasOne(d => d.Package).WithMany(p => p.TourLocations)
                 .HasForeignKey(d => d.PackageId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -1365,7 +1330,7 @@ public partial class BookingCmsContext : DbContext
             entity.ToTable("Vehicle");
 
             entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
-            entity.Property(e => e.BasePrice).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.CarName).HasMaxLength(200);
             entity.Property(e => e.Color)
                 .HasMaxLength(10)
                 .IsUnicode(false);
@@ -1375,19 +1340,20 @@ public partial class BookingCmsContext : DbContext
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.FuelType)
+            entity.Property(e => e.Fare).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.InsurenceValidUntil)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.InsurnceNumber)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.Model)
                 .HasMaxLength(20)
                 .IsUnicode(false);
-            entity.Property(e => e.ItemGuid)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ItemGUID");
-            entity.Property(e => e.Make)
-                .HasMaxLength(20)
+            entity.Property(e => e.PollucationCertificationNumber)
+                .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.ModelName)
-                .HasMaxLength(20)
-                .IsUnicode(false);
-            entity.Property(e => e.TaxRate).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.UpdatedBy)
                 .HasMaxLength(450)
                 .IsUnicode(false);
@@ -1493,6 +1459,31 @@ public partial class BookingCmsContext : DbContext
                 .HasForeignKey(d => d.VehicleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__VehicleMe__Vehic__0777106D");
+        });
+
+        modelBuilder.Entity<VehicleTypeMaster>(entity =>
+        {
+            entity.HasKey(e => e.VehicleTypeId).HasName("PK__VehicleT__9F4496237AEF0410");
+
+            entity.ToTable("VehicleTypeMaster");
+
+            entity.HasIndex(e => e.TypeName, "UQ_TypeName").IsUnique();
+
+            entity.Property(e => e.VehicleTypeId).HasColumnName("VehicleTypeID");
+            entity.Property(e => e.AirConditioning).HasDefaultValue(true);
+            entity.Property(e => e.CreatedBy).HasMaxLength(100);
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.FuelType).HasMaxLength(50);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.ModifiedBy).HasMaxLength(100);
+            entity.Property(e => e.ModifiedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Transmission).HasMaxLength(50);
+            entity.Property(e => e.TypeName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<ViewAllBooking>(entity =>

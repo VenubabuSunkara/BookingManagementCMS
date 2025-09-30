@@ -45,6 +45,10 @@ public partial class Driver
 
     public bool? IsActive { get; set; }
 
+    public string? Gender { get; set; }
+
+    public string? DateOfBirth { get; set; }
+
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 
     public virtual ICollection<DriverMediaMapping> DriverMediaMappings { get; set; } = new List<DriverMediaMapping>();
