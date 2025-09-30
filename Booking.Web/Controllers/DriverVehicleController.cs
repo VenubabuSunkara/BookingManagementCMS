@@ -21,13 +21,14 @@ namespace Booking.Web.Controllers
         private readonly IVehicleService _vehicleService = vehicleService;
         private readonly GoogleSettings _settings = options.Value;
         private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
-        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file, CancellationToken token)
+        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file, string FolderName,
+            CancellationToken token)
         {
             var fileName = Path.GetFileName(file.FileName);
             var uniqueId = Guid.NewGuid().ToString();
             var uniqueFileName = $"{uniqueId}_{fileName}";
             var uniquethumbFileName = $"{uniqueId}_thumb_{fileName}";
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, FolderName);
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -51,8 +52,8 @@ namespace Booking.Web.Controllers
             {
                 FileName = uniqueFileName,
                 OriginalFileName = fileName,
-                FilePath = "/uploads/" + uniqueFileName, //"TODO: Change to CDN Path",
-                ThumbnailPath = "/uploads/" + uniquethumbFileName, //"TODO: Change to CDN Path",
+                FilePath = $"/{FolderName}/" + uniqueFileName, //"TODO: Change to CDN Path",
+                ThumbnailPath = $"/{FolderName}/" + uniquethumbFileName, //"TODO: Change to CDN Path",
                 FileSize = file.Length,
                 FileType = Path.GetExtension(filePath)
             };
@@ -155,7 +156,7 @@ namespace Booking.Web.Controllers
             {
                 var uploadedFiles = new List<TourPackageMediaDto>
                 {
-                    await ProcessAndSaveFile(file, token)
+                    await ProcessAndSaveFile(file,"UploadFiles\\DriverPhotos", token)
                 };
                 return Json(new { success = true, files = uploadedFiles });
             }
@@ -176,7 +177,7 @@ namespace Booking.Web.Controllers
             {
                 var uploadedFiles = new List<TourPackageMediaDto>
                 {
-                    await ProcessAndSaveFile(file, token)
+                    await ProcessAndSaveFile(file,"UploadFiles\\VehicleBannerImages", token)
                 };
                 return Json(new { success = true, files = uploadedFiles });
             }

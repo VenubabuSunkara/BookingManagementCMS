@@ -1,8 +1,5 @@
-﻿using Booking.Application.DTOs;
-using Booking.Application.DTOs.Tour;
+﻿using Booking.Application.DTOs.Tour;
 using Booking.Application.Interfaces;
-using Booking.Application.Services;
-using Booking.Infrastructure.Data.Models;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,8 +7,6 @@ using Newtonsoft.Json;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using StackExchange.Profiling.Internal;
-using System.IO;
-using System.Text.Json;
 using Size = SixLabors.ImageSharp.Size;
 
 namespace Booking.Web.Controllers
@@ -41,13 +36,13 @@ namespace Booking.Web.Controllers
 
             return (true, string.Empty);
         }
-        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file, CancellationToken token)
+        private async Task<TourPackageMediaDto> ProcessAndSaveFile(IFormFile file, string folderName, CancellationToken token)
         {
             var fileName = Path.GetFileName(file.FileName);
             var uniqueId = Guid.NewGuid().ToString();
             var uniqueFileName = $"{uniqueId}_{fileName}";
             var uniquethumbFileName = $"{uniqueId}_thumb_{fileName}";
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderName);
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -71,8 +66,8 @@ namespace Booking.Web.Controllers
             {
                 FileName = uniqueFileName,
                 OriginalFileName = fileName,
-                FilePath = "/uploads/" + uniqueFileName,
-                ThumbnailPath = "/uploads/" + uniquethumbFileName,
+                FilePath = $"/{folderName}/" + uniqueFileName,
+                ThumbnailPath = $"/{folderName}/" + uniquethumbFileName,
                 FileSize = file.Length,
                 FileType = Path.GetExtension(filePath)
             };
@@ -245,7 +240,7 @@ namespace Booking.Web.Controllers
             {
                 var uploadedFiles = new List<TourPackageMediaDto>
                 {
-                    await ProcessAndSaveFile(file, token)
+                    await ProcessAndSaveFile(file,"UploadFiles\\PackageMedia", token)
                 };
                 return Json(new { success = true, files = uploadedFiles });
             }
@@ -270,7 +265,7 @@ namespace Booking.Web.Controllers
                     //    return Json(new { success = false, message = validationResult.Message });
                     //}
 
-                    var fileResult = await ProcessAndSaveFile(file, token);
+                    var fileResult = await ProcessAndSaveFile(file, "UploadFiles\\PackageMedia", token);
                     uploadedFiles.Add(fileResult);
                 }
 

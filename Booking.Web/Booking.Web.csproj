@@ -10,17 +10,9 @@
 
   <ItemGroup>
     <Compile Remove="Areas\**" />
-    <Compile Remove="wwwroot\uploads\NewFolder\**" />
-    <Compile Remove="wwwroot\uploads\thumbs\**" />
     <Content Remove="Areas\**" />
-    <Content Remove="wwwroot\uploads\NewFolder\**" />
-    <Content Remove="wwwroot\uploads\thumbs\**" />
     <EmbeddedResource Remove="Areas\**" />
-    <EmbeddedResource Remove="wwwroot\uploads\NewFolder\**" />
-    <EmbeddedResource Remove="wwwroot\uploads\thumbs\**" />
     <None Remove="Areas\**" />
-    <None Remove="wwwroot\uploads\NewFolder\**" />
-    <None Remove="wwwroot\uploads\thumbs\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -224,7 +216,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\UploadFiles\DriverPhotos\" />
+    <Folder Include="wwwroot\UploadFiles\DriverVehicleMedia\" />
+    <Folder Include="wwwroot\UploadFiles\PackageMedia\" />
+    <Folder Include="wwwroot\UploadFiles\VehicleBannerImages\" />
   </ItemGroup>
 
 </Project>

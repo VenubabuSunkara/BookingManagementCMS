@@ -1,12 +1,22 @@
-var DropzoneExample = function (current) {
-    debugger;
-    var DropzoneDemos = function (current) {
-        debugger;
-        const a = $(current);
-        console.log(current);
-        debugger;
+var DropzoneExample = function () {
+    var getUploadUrl = function (element, defaultUrl) {
+        // Try to get URL from data-upload-url attribute, fallback to defaultUrl
+        var urls = $(element).data('upload-url') || defaultUrl;
+        return $(element).data('upload-url') || defaultUrl;
+    };
+    var Jsonid = "";
+    var outputId = function (element) {
+        // Try to get URL from data-upload-url attribute, fallback to defaultUrl
+        return $(element).data('ouput-json');
+    };
+    var DropzoneDemos = function () {
+
         Dropzone.options.singleFileUpload = {
-            url: "/Packages/Single",
+            url: function () {
+                // 'this.element' refers to the dropzone element
+                Jsonid = outputId(this.element);
+                return getUploadUrl(this.element, "/Packages/Single");
+            },
             paramName: "file",
             maxFiles: 1,
             maxFilesize: 2,
@@ -14,9 +24,8 @@ var DropzoneExample = function (current) {
             dictDefaultMessage: "Drop files here or click to upload",
             init: function () {
                 this.on("success", function (file, response) {
-                    debugger;
                     if (response.success) {
-                        $("#SingleMediajson").val(JSON.stringify(response.files));
+                        $("#" + Jsonid).val(JSON.stringify(response.files));
                     } else {
                         alert(response.message);
                     }
@@ -28,7 +37,10 @@ var DropzoneExample = function (current) {
             }
         };
         Dropzone.options.multiFileUpload = {
-            url: "/Packages/Multiple",
+            url: function () {
+                Jsonid = outputId(this.element);
+                return getUploadUrl(this.element, "/Packages/Multiple");
+            },
             paramName: "files",
             maxFiles: 10,
             maxFilesize: 20,
@@ -37,7 +49,7 @@ var DropzoneExample = function (current) {
             init: function () {
                 this.on("success", function (file, response) {
                     if (response.success) {
-                        $("#MultipleMediajson").val(JSON.stringify(response.files));
+                        $("#" + Jsonid).val(JSON.stringify(response.files));
                     } else {
                         alert(response.message);
                     }
@@ -49,6 +61,9 @@ var DropzoneExample = function (current) {
             }
         };
         Dropzone.options.fileTypeValidation = {
+            url: function () {
+                return getUploadUrl(this.element, "/Packages/FileType");
+            },
             paramName: "file",
             maxFiles: 10,
             maxFilesize: 10,

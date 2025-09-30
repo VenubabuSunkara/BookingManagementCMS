@@ -24,7 +24,7 @@
                             <form class="theme-form mega-form" method="post" asp-action="SaveDriverVehicle" asp-controller="DriverVehicle" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label class="form-label-title" asp-for="DriverDto.Photo">Upload Driver Image here</label>
-                                    <div class="dropzone" id="singleFileUpload" data-url="@Url.Action("SaveDriverPhoto", "DriverVehicles")">
+                                    <div class="dropzone" id="singleFileUpload" data-ouput-json="DriverPhotojson" data-upload-url="@Url.Action("SaveDriverPhoto", "DriverVehicle")">
                                         <div class="dz-message needsclick">
                                             <i class="icon-cloud-up"></i>
                                             <h6>Drop files here or click to upload.</h6>
@@ -174,7 +174,7 @@
                                     <label class="form-label-title" asp-for="VehicleDto.DefaultImage">
                                         Upload Car Image here
                                     </label>
-                                    <div class="dropzone" id="singleFileUpload" data-url="@Url.Action("SaveVehicleImage", "DriverVehicles")">
+                                    <div class="dropzone" id="singleFileUpload" data-ouput-json="VehicleDefaultImagejson" data-upload-url="@Url.Action("SaveVehicleImage", "DriverVehicle")">
                                         <div class="dz-message needsclick">
                                             <i class="icon-cloud-up"></i>
                                             <h6>Drop files here or click to upload.</h6>
