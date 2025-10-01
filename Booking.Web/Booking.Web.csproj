@@ -218,7 +218,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\UploadFiles\DriverPhotos\" />
     <Folder Include="wwwroot\UploadFiles\DriverVehicleMedia\" />
-    <Folder Include="wwwroot\UploadFiles\PackageMedia\" />
     <Folder Include="wwwroot\UploadFiles\VehicleBannerImages\" />
   </ItemGroup>
 

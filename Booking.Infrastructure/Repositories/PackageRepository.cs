@@ -60,6 +60,15 @@ namespace Booking.Infrastructure.Repositories
 
         }
 
+        public Task<IEnumerable<PackageDropdownEntity>> GetTrourPackageDrodown(CancellationToken token)
+        {
+            IQueryable<TourPackage> query = _context.TourPackages.AsNoTracking();
+            return Task.FromResult(query.Select(x => new PackageDropdownEntity()
+            {
+                PackageId = x.ItemId,
+                PackageName = x.PackageName
+            }).AsEnumerable());
+        }
         public async Task<TourPackageTable> GetPackages(int Skip, int Take, string searchKey, int CategoryId, CancellationToken token)
         {
             IQueryable<TourPackage> query = _context.TourPackages.AsNoTracking().Include(x => x.TourLocations).AsNoTracking();
@@ -124,7 +133,7 @@ namespace Booking.Infrastructure.Repositories
             await _context.SaveChangesAsync(token);
             return entity.ItemId;
         }
-        private async Task UpdateLocationsAsync(int packageId, TourLocationEntity location, CancellationToken token)
+        public async Task UpdateLocationsAsync(int packageId, TourLocationEntity location, CancellationToken token)
         {
             //// Remove locations not in the new list
             //await _context.TourLocations
@@ -173,7 +182,7 @@ namespace Booking.Infrastructure.Repositories
             //    await _context.SaveChangesAsync();
             //}
         }
-        private async Task UpdateMediaAsync(int packageId, List<PackageMediaEntity> media, CancellationToken token)
+        public async Task UpdateMediaAsync(int packageId, List<PackageMediaEntity> media, CancellationToken token)
         {
             // Remove media not in the new list
             await _context.TourPackageMedia
@@ -257,5 +266,7 @@ namespace Booking.Infrastructure.Repositories
                 throw;
             }
         }
+
+
     }
 }

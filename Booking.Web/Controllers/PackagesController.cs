@@ -78,7 +78,7 @@ namespace Booking.Web.Controllers
         {
             return await Task.Run(() =>
             {
-                return View("Index");
+                return View();
             }, token);
         }
         [HttpPost]
@@ -160,6 +160,10 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPackage(int PackageId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Index");
+            }
             var tourPackages = await _packageCategoryService.GetTourPackageCategory(token);
             var package = await _packageService.GetPackage(PackageId, token);
             if (package == null) return View("Index");
@@ -193,7 +197,10 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SavePackage(PackageViewModel model, CancellationToken token)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return View("AddPackage", model);
+            }
             var bannerdata = Newtonsoft.Json.JsonConvert.DeserializeObject<List<TourPackageMediaDto>>(model.SingleMediajson);
             if (bannerdata != null && bannerdata.Count > 0)
             {
@@ -204,38 +211,33 @@ namespace Booking.Web.Controllers
             model.TourPackage.UpdatedOn = DateTime.UtcNow;
             model.TourPackage.CreatedBy = base.GetUserName();
             model.TourPackage.UpdatedBy = base.GetUserName();
-            await _packageService.SavePackage(model.TourPackage, token);
-
-            //if (!string.IsNullOrWhiteSpace(model.MultipleMediajson))
-            //{
-            //    List<TourPackageMediaDto> gallary = JsonConvert.DeserializeObject<List<TourPackageMediaDto>>(model.MultipleMediajson) ?? [];
-            //    List<PackageMediaDto> PackageMedia = [.. gallary.Select(x => new PackageMediaDto()
-            //    {
-            //       PackageId = packageId,
-            //       MediaType= x.FileType,
-            //       MediaUrl=x.FilePath,
-            //       FileName=x.FileName,
-            //       IsDefault=false,
-            //       ThumbnailImage=x.ThumbnailPath,
-            //       CreatedAt=DateTime.UtcNow,
-            //       CreatedBy=base.GetUserName(),
-            //       UpdatedAt=DateTime.UtcNow,
-            //       UpdatedBy=base.GetUserName()
-            //    })];
-            //    await _packageMediaService.SavePackageMediaList(PackageMedia, token);
-            //}
-            //model.Location.PackageId = packageId;
-            //model.Location.CreatedOn = DateTime.UtcNow;
-            //model.Location.UpdatedOn = DateTime.UtcNow;
-            //model.Location.CreatedBy = base.GetUserName();
-            //model.Location.UpdatedBy = base.GetUserName();
-            //await _packageLocationService.SavePackageLocation(model.Location, token);
-
+            int PackageId = await _packageService.SavePackage(model.TourPackage, token);
+            if (bannerdata != null && bannerdata.Count > 0)
+            {
+                List<PackageMediaDto> PackageMedia = [.. bannerdata.Select(x => new PackageMediaDto()
+                {
+                   PackageId = PackageId,
+                   MediaType= x.FileType,
+                   MediaUrl=x.FilePath,
+                   FileName=x.FileName,
+                   IsDefault=false,
+                   ThumbnailImage=x.ThumbnailPath,
+                   CreatedAt=DateTime.UtcNow,
+                   CreatedBy=base.GetUserName(),
+                   UpdatedAt=DateTime.UtcNow,
+                   UpdatedBy=base.GetUserName()
+                })];
+                await _packageMediaService.SavePackageMediaList(PackageMedia, token);
+            }
             return RedirectToAction("Index");
         }
         [HttpPost]
         public async Task<IActionResult> Single(IFormFile file, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "No files uploaded." });
+            }
             try
             {
                 var uploadedFiles = new List<TourPackageMediaDto>
@@ -253,6 +255,10 @@ namespace Booking.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Multiple(List<IFormFile> files, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "No files uploaded." });
+            }
             try
             {
                 var uploadedFiles = new List<TourPackageMediaDto>();
@@ -280,12 +286,68 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePackage(int PackageId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "No files uploaded." });
+            }
             if (PackageId == 0) return Json(new { success = false, message = "Invalid Package Id" });
             var result = await _packageService.DeletePackage(PackageId, token);
             if (result > 0)
                 return Json(new { success = true, message = "Package deleted successfully" });
             else
                 return Json(new { success = false, message = "Error deleting package" });
+        }
+
+        public async Task<IActionResult> AddGallary(CancellationToken token)
+        {
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
+        }
+        public async Task<IActionResult> SavePackageMedia(List<IFormFile> files, int PackageId, CancellationToken token)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "No files uploaded." });
+            }
+            try
+            {
+                var uploadedFiles = new List<PackageMediaDto>();
+                foreach (var file in files)
+                {
+                    var fileResult = await ProcessAndSaveFile(file, $"UploadFiles\\PackageMedia\\{PackageId}", token);
+                    uploadedFiles.Add(new PackageMediaDto
+                    {
+                        PackageId = PackageId,
+                        MediaType = fileResult.FileType,
+                        MediaUrl = fileResult.FilePath,
+                        FileName = fileResult.FileName,
+                        IsDefault = false,
+                        ThumbnailImage = fileResult.ThumbnailPath,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = base.GetUserName(),
+                        UpdatedAt = DateTime.UtcNow,
+                        UpdatedBy = base.GetUserName()
+                    });
+                }
+                if (uploadedFiles.Count > 0)
+                {
+                    await _packageMediaService.SavePackageMediaList(uploadedFiles, token);
+                }
+                return Json(new { success = true, files = uploadedFiles });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading files");
+                return Json(new { success = false, message = "An error occurred while uploading files." });
+            }
+
+        }
+
+        public async Task<IActionResult> SavePackageLocation(List<TourLocationDto> locationDtos, int PackageId, CancellationToken token)
+        {
+            return null;
         }
     }
 }

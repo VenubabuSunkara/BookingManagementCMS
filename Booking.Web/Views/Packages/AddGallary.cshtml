@@ -1,0 +1,84 @@
+﻿@model Booking.Application.DTOs.PackageGallaryDto
+@{
+	ViewData["Title"] = "Add Package Gallary";
+}
+@section Styles {
+	<!--MultiSelect-->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+	<!--Drop zon-->
+	<link rel="stylesheet" type="text/css" href="~/css/dropzone.css" />
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="card">
+						<div class="card-header">
+							<h5>Add New Package Gallary</h5>
+						</div>
+						<div class="card-body">
+							<form id="theme-form mega-form" class="theme-form mega-form" asp-action="SavePackage" asp-controller="Packages" method="post" enctype="multipart/form-data">
+								<div class="row">
+									<div class="col-6 mb-3">
+										<label asp-for="PackageId"  class="form-label-title">
+											Select Package Category
+										</label>
+										@Html.DropDownListFor(m => m.PackageId, Model.Packages, "-- Select category --", new { @class = "form-control", @id = "ddlPackageCategory" })
+										<span asp-validation-for="PackageId" class="text-danger"></span>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12">
+											<label for="packageMedia" class="form-label-title">
+												Upload Tour Banner Image here
+											</label>
+											<div class="dropzone" id="multiFileUpload" data-ouput-json="PackageMediajson" data-upload-url="@Url.Action("SaveGallary", "Package")">
+												<div class="dz-message needsclick">
+													<i class="icon-cloud-up"></i>
+													<h6>
+														Drop files here or click to upload.
+													</h6>
+													<span class="note needsclick">
+														(This is just a demo dropzone. Selected
+														files are <strong>not</strong> actually
+														uploaded.)
+													</span>
+												</div>
+											</div>
+											<input type="hidden" name="PackageMediajson" id="PackageMediajson" />
+										</div>
+									</div>
+								</div>
+								<div class="card-footer text-end">
+									<button type="submit" class="btn btn-primary me-3">Submit</button>
+									<button class="btn btn-outline-primary">Cancel</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+	<!--Searchable dropdown-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js" type="text/javascript"></script>
+	<!--Dropzon start-->
+	<script src="~/js/dropzone.js" type="text/javascript"></script>
+	<script src="~/js/dropzone-script.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  $('#ddlPackageCategory').select2({
+			placeholder: "-- Select category --",
+			allowClear: true
+		  });
+		});
+	</script>
+}
