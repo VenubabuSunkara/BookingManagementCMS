@@ -9,5 +9,8 @@ namespace Booking.Domain.Interfaces
         Task<TourPackageEntity?> GetPackage(int PackageId, CancellationToken token);
         Task<int> DeletePackage(int PackageId, CancellationToken token);
         Task<int> UpdatePackage(TourPackageEntity tourPackage, CancellationToken token);
+        Task<IEnumerable<PackageDropdownEntity>> GetTrourPackageDrodown(CancellationToken token);
+        Task UpdateMediaAsync(int packageId, List<PackageMediaEntity> media, CancellationToken token);
+        Task UpdateLocationsAsync(int packageId, TourLocationEntity location, CancellationToken token);
     }
 }

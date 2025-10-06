@@ -113,6 +113,16 @@ namespace Booking.Application.Services
             };
         }
 
+        public async Task<IEnumerable<PackageDropdownDto>> GetTrourPackageDrodown(CancellationToken token)
+        {
+            var packageDropdowndata = await _packageRepository.GetTrourPackageDrodown(token);
+            return packageDropdowndata.Select(x => new PackageDropdownDto()
+            {
+                PackageId = x.PackageId,
+                PackageName = x.PackageName,
+            });
+        }
+
         public async Task<int> SavePackage(TourPackageDto tourPackage, CancellationToken token)
         {
             return await _packageRepository.SavePackage(new TourPackageEntity()

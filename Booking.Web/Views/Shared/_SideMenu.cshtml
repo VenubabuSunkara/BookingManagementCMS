@@ -27,6 +27,8 @@
         <ul class="sidebar-submenu">
             <li><a asp-controller="PackageCategory" asp-action="Index">Packages Categories</a></li>
             <li><a asp-controller="Packages" asp-action="Index">Packages</a></li>
+            <li><a asp-controller="Packages" asp-action="AddLocations">Packages Locations</a></li>
+            <li><a asp-controller="Packages" asp-action="AddGallary">Packages Gallary</a></li>
         </ul>
     </li>
 
@@ -34,8 +36,8 @@
         <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="map"></i><span>Driver Vehicles</span></a>
         <ul class="sidebar-submenu">
             <li><a asp-controller="DriverVehicle" asp-action="Index">Driver Vehicles</a></li>
-            @* <li><a asp-controller="Driver" asp-action="DriversList">All Drivers</a></li>
-            <li><a asp-controller="Vehicle" asp-action="VehicleList">All Vehicles</a></li> *@
+            @* <li><a asp-controller="DriverVehicle" asp-action="DriversList"></a></li>
+            <li><a asp-controller="DriverVehicle" asp-action="VehicleList">All Vehicles</a></li> *@
             <li><a asp-controller="Feature" asp-action="Index">Features</a></li>
         </ul>
     </li>

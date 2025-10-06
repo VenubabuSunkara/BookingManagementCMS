@@ -1,5 +1,4 @@
 ﻿using Booking.Application.DTOs.Tour;
-using Booking.Domain.Entities.Tour;
 
 namespace Booking.Application.Interfaces
 {
@@ -10,6 +9,6 @@ namespace Booking.Application.Interfaces
         Task<TourPackageDto?> GetPackage(int PackageId, CancellationToken token);
         Task<int> DeletePackage(int PackageId, CancellationToken token);
         Task<int> UpdatePackage(TourPackageDto tourPackage, CancellationToken token);
-
+        Task<IEnumerable<PackageDropdownDto>> GetTrourPackageDrodown(CancellationToken token);
     }
 }
