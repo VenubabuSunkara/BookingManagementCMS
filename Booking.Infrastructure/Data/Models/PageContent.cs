@@ -9,7 +9,7 @@ public partial class PageContent
 
     public string PageName { get; set; } = null!;
 
-    public string PageContent1 { get; set; } = null!;
+    public string PageContentData { get; set; } = null!;
 
     public DateTime CreatedOn { get; set; }
 

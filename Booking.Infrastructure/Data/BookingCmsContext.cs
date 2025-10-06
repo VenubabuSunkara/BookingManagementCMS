@@ -764,7 +764,7 @@ public partial class BookingCmsContext : DbContext
                 .HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.ItemGuid).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.PageContent1).HasColumnName("PageContent");
+            entity.Property(e => e.PageContentData).HasColumnName("PageContentData");
             entity.Property(e => e.PageName)
                 .HasMaxLength(100)
                 .IsUnicode(false);
