@@ -171,7 +171,6 @@ namespace Booking.Infrastructure.Repositories
         }
         public async Task<int> RejectDriverVehicleAsync(int DriverId, int VehicleId, CancellationToken token)
         {
-            await _context.DriverVehicles.Where(u => u.DriverId == DriverId).ExecuteDeleteAsync(token);
             var rejectedCount = await _context.Drivers.Where(d => d.DriverId == DriverId)
             .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, false), token);
             return rejectedCount;

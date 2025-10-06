@@ -15,6 +15,7 @@ namespace Booking.Application.Interfaces
         Task<int> DeletePackageMedia(int MediaId, CancellationToken token);
         Task<int> DeletePackageMediaByPackageId(int PackageId, CancellationToken token);
         Task<IEnumerable<PackageMediaDto>> GetPackageMediaByPackageId(int PackageId, CancellationToken token);
+        Task<int> UpdatePackageMedia(PackageMediaDto mediaEntity, CancellationToken token);
 
     }
 }
