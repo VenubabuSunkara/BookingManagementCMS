@@ -84,8 +84,8 @@ namespace Booking.Domain.Entities
 
         public PageConfigurationId(int id)
         {
-            if (id <= 0)
-                throw new ArgumentException("Id must be a positive integer", nameof(id));
+            ///if (id <= 0)
+            ///    throw new ArgumentException("Id must be a positive integer", nameof(id));
             Value = id;
         }
 

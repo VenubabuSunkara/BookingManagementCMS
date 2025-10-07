@@ -57,6 +57,7 @@
 <!-- Container-fluid Ends-->
 @section Scripts {
     @await Html.PartialAsync("_DataTableScripts")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
         let deletedId = null;
@@ -150,7 +151,10 @@
                      columns: [
                              { data: 'id', autoWidth: true },
                              { data: 'pageName', autoWidth: true },
-                             { data: 'pageContentData', autoWidth: true },
+                             { data: 'pageContentData', autoWidth: true,  render: function (data, type, row) {
+                                    return `<a href="javascript:void(0)" onclick="preview(this)"> View More... </a>`;
+                                 }
+                             },
                              { data: 'placeholder', autoWidth: true },
                              { data: 'isActive', autoWidth: true },
                              { data: 'createdOn', autoWidth: true ,
