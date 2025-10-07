@@ -347,7 +347,14 @@ namespace Booking.Web.Controllers
 
         public async Task<IActionResult> SavePackageLocation(List<TourLocationDto> locationDtos, int PackageId, CancellationToken token)
         {
-            return null;
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Invalid data." });
+            }
+            return await Task.Run(() =>
+            {
+                return View();
+            }, token);
         }
     }
 }

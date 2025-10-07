@@ -79,20 +79,22 @@
     <li class="sidebar-list">
         <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="users"></i><span>Users Management</span></a>
         <ul class="sidebar-submenu">
-            <li><a href="@Url.Action("Index", "Customer")">Customers</a></li>
-            <li><a href="@Url.Action("Index", "Account")">Company Users</a></li>
-            <li><a href="@Url.Action("AddUser", "Users")">Add New User</a></li>
-            <li><a href="@Url.Action("Index", "Roles")">Roles</a></li>
+            <li><a asp-action="Index" asp-controller="Customer">Customers</a></li>
+            <li><a asp-action="Index" asp-controller="Account">Company Users</a></li>
+            <li><a asp-action="AddUser" asp-controller="Users">Add New User</a></li>
+            <li><a asp-action="Index" asp-controller="Roles">Roles</a></li>
         </ul>
     </li>
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title link-nav" asp-action="Index" asp-controller="Settings"><i data-feather="settings"> </i><span>Setting</span></a>
-
+        <a class="sidebar-link sidebar-title" href="javascript:void(0)"><i data-feather="settings"> </i><span>Setting</span></a>
+        <ul class="sidebar-submenu">
+            <li><a asp-action="Index" asp-controller="Settings">Site Settings</a></li>
+            <li><a asp-action="Index" asp-controller="PageConfiguration">Page Configurations</a></li>
+        </ul>
     </li>
     <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" asp-action="Index" asp-controller="EmailTemplate"><i data-feather="mail"> </i><span> Email Templates</span></a></li>
     <li class="sidebar-list">
-        <a class="sidebar-link sidebar-title link-nav"
-           href="@Url.Action("LogOut", "Account")"><i data-feather="log-out"> </i><span>Log Out</span></a>
+        <a class="sidebar-link sidebar-title link-nav" asp-action="LogOut" asp-controller="Account"><i data-feather="log-out"> </i><span>Log Out</span></a>
     </li>
     @* <li class="sidebar-list">
         <a class="sidebar-link sidebar-title link-nav"

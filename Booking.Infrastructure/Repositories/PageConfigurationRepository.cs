@@ -1,21 +1,15 @@
 ﻿using Booking.Domain.Entities;
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
-using Booking.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using MimeKit.Cryptography;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Infrastructure.Repositories
 {
     public class PageConfigurationRepository(BookingCmsContext context) : IPageConfigurationRepository
     {
         private readonly BookingCmsContext _context = context;
-        public async Task AddAsync(PageConfiguration pageConfiguration, CancellationToken token)
+        public async Task AddAsync(PageConfigurationEntity pageConfiguration, CancellationToken token)
         {
             var pageContent = new Booking.Infrastructure.Data.Models.PageContent()
             {
@@ -38,28 +32,90 @@ namespace Booking.Infrastructure.Repositories
             await _context.TourPackages.Where(u => u.ItemId == id).ExecuteDeleteAsync(token);
         }
 
-        public Task<IEnumerable<PageConfiguration>> GetAllAsync(CancellationToken token)
+        public async Task<IEnumerable<PageConfigurationEntity>> GetAllAsync(CancellationToken token)
         {
-            throw new NotImplementedException();
+            var pageConfigDataList = await _context.PageContents.ToListAsync(token);
+            return [.. pageConfigDataList.Select(pageConfigData =>
+            PageConfigurationEntity.Create(
+                pageConfigData.Id,
+                new PageName(pageConfigData.PageName),
+                new PageContent(pageConfigData.PageContentData),
+                pageConfigData.CreateBy,
+                pageConfigData.UpdatedBy,
+                pageConfigData.CreatedOn,
+                pageConfigData.UpdatedOn,
+                pageConfigData.IsActive,
+                pageConfigData.ItemGuid,
+                pageConfigData.Placeholder
+            ))];
         }
 
-        public async Task<PageConfiguration?> GetByIdAsync(int id, CancellationToken token)
+        public async Task<PageConfigurationTableEntity> GetAllAsync(int skip, int take, string search, CancellationToken token)
         {
-            var pageConfigData = await _context.TourPackages.FindAsync(u => u.ItemId == id);
-            return PageConfiguration.Create(
-             new PageName(pageConfigData.Name.Value),
-             new Domain.Entities.PageContent(pageConfigData.Content.Value),
-             pageConfigData.CreatedBy,
-             pageConfigData.CreatedOn,
-             pageConfigData.IsActive,
-             pageConfigData.Placeholder
-         );
+            var q = _context.PageContents.AsNoTracking();
+            var total = await q.CountAsync(token);
+            int filtered = total;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                q = q.Where(d =>
+                            d.PageName.Contains(search) ||
+                            d.PageContentData.Contains(search)
+                );
+                filtered = await q.CountAsync(token);
+            }
+            q = q.OrderByDescending(d => d.CreatedOn);
+            var pageConfigDataList = await q.Skip(skip).Take(take).ToListAsync(token);
+
+            return new PageConfigurationTableEntity
+            {
+                TotalRecords = total,
+                FilterRecords = filtered,
+                PageConfigurationEntities = [.. pageConfigDataList.Select(pageConfigData =>
+                PageConfigurationEntity.Create(
+                    pageConfigData.Id,
+                    new PageName(pageConfigData.PageName),
+                    new PageContent(pageConfigData.PageContentData),
+                    pageConfigData.CreateBy,
+                    pageConfigData.UpdatedBy,
+                    pageConfigData.CreatedOn,
+                    pageConfigData.UpdatedOn,
+                    pageConfigData.IsActive,
+                    pageConfigData.ItemGuid,
+                    pageConfigData.Placeholder
+                )
+            )]
+            };
+        }
+
+        public async Task<PageConfigurationEntity?> GetByIdAsync(int id, CancellationToken token)
+        {
+            var pageConfigData = await _context.PageContents.FirstOrDefaultAsync(x => x.Id == id, token);
+            if (pageConfigData == null) return null;
+            return PageConfigurationEntity.Create(
+                pageConfigData.Id,
+                new PageName(pageConfigData.PageName),
+                new PageContent(pageConfigData.PageContentData),
+                pageConfigData.CreateBy,
+                pageConfigData.UpdatedBy,
+                pageConfigData.CreatedOn,
+                pageConfigData.UpdatedOn,
+                pageConfigData.IsActive,
+                pageConfigData.ItemGuid,
+                pageConfigData.Placeholder);
         }
 
 
-        public Task UpdateAsync(PageConfiguration pageConfiguration, CancellationToken token)
+        public async Task UpdateAsync(PageConfigurationEntity pageConfiguration, CancellationToken token)
         {
-            throw new NotImplementedException();
+           await _context.PageContents.Where(x => x.Id == pageConfiguration.Id.Value)
+                .ExecuteUpdateAsync(p => p
+                    .SetProperty(pc => pc.PageName, pageConfiguration.Name.Value)
+                    .SetProperty(pc => pc.PageContentData, pageConfiguration.Content.Value)
+                    .SetProperty(pc => pc.UpdatedBy, pageConfiguration.UpdatedBy)
+                    .SetProperty(pc => pc.UpdatedOn, pageConfiguration.UpdatedOn)
+                    .SetProperty(pc => pc.IsActive, pageConfiguration.IsActive)
+                    .SetProperty(pc => pc.Placeholder, pageConfiguration.Placeholder)
+                , token);
         }
     }
 }

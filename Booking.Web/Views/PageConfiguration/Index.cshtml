@@ -1,0 +1,282 @@
+﻿@{
+    ViewData["Title"] = "Page Configuration List";
+}
+@section Styles {
+    @await Html.PartialAsync("_DataTableStyles")
+}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>Page Configuration</h5>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="PageConfiguration" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
+
+                        <a asp-controller="PageConfiguration" asp-action="Import" class="btn btn-theme">
+                            <i data-feather="file-plus"></i>Import
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblpageconfiguration">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>PageName</th>
+                                        <th>Content</th>
+                                        <th>PlaceHolder</th>
+                                        <th>IsActive</th>
+                                        <th>CreatedOn</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div class="pagination-box">
+                                <nav aria-label="Table navigation">
+                                    <ul id="customPaginate" class="pagination pagination-primary justify-content-center"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    @await Html.PartialAsync("_DataTableScripts")
+    <script type="text/javascript">
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        let deletedId = null;
+         function rejectPageConfig(pageConfigId){
+             deletedId=pageConfigId;
+             $("#deleteParam").val(pageConfigId);
+             $('#deleteConfirmModal').modal('show');
+         }
+
+         function DeleteConfirm(){
+             if (deleteId) {
+                $.ajax({
+                     type: "POST",
+                     url: "/PageConfiguration/DeleteAsync",
+                     data: { PageConfigurationId:deletedId},
+                     dataType: "json",
+                     headers: {
+                       'RequestVerificationToken': token
+                     },
+                     success: function(result) {
+                        $('#deleteConfirmModal').modal('hide');
+                        pageconfigListVM.refresh();
+                     },
+                     error: function(req, status, error) {
+                     console.error(error);
+                     }
+                 });
+              }
+         }
+
+         var  pageconfigListVM = {
+                 pageConfigdt: null,
+                 init: function () {
+                      const token = $('input[name="__RequestVerificationToken"]').val();
+                      this.pageConfigdt = $('#tblpageconfiguration').DataTable({
+                      processing: true,
+                      serverSide: true,
+                      info: false,
+                      stateSave: true,
+                      paging: true,
+                      pagingType: 'custom',
+                      pageLength: 10,
+                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                      layout: {
+                      topStart: {
+                        buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/PageConfiguration/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                     },
+
+                     ajax: {
+                             url: '/PageConfiguration/LoadPageConfiguration',
+                             type: 'POST',
+                             contentType: 'application/json; charset=utf-8',
+                             dataType: 'json',
+                             data: function (d) {
+                                 return JSON.stringify(d); // Send as JSON string
+                             },
+                             headers: {
+                                 'RequestVerificationToken': token
+                             },
+                             error: function (xhr, error, thrown) {
+                                 console.error("DataTable error: ", xhr.responseText);
+                             }
+                         },
+                     columns: [
+                             { data: 'id', autoWidth: true },
+                             { data: 'pageName', autoWidth: true },
+                             { data: 'pageContentData', autoWidth: true },
+                             { data: 'placeholder', autoWidth: true },
+                             { data: 'isActive', autoWidth: true },
+                             { data: 'createdOn', autoWidth: true ,
+                                render: function (data, type, row) {
+                                    return moment(data).format('YYYY-MM-DD');
+                                 }
+                             },
+                             {
+                                 data: 'id',
+                                 render: function (data, type, full, meta) {
+                                 let actions='';
+                                   actions += ` <a href="javascript:void(0)" title="Delete" onclick="rejectPageConfig(${data})"><i class="fa fa-trash-o"></i></a>`;
+                                   return actions;
+                                 }
+                             }
+                         ],
+                     language: {
+                          emptyTable: "No entries to show"
+                     },
+                     drawCallback: () => this.renderPagination()
+                     });
+                 },
+                 renderPagination: function() {
+                          const info = this.pageConfigdt.page.info();
+                          const total = info.pages;
+                          const current = info.page + 1;
+
+                          const $ul = $('#customPaginate').empty();
+
+                          // Previous button
+                          $ul.append(
+                            `<li class="page-item ${current === 1 ? 'disabled' : ''}">
+                               <button class="page-link" >Previous</button>
+                             </li>`
+                          );
+
+                          // Page numbers
+                          for (let i = 1; i <= total; i++) {
+                            $ul.append(
+                              `<li class="page-item ${i === current ? 'active' : ''}">
+                                 <button  class="page-link" >${i}${i===current ? ' <span class="sr-only">(current)</span>' : ''}</button >
+                               </li>`
+                            );
+                          }
+
+                          // Next button
+                          $ul.append(
+                            `<li class="page-item ${current === total ? 'disabled' : ''}">
+                               <button  class="page-link" >Next</button>
+                             </li>`
+                          );
+
+                          // Click behaviors
+                          $ul.find('li.page-item').each((idx, li) => {
+                            const $li = $(li);
+                            const $a = $li.find('button');
+
+                            if ($li.hasClass('disabled') || $li.hasClass('active')) return;
+
+                            $a.on('click', (e) => {
+                              e.preventDefault();
+                              if (idx === 0) this.pageConfigdt.page('previous').draw(false);
+                              else if (idx === total + 1) this.pageConfigdt.page('next').draw(false);
+                              else this.pageConfigdt.page(idx - 1).draw(false);
+                            });
+                          });
+                        },
+                 refresh: function () {
+                     if (this.pageConfigdt) {
+                         this.pageConfigdt.ajax.reload();
+                     }
+                 },
+                 draw:function(){
+                     if (this.pageConfigdt) {
+                        this.pageConfigdt.on('draw', renderPagination(this.pageConfigdt));
+                     }
+                 }
+
+             };
+             $(document).ready(function () {
+                 pageconfigListVM.init();
+         });
+
+
+        function renderPagination(table) {
+           var info = table.page.info();
+           var totalPages = info.pages;
+           var currentPage = info.page + 1;
+
+           var $pag = $('#customPaginate').empty();
+
+           // Previous button
+           $pag.append(
+             `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === 1 ? '-1' : '0'}">Previous</a>
+             </li>`
+           );
+
+           // Page number buttons
+           for (var i = 1; i <= totalPages; i++) {
+             $pag.append(
+               `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                 <a class="page-link" href="javascript:void(0)">${i}${i === currentPage ? ' <span class="sr-only">(current)</span>' : ''}</a>
+               </li>`
+             );
+           }
+
+           // Next button
+           $pag.append(
+             `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === totalPages ? '-1' : '0'}">Next</a>
+             </li>`
+           );
+
+           // Bind click events
+           $pag.find('li.page-item').each(function(index, item) {
+             if ($(item).hasClass('disabled') || $(item).hasClass('active')) return;
+             $(item).find('a').on('click', function() {
+                $pag.find('li.page-item').removeClass('active');
+                $(item).parent().addClass('active');
+               if (index === 0) table.page('previous').draw(false);              // Previous
+               else if (index === totalPages + 1) table.page('next').draw(false); // Next
+               else table.page(index - 1).draw(false);                           // Specific page
+             });
+           });
+         }
+
+    </script>
+}

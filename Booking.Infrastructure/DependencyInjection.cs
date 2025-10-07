@@ -39,7 +39,7 @@ namespace Booking.Infrastructure
             services.AddScoped<IPackageMediaRepository, PackageMediaRepository>();
             services.AddScoped<IPackageLocationRepository, PackageLocationRepository>();
             services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
-
+            services.AddScoped<IPageConfigurationRepository, PageConfigurationRepository>();
             return services;
         }
 

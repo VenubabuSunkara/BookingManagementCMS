@@ -1,0 +1,13 @@
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.csproj.AssemblyReference.cache
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.GeneratedMSBuildEditorConfig.editorconfig
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.AssemblyInfoInputs.cache
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.AssemblyInfo.cs
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.csproj.CoreCompileInputs.cache
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.sourcelink.json
+C:\BookingManagementCMS\MessageScheduling\bin\Debug\net9.0\MessageScheduling.deps.json
+C:\BookingManagementCMS\MessageScheduling\bin\Debug\net9.0\MessageScheduling.dll
+C:\BookingManagementCMS\MessageScheduling\bin\Debug\net9.0\MessageScheduling.pdb
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.dll
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\refint\MessageScheduling.dll
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\MessageScheduling.pdb
+C:\BookingManagementCMS\MessageScheduling\obj\Debug\net9.0\ref\MessageScheduling.dll

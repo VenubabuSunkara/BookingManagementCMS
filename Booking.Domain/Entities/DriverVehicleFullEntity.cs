@@ -9,7 +9,7 @@ namespace Booking.Domain.Entities
 {
     public class DriverVehicleFullEntity
     {
-        public DriverEntity Driver { get; set; }
+        public DriverEntity Driver { get; set; } = new DriverEntity();
         public VehicleEntity Vehicle { get; set; } = new VehicleEntity();
         public IEnumerable<VehicleMedia> VehicleMedia { get; set; } = [];
         public IEnumerable<DriverVehicleAvailabilityEntity> DriverVehicleAvailabilityEntities { get; set; } = [];

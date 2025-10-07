@@ -8,7 +8,13 @@ using System.Threading.Tasks;
 namespace Booking.Domain.Entities
 {
 
-    public class PageConfiguration
+    public class PageConfigurationTableEntity
+    {
+        public int TotalRecords { get; set; }
+        public int FilterRecords { get; set; }
+        public List<PageConfigurationEntity> PageConfigurationEntities { get; set; } = [];
+    }
+    public class PageConfigurationEntity
     {
         // Private setters to enforce encapsulation
         public PageConfigurationId Id { get; private set; }
@@ -20,30 +26,36 @@ namespace Booking.Domain.Entities
         public string UpdatedBy { get; private set; }
         public bool IsActive { get; private set; }
         public string Placeholder { get; private set; }
+        public Guid ItemGuid { get; private set; }
 
         // Private constructor to prevent direct instantiation
-        private PageConfiguration() { }
+        private PageConfigurationEntity() { }
 
         // Factory method for creating a new PageConfiguration
-        public static PageConfiguration Create(
+        public static PageConfigurationEntity Create(
+            int id,
             PageName name,
             PageContent content,
             string createdBy,
+            string updatedBy,
             DateTime createdOn,
+            DateTime updatedOn,
             bool isActive,
+            Guid itemGuid,
             string placeholder)
         {
-            return new PageConfiguration
+            return new PageConfigurationEntity
             {
-                Id = new PageConfigurationId(1), // Replace '1' with appropriate Id generation logic
+                Id = new PageConfigurationId(id), // Replace '1' with appropriate Id generation logic
                 Name = name,
                 Content = content,
                 CreatedOn = createdOn,
-                UpdatedOn = createdOn,
+                UpdatedOn = updatedOn,
                 CreatedBy = createdBy,
-                UpdatedBy = createdBy,
+                UpdatedBy = updatedBy,
                 IsActive = isActive,
                 Placeholder = placeholder,
+                ItemGuid = itemGuid
             };
         }
 

@@ -7,6 +7,7 @@ using Booking.Application.Services;
 using Booking.Infrastructure;
 using Booking.Infrastructure.Data.Models;
 using Booking.Infrastructure.Identity.Data;
+using Booking.Web.Helper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +74,7 @@ builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<ISmtpEmailService, SmtpEmailService>();
 builder.Services.AddScoped<ISendGridEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient<IGooglePlacesService, GooglePlacesService>();
-
+builder.Services.AddScoped<IPageConfigurationService, PageConfigurationService>();
 builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
 builder.Services.AddSingleton<FileReaderService>();
 builder.Services.AddSendGrid(options =>
@@ -117,7 +118,11 @@ builder.Services.AddSingleton<ICloudStorageService, GoogleCloudStorageService>()
 builder.Services.AddMiniProfiler().AddEntityFramework();
 
 // Runtime Compilation
-var mvcBuilder = builder.Services.AddControllersWithViews();
+var mvcBuilder = builder.Services.AddControllersWithViews(
+    options =>
+    {
+        options.Filters.Add<GlobalExceptionHandler>();
+    });
 if (builder.Environment.IsDevelopment())
 {
     mvcBuilder.AddRazorRuntimeCompilation();

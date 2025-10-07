@@ -9,10 +9,12 @@ namespace Booking.Domain.Interfaces
 {
     public interface IPageConfigurationRepository
     {
-        Task AddAsync(PageConfiguration pageConfiguration, CancellationToken token);
-        Task<PageConfiguration?> GetByIdAsync(int id, CancellationToken token);
-        Task<IEnumerable<PageConfiguration>> GetAllAsync(CancellationToken token);
-        Task UpdateAsync(PageConfiguration pageConfiguration, CancellationToken token);
+        Task AddAsync(PageConfigurationEntity pageConfiguration, CancellationToken token);
+        Task<PageConfigurationEntity?> GetByIdAsync(int id, CancellationToken token);
+        Task<IEnumerable<PageConfigurationEntity>> GetAllAsync(CancellationToken token);
+        Task<PageConfigurationTableEntity> GetAllAsync(int skip, int take, string search, CancellationToken token);
+
+        Task UpdateAsync(PageConfigurationEntity pageConfiguration, CancellationToken token);
         Task DeleteAsync(int id, CancellationToken token);
     }
 }
