@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Text.Json;
 
 namespace Booking.Infrastructure.Repositories
 {
@@ -232,7 +234,7 @@ namespace Booking.Infrastructure.Repositories
                 CreatedBy = entity.VehicleEntity.CreatedBy,
                 CreatedOn = entity.VehicleEntity.CreatedOn,
             };
-            await _context.Vehicles.AddAsync(vehicleTable,token);
+            await _context.Vehicles.AddAsync(vehicleTable, token);
             await _context.SaveChangesAsync(token);
             await _context.DriverVehicles.AddAsync(new Data.Models.DriverVehicle()
             {
@@ -252,9 +254,73 @@ namespace Booking.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<CreateDriverVehicleEntity?> GetDriverVehicleById(int DriverId, int VehicleId, CancellationToken token)
+        public async Task<CreateDriverVehicleEntity?> GetDriverVehicleById(int DriverId, int VehicleId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            CreateDriverVehicleEntity model = new()
+            {
+                DriverEntity = await _context.Drivers.AsNoTracking().Where(x => x.DriverId.Equals(DriverId))
+                    .Select(entity => new CreateDriverEntity()
+                    {
+                        PhoneNumber = entity.PhoneNumber,
+                        FirstName = entity.FirstName,
+                        LastName = entity.LastName,
+                        Email = entity.Email,
+                        AboutOn = entity.AboutOn,
+                        Address = entity.Address,
+                        DateOfBirth = entity.DateOfBirth,
+                        UpdatedOn = entity.UpdatedOn,
+                        UpdatedBy = entity.UpdatedBy,
+                        CreatedBy = entity.CreatedBy,
+                        CreatedOn = entity.CreatedOn,
+                        UserName = entity.UserName,
+                        Gender = entity.Gender,
+                        AvailabilityStatus = entity.AvailabilityStatus,
+                        ApproveDriver = entity.ApproveDriver,
+                        IsActive = entity.IsActive,
+                        Photo = entity.Photo,
+                        TenantId = entity.TenantId,
+                        LicenseNumber = entity.LicenseNumber,
+                    }).FirstOrDefaultAsync(cancellationToken: token) ?? new CreateDriverEntity()
+                    ,
+                VehicleEntity = await _context.Vehicles.AsNoTracking().Where(x => x.VehicleId.Equals(VehicleId))
+                     .Select(entity => new CreateVehicleEntity()
+                     {
+                         VehicleNumber = entity.VehicleNumber,
+                         Model = entity.Model,
+                         Color = entity.Color,
+                         Fare = entity.Fare,
+                         CarName = entity.CarName,
+                         AverageMileage = entity.AverageMileage,
+                         Fecility = entity.Fecility,
+                         PollucationCertificationNumber = entity.PollucationCertificationNumber,
+                         InsurenceValidUntil = entity.InsurenceValidUntil,
+                         InsurnceNumber = entity.InsurnceNumber,
+                         VehicleTypeId = entity.VehicleTypeId,
+                         AboutOnVehicle = entity.AboutOnVehicle,
+                         DefaultImage = entity.DefaultImage,
+                         UpdatedOn = entity.UpdatedOn,
+                         UpdatedBy = entity.UpdatedBy,
+                         CreatedBy = entity.CreatedBy,
+                         CreatedOn = entity.CreatedOn,
+                     }).FirstOrDefaultAsync(token) ?? new CreateVehicleEntity(),
+                DriverPhotojson = JsonSerializer.Serialize(await _context.DriverMediaMappings.AsNoTracking().Where(x => x.DriverId == DriverId)
+                .Select(x => new
+                {
+                    x.Media.MediaName,
+                    x.Media.MediaType,
+                    x.Media.ThumbnailUrl,
+                    x.Media.MediaUrl
+                }).ToArrayAsync(cancellationToken: token)),
+                VehicleDefaultImagejson = JsonSerializer.Serialize(await _context.VehicleMediaMappings.AsNoTracking().Where(x => x.VehicleId == VehicleId)
+                .Select(x => new
+                {
+                    x.Media.MediaName,
+                    x.Media.MediaType,
+                    x.Media.ThumbnailUrl,
+                    x.Media.MediaUrl
+                }).ToArrayAsync(cancellationToken: token)),
+            };
+            return model;
         }
     }
 }

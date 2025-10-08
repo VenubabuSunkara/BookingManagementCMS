@@ -8,7 +8,6 @@
     {
         ViewData["Title"] = "Update Package Category";
     }
-   // bool isCategoryActive = Model?.IsActive ?? false;
 }
 
 <!-- Container-fluid starts-->
@@ -31,18 +30,22 @@
                             </div>
                             <div class="card-body">
                                 <div class="theme-form mega-form">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" asp-for="Id" />
                                     <div class="mb-3">
                                         <label asp-for="CategoryName" class="form-label-title">Category Name</label>
                                         <input class="form-control" type="text" placeholder="Category name" asp-for="CategoryName" />
+                                        <span asp-validation-for="CategoryName" class="text-danger"></span>
                                     </div>
                                     <div class="mb-3">
                                         <label asp-for="Description" class="form-label-title">Description</label>
-                                        <textarea asp-for="Description" class="form-control" placeholder="Category Description"></textarea>
+                                        <textarea asp-for="Description" class="form-control descriptionOf" placeholder="Category Description"></textarea>
+                                        <span asp-validation-for="Description" class="text-danger"></span>
                                     </div>
                                     <div class="mb-3">
                                         <label asp-for="IsActive" class="form-label-title">Is Active</label>
                                         <input type="checkbox" asp-for="IsActive" />
+                                        <span asp-validation-for="IsActive" class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>

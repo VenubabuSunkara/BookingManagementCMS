@@ -13,6 +13,8 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<int> CreateCategoryAsync(TourPackageCategoryEntity entity, CancellationToken token)
         {
+            if (await _context.TourPackageCategories.AsNoTracking().AnyAsync(x => x.CategoryName.Equals(entity.CategoryName), cancellationToken: token))
+                return 0;
             var category = new TourPackageCategory
             {
                 CategoryName = entity.CategoryName,
@@ -30,37 +32,39 @@ namespace Booking.Infrastructure.Repositories
 
         public async Task<int> DeleteCategoryAsync(int CategoryId, CancellationToken token)
         {
-            return await _context.TourPackageCategories.Where(x => x.Id.Equals(CategoryId)).ExecuteDeleteAsync(token);
+            return await _context.TourPackageCategories.AsNoTracking()
+                               .Where(x => x.Id.Equals(CategoryId))
+                               .ExecuteDeleteAsync(cancellationToken: token);
         }
 
-        public async Task<TourPackageCategoryEntity> GetCategoryAsync(int CategoryId, CancellationToken token)
+        public async Task<TourPackageCategoryEntity?> GetCategoryAsync(int CategoryId, CancellationToken token)
         {
-            var category = await _context.TourPackageCategories
-                              .AsNoTracking()
-                              .Where(x => x.Id == CategoryId)
-                              .Select(x => new TourPackageCategoryEntity
-                              {
-                                  Id = x.Id,
-                                  CategoryName = x.CategoryName,
-                                  Description = x.Description,
-                                  IsActive = x.IsActive ?? false,
-                                  NoOfPackages = x.TourPackages.Count()
-                              }).FirstOrDefaultAsync(token);
-            return category!;
+            return await _context.TourPackageCategories
+                               .AsNoTracking()
+                               .Where(x => x.Id == CategoryId)
+                               .Select(x => new TourPackageCategoryEntity
+                               {
+                                   Id = x.Id,
+                                   CategoryName = x.CategoryName,
+                                   Description = x.Description,
+                                   IsActive = x.IsActive ?? false,
+                                   NoOfPackages = x.TourPackages.Count
+                               }).FirstOrDefaultAsync(token);
         }
 
         public async Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory(CancellationToken token)
         {
             return await _context.TourPackageCategories.AsNoTracking()
-                         .Select(x => new TourPackageCategoryEntity
-                         {
-                             Id = x.Id,
-                             CategoryName = x.CategoryName,
-                             Description = x.Description,
-                             IsActive = x.IsActive ?? false,
-                             NoOfPackages = x.TourPackages.Count()
-                         }).ToListAsync(token);
+                 .Select(x => new TourPackageCategoryEntity
+                 {
+                     Id = x.Id,
+                     CategoryName = x.CategoryName,
+                     Description = x.Description,
+                     IsActive = x.IsActive ?? false,
+                     NoOfPackages = x.TourPackages.Count
+                 }).ToListAsync(token);
         }
+
         public async Task<int> UpdateCategoryAsync(TourPackageCategoryEntity entity, CancellationToken token)
         {
             return await _context.TourPackageCategories
@@ -82,7 +86,7 @@ namespace Booking.Infrastructure.Repositories
                     Description = x.Description,
                     Id = x.Id,
                     IsActive = x.IsActive ?? false,
-                    NoOfPackages = x.TourPackages.Count()
+                    NoOfPackages = x.TourPackages.Count
                 }).ToListAsync(token);
         }
         public async Task ImportPackageCategoriesAsync(IEnumerable<TourPackageCategoryEntity> entities, CancellationToken token)
@@ -98,7 +102,12 @@ namespace Booking.Infrastructure.Repositories
                 UpdatedOn = x.UpdatedOn,
                 CreatedOn = x.CreatedOn,
                 UpdatedBy = x.UpdatedBy
-            }), b => b.SetOutputIdentity = true, cancellationToken: token); //BulkConfig with Action arg.
+            }), bulkConfig, cancellationToken: token); //BulkConfig with Action arg.
+        }
+
+        public async Task<bool> IsExistsName(string categoryName, CancellationToken token)
+        {
+            return await _context.TourPackageCategories.AsNoTracking().AnyAsync(x => x.CategoryName.Equals(categoryName), cancellationToken: token);
         }
     }
 }

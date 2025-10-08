@@ -5,6 +5,7 @@ using Booking.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using SendGrid.Helpers.Errors.Model;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -95,6 +96,10 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<IActionResult> RejectDriver(int DriverId, int VehicleId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             await _driverVehicleService.RejectDriverVehicleAsync(DriverId, VehicleId, token);
             return RedirectToAction("Index");
         }
@@ -110,6 +115,10 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<IActionResult> AddSchedule(int DriverId, int VehicleId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("AddSchedule");
+            }
             var driver = await _driverService.GetDriverAsync(DriverId, token);
             var vehicle = await _vehicleService.GetVehicleAsync(VehicleId, token);
             ViewBag.ApiKey = _settings.PlacesApiKey;
@@ -123,6 +132,10 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken, HttpPost]
         public async Task<ActionResult> DriverVehicleRoutes(int DriverId, int VehicleId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("DriverVehicleRoutes");
+            }
             return await Task.Run(() =>
             {
                 return View();
@@ -132,6 +145,19 @@ namespace Booking.Web.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveDriverVehicle(CreateDriverVehicleDto model, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return await Task.Run(() =>
+               {
+                   return View("Create", model);
+               }, token);
+            }
+
+            #region Save Driver
+
+            #endregion
+
+
 
             return await Task.Run(() =>
             {

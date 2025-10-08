@@ -11,7 +11,7 @@ namespace Booking.Application.DTOs.Tour
         public int? Id { get; set; }
         public string CategoryName { get; set; } = null!;
         public string? Description { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; } = false;
         public int? NoOfPackages { get; set; } = 0;
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }

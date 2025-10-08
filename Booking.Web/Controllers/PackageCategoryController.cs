@@ -34,6 +34,10 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPackageCategory(int CategoryId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Index");
+            }
             var CategoryModel = await _packageCategoryService.GetCategoryAsync(CategoryId, token);
             return await Task.Run(() =>
             {
@@ -63,8 +67,11 @@ namespace Booking.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePackageCategory(int categoryId, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = "Category not found" });
+            }
             var result = await _packageCategoryService.DeleteCategoryAsync(categoryId, token);
-
             if (result > 0)
                 return Json(new { success = true, message = "Category deleted successfully" });
 
@@ -74,6 +81,10 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAllPackageCategories([FromBody] DataTableAjaxPostModel request, CancellationToken token)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
             var tourPackages = await _packageCategoryService.GetTourPackageCategory(token);
             return Json(new
             {
