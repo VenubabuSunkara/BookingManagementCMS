@@ -134,7 +134,27 @@ namespace Booking.Application.Services
                     TenantId = driverVehicle.DriverEntity.TenantId,
                     LicenseNumber = driverVehicle.DriverEntity.LicenseNumber,
                 },
-                VehicleDto=
+                VehicleDto= new CreateVehicleDto ()
+                {
+                    VehicleNumber = driverVehicle.VehicleEntity.VehicleNumber,
+                    Model = driverVehicle.VehicleEntity.Model,
+                    Color = driverVehicle.VehicleEntity.Color,
+                    Fare = driverVehicle.VehicleEntity.Fare,
+                    CarName = driverVehicle.VehicleEntity.CarName,
+                    AverageMileage = driverVehicle.VehicleEntity.AverageMileage,
+                    Fecility = driverVehicle.VehicleEntity.Fecility,
+                    PollucationCertificationNumber = driverVehicle.VehicleEntity.PollucationCertificationNumber,
+                    InsurenceValidUntil = driverVehicle.VehicleEntity.InsurenceValidUntil,
+                    InsurnceNumber = driverVehicle.VehicleEntity.InsurnceNumber,
+                    VehicleTypeId = driverVehicle.VehicleEntity.VehicleTypeId,
+                    AboutOnVehicle = driverVehicle.VehicleEntity.AboutOnVehicle,
+                    DefaultImage = driverVehicle.VehicleEntity.DefaultImage,
+                    UpdatedOn = driverVehicle.VehicleEntity.UpdatedOn,
+                    UpdatedBy = driverVehicle.VehicleEntity.UpdatedBy,
+                    CreatedBy = driverVehicle.VehicleEntity.CreatedBy,
+                    CreatedOn = driverVehicle.VehicleEntity.CreatedOn,
+                    VehicleId = driverVehicle.VehicleEntity.VehicleId,
+                },
             };
         }
 
