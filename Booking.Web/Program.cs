@@ -170,7 +170,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.UseResponseCaching();
 app.UseOutputCache();
-//app.UseResponseCompression();
+///app.UseResponseCompression();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}")

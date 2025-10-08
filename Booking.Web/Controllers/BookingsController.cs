@@ -39,11 +39,15 @@ namespace Booking.Web.Controllers
                 return View("Index");
             });
         }
-            [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetAllDriverVehicleBookings(int VehicleId, int DriverId, CancellationToken cancellationToken)
         {
-            var result = await _bookingService.GetVehicleBookings(VehicleId, DriverId, 0, 100, cancellationToken);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var result = await _bookingService.GetVehicleBookings(VehicleId, DriverId, 0, 10, cancellationToken);
             return View("DriverVehicleBookings", result);
         }
 

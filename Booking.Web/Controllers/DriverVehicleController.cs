@@ -154,10 +154,8 @@ namespace Booking.Web.Controllers
             }
 
             #region Save Driver
-
+            await _driverVehicleService.CreateDriverVehicle(model, token);
             #endregion
-
-
 
             return await Task.Run(() =>
             {

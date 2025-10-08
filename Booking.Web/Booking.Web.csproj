@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\DriverVehicle\DriverVehicleBookings.cshtml" />
     <Content Remove="wwwroot\editor.js" />
     <Content Remove="wwwroot\fonts\fontawesome-webfont.eot" />
     <Content Remove="wwwroot\fonts\fontawesome-webfont.ttf" />

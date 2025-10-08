@@ -57,7 +57,7 @@ namespace Booking.Infrastructure.Repositories
                                      {
                                          DriverId = a.DriverId,
                                          VehicleId = a.VehicleId,
-                                         AvailableDate = a.AvailableFrom,
+                                         AvailableFrom = a.AvailableFrom,
                                          AvailabilityId = a.AvailabilityId,
                                          SlotEnd = a.SlotEnd,
                                          SlotStart = a.SlotStart,
