@@ -1,8 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Email Template List";
 }
-<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+@section Styles {
+    @await Html.PartialAsync("_DataTableStyles")
+}
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
@@ -56,19 +57,8 @@
 <!-- Container-fluid ends-->
 <!-- Container-fluid Ends-->
 @section Scripts {
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
-    <!-- DataTables Buttons extension -->
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- JSZip for Excel export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <!-- pdfmake for PDF export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.0/classic/ckeditor.js"></script>
-
+    @await Html.PartialAsync("_DataTableScripts")
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript">
         const token = $('input[name="__RequestVerificationToken"]').val();
 
@@ -134,30 +124,33 @@
                         }
                     },
                     columns: [{
-                            data: 'id'
+                            data: 'id',width:'5%'
                         },
                         {
-                            data: 'name'
+                            data: 'name',width:'10%'
                         },
                         {
-                            data: 'emailSubject'
+                            data: 'emailSubject',width:'15%'
                         },
                         {
-                            data: 'emailBody', render: function(data, type, row) {
+                            data: 'emailBody',width:'45%', render: function(data, type, row) {
                                 const bodyContent=row.emailBody.toString();
                                 return `<div>${bodyContent}</div>`
                             }
                         },
                         {
-                            data: 'createdOn'
+                            data: 'createdOn',width:'10%', render: function (data, type, row) {
+                                    return moment(data).format('YYYY-MM-DD');
+                                 }
                         },
                         {
-                            data: 'isEnabled'
+                            data: 'isEnabled',width:'5%'
                         },
                         {
                             data: null,
                             orderable: false,
                             searchable: false,
+                            width:'10%',
                             render: function(data, type, row) {
                                  let actions='';
                                    actions += ` <a href="javascript:void(0)" title="Delete" onclick="rejectTemplate(${row.id})"><i class="fa fa-trash-o"></i></a>`;
