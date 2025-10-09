@@ -31,3 +31,5 @@
 /Booking.Web/bin/Debug/net9.0
 /Booking.Web/obj
 /TemplateBinder
+/Booking.API/obj
+/Booking.API/Booking.API.csproj.user

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MessageScheduling")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fbb32be5794868fec1f10bb0961739ffb7005f49")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b22c239f3ccfd3b106266feebc9a92619e802749")]
 [assembly: System.Reflection.AssemblyProductAttribute("MessageScheduling")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MessageScheduling")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
