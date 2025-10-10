@@ -11,6 +11,15 @@ namespace Booking.Application.DTOs.Tour
 {
     public class TourPackageDto
     {
+
+        //TODO: Add validation attributes
+        //NO of Persons from family allowing 
+        //Seperate Days and Nights as two fields
+        public int? NoDays { get; set; }
+        public int? NoNights { get; set; }
+        public int? NoPasangers { get; set; }
+        public int? Rating { get; set; }
+        //
         public int Id { get; set; }
         public string PackageName { get; set; } = null!;
         public string? ShortDescription { get; set; }
@@ -31,5 +40,6 @@ namespace Booking.Application.DTOs.Tour
         public TourPackageCategoryDto Category { get; set; } = new TourPackageCategoryDto();
         public TourLocationDto Location { get; set; } = new TourLocationDto();
         public List<PackageMediaDto> PackageMedia { get; set; } = [];
+        
     }
 }

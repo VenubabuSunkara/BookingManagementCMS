@@ -33,3 +33,6 @@
 /TemplateBinder
 /Booking.API/obj
 /Booking.API/Booking.API.csproj.user
+/Booking.API/bin/Debug/net9.0
+/MessageScheduling/bin
+/MessageScheduling/obj

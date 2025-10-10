@@ -33,7 +33,7 @@ namespace Booking.Web.ViewComponents
                     ProfilePhoto = userEntity.ProfilePhoto
                 });
             }
-            return View("Guest");
+            return View("Unauthorized");
         }
     }
 }
