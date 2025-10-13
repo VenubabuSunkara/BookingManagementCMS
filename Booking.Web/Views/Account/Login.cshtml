@@ -14,16 +14,18 @@
             @Html.AntiForgeryToken()
             <h4>Sign in to account</h4>
             <p>Enter your email &amp; password to login</p>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label class="col-form-label form-label-title">UserName/Email/Phone</label>
+                <label asp-for="LoginUser" class="col-form-label form-label-title">Email</label>
                 <input class="form-control"
-                       type="text"
-                       required="required"
-                       name="LoginUser"
-                       placeholder="username/email/phone" />
+                       type="email"
+                       required="required" asp-for="LoginUser"
+                       placeholder="Enter email" />
+                <span asp-validation-for="LoginUser" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="col-form-label form-label-title">Password</label>
+                <label asp-for="Password" class="col-form-label form-label-title">Password</label>
                 <div class="form-input position-relative">
                     <input class="form-control"
                            type="password"
@@ -31,6 +33,7 @@
                            required="required"
                            placeholder="*********" />
                     <div class="show-hide"><span class="show"> </span></div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group mb-0">

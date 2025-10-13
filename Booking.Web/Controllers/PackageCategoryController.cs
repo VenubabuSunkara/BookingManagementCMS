@@ -79,16 +79,12 @@ namespace Booking.Web.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GetAllPackageCategories([FromBody] DataTableAjaxPostModel request, CancellationToken token)
+        public async Task<IActionResult> GetAllPackageCategories(CancellationToken token)
         {
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("Index");
-            }
             var tourPackages = await _packageCategoryService.GetTourPackageCategory(token);
             return Json(new
             {
-                draw = request.draw == 0 ? 1 : request.draw,
+                draw = 1,
                 recordsFiltered = tourPackages.Count(),
                 recordsTotal = tourPackages.Count(),
                 data = tourPackages.Select(x => new
@@ -119,7 +115,8 @@ namespace Booking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportCategory(IFormFile file, CancellationToken token)
         {
-            if (file == null || file.Length == 0)
+
+            if (!ModelState.IsValid)
                 return BadRequest("No file uploaded");
 
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();

@@ -28,5 +28,6 @@ namespace Booking.Domain.Entities
 
         public string FullName => $"{FirstName} {LastName}";
         public string RegistrationToken { get; set; } = string.Empty;
+        public List<string> ErrorMsaages { get; set; } = [];
     }
 }

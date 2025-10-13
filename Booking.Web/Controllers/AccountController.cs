@@ -44,12 +44,11 @@ namespace Booking.Web.Controllers
                 RememberMe = loginDto.RememberMe
             });
 
-            if (UserData == null)
+            if (UserData?.ErrorMessges.Count > 0)
             {
-                ModelState.AddModelError("", "Invalid login attempt.");
+                ModelState.AddModelError("", string.Join(",", UserData?.ErrorMessges?.ToArray() ?? []));
                 return View(loginDto);
             }
-            // base.UserDto=UserData;
             return RedirectToAction("Index", "Home");
         }
 

@@ -2,6 +2,7 @@
 using Booking.Domain.Interfaces;
 using Booking.Infrastructure.Data;
 using Booking.Infrastructure.Data.Models;
+using Booking.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -97,6 +98,12 @@ namespace Booking.Infrastructure.Repositories
                 })]
             };
         }
+        /// <summary>
+        /// Login the user and return user details with claims
+        /// Get the user and assign role 
+        /// </summary>
+        /// <param name="loginEntity"></param>
+        /// <returns></returns>
         public async Task<UserEntity?> Login(LoginEntity loginEntity)
         {
             var user = new IdentityUser()
@@ -106,13 +113,31 @@ namespace Booking.Infrastructure.Repositories
             };
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName, loginEntity.Password, loginEntity.RememberMe, lockoutOnFailure: false);
-            if (!result.Succeeded) { return null; }
+            if (!result.Succeeded)
+            {
+                return new UserEntity()
+                {
+                    ErrorMsaages = [ResorceHelper.LoginUerNameAndPasswordNotMatch]
+                };
+            }
 
             var userinfo = await _userManager.FindByEmailAsync(loginEntity.Email);
-            if (userinfo == null) return null;
+            if (userinfo == null)
+            {
+                return new UserEntity()
+                {
+                    ErrorMsaages = [ResorceHelper.UserEmailNotFound]
+                };
+            }
 
             var userEntity = await _context.CompanyUsers.Where(x => x.UserId == userinfo.Id).FirstOrDefaultAsync();
-            if (userEntity == null) return null;
+            if (userEntity == null)
+            {
+                return new UserEntity()
+                {
+                    ErrorMsaages = [ResorceHelper.UserNotFound]
+                };
+            }
             var roles = await _userManager.GetRolesAsync(user);
             /*Add Claims*/
             var finalUserdata = new UserEntity()

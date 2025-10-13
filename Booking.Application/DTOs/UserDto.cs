@@ -25,5 +25,6 @@ namespace Booking.Application.DTOs
         public string ProfilePhoto { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string RegistrationToken { get; set; } = string.Empty;
+        public List<string> ErrorMessges { get; set; } = [];
     }
 }

@@ -97,7 +97,8 @@ namespace Booking.Application.Services
                 Id = user.Id,
                 RoleId = user.RoleId,
                 Contact = user.Contact,
-                Roles = user.Roles
+                Roles = user.Roles,
+                ErrorMessges = user.ErrorMsaages
             };
         }
 
