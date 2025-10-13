@@ -65,6 +65,7 @@ namespace Booking.Web.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeletePackageCategory(int categoryId, CancellationToken token)
         {
             if (!ModelState.IsValid)

@@ -1,8 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Packages Categories";
 }
-<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+@section Styles {
+    @await Html.PartialAsync("_DataTableStyles")
+}
 <!-- Container-fluid starts-->
 <div class="container-fluid">
     <div class="row">
@@ -53,17 +54,7 @@
 <!-- Container-fluid ends-->
 <!-- Container-fluid Ends-->
 @section Scripts {
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
-    <!-- DataTables Buttons extension -->
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- JSZip for Excel export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <!-- pdfmake for PDF export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    @await Html.PartialAsync("_DataTableScripts")
     <script>
         document.getElementById('fileInput').addEventListener('change', function (e) {
             if (e.target.files.length > 0) {
@@ -96,16 +87,21 @@
     </script>
 
     <script type="text/javascript">
+         const token = $('input[name="__RequestVerificationToken"]').val();
          var deleteId=0;
          //Delere promotion post event handeler
          function DeleteConfirm(){
              if (deleteId) {
                  $.ajax({
-                    type: "GET",
+                    type: "POST",
                     url: "/PackageCategory/DeletePackageCategory",
                     data: { CategoryId:deleteId },
+                     headers: {
+                                'RequestVerificationToken': token
+                            },
                     dataType: "json",
                     success: function(result) {
+                          $('#deleteConfirmModal').modal('hide');
                     packageCatListVM.refresh();
                     },
                     error: function(req, status, error) {
@@ -122,7 +118,6 @@
         var  packageCatListVM = {
                 packagecatdt: null,
                 init: function () {
-                     const token = $('input[name="__RequestVerificationToken"]').val();
                      this.packagecatdt = $('#tblpackagecategories').DataTable({
                      processing: false,
                      serverSide: false,
@@ -199,7 +194,7 @@
                                {
                                 data: 'id', align:'center',autoWidth: true,
                                 render: function (data, type, row) {
-                                    return `<a href="javascript:void(0)" onclick="deletePackageCategory(${data}"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                    return `<a href="javascript:void(0)" onclick="deletePackageCategory(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
                                 }
                             }
                         ],
