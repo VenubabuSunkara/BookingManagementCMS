@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Application", "Book
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Infrastructure", "Booking.Infrastructure\Booking.Infrastructure.csproj", "{BED0FC4F-2868-43EE-B2E9-9D8728EC2CCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Admin", "Booking.Web\Booking.Admin.csproj", "{D0D3717F-7535-4573-8647-0D1B40955414}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Admin", "Booking.Admin\Booking.Admin.csproj", "{D0D3717F-7535-4573-8647-0D1B40955414}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{00154715-4F88-433E-B67B-31DA5C2C6AC1}"
 	ProjectSection(SolutionItems) = preProject

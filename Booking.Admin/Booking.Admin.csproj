@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-Booking.Web-54dd5edf-faf9-42d1-8ec8-6480497406a8</UserSecretsId>
+    <UserSecretsId>aspnet-Booking.Admin-54dd5edf-faf9-42d1-8ec8-6480497406a8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
