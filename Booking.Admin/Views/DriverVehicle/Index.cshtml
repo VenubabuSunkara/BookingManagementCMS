@@ -205,12 +205,12 @@
                                  data: 'driver.id',
                                  render: function (data, type, full, meta) {
                                  let actions='';
-                                   actions += `   <a href="javascript:void(0)" title="Delete" onclick="rejectDriver(${data},${full.vehicle.id})"><i class="fa fa-trash-o"></i></a>`;
-                                   actions += ` || <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("GetAllDriverVehicleBookings", "Bookings")',${full.vehicle.id},${data})" title="Trips" ><i class="fa fa-car"></i></a>`;
-                                   actions += ` || <a href="@Url.Action("Payments", "DriverVehicle")?DriverId=${data}" title="Payments"><i class="fa fa-credit-card-alt"></i></a>`;
-                                   actions += ` || <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("GetReviewsByVehicleDriver", "Review")',${full.vehicle.id},${data})" title="Feedback" ><i class="fa fa-comments-o"></i></a>`;
-                                   actions += ` || <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("Index", "Scheduler")',${full.vehicle.id},${data})" title="Vehicle Schedules"><i class="fa fa-calendar"></i></a>`;
-                                   actions += ` || <a href=javascript:void(0)" onclick="submitReviewForm('@Url.Action("Index", "VehicleRoutes")',${full.vehicle.id},${data})" title="Driver Vehicle Routes"><i class="fa fa-map-o"></i></a>`;
+                                   actions += `  <a href="javascript:void(0)" title="Delete" onclick="rejectDriver(${data},${full.vehicle.id})"><i class="fa fa-trash-o"></i></a>`;
+                                   actions += `  <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("GetAllDriverVehicleBookings", "Bookings")',${full.vehicle.id},${data})" title="Trips" ><i class="fa fa-car"></i></a>`;
+                                   actions += `  <a href="@Url.Action("Payments", "DriverVehicle")?DriverId=${data}" title="Payments"><i class="fa fa-credit-card-alt"></i></a>`;
+                                   actions += `  <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("GetReviewsByVehicleDriver", "Review")',${full.vehicle.id},${data})" title="Feedback" ><i class="fa fa-comments-o"></i></a>`;
+                                   actions += `  <a href="javascript:void(0)" onclick="submitReviewForm('@Url.Action("Index", "Scheduler")',${full.vehicle.id},${data})" title="Vehicle Schedules"><i class="fa fa-calendar"></i></a>`;
+                                   actions += `  <a href=javascript:void(0)" onclick="submitReviewForm('@Url.Action("Index", "VehicleRoutes")',${full.vehicle.id},${data})" title="Driver Vehicle Routes"><i class="fa fa-map-o"></i></a>`;
 
                                    return actions;
                                  }
