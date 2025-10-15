@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateBinder", "TemplateB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.API", "Booking.API\Booking.API.csproj", "{B55C8D77-47F5-45DD-8AC8-D02390B8EBDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Web", "Booking.Web\Booking.Web.csproj", "{CAA011FD-E322-48BD-8057-F2897A1BB856}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{B55C8D77-47F5-45DD-8AC8-D02390B8EBDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B55C8D77-47F5-45DD-8AC8-D02390B8EBDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B55C8D77-47F5-45DD-8AC8-D02390B8EBDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAA011FD-E322-48BD-8057-F2897A1BB856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAA011FD-E322-48BD-8057-F2897A1BB856}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAA011FD-E322-48BD-8057-F2897A1BB856}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAA011FD-E322-48BD-8057-F2897A1BB856}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

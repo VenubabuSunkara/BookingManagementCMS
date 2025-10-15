@@ -74,6 +74,12 @@
                                 <thead>
                                     <tr>
                                         <th>Id</th>
+                                        <th>Driver Name</th>
+                                        <th>Vehicle Name</th>
+                                        <th>Schedule Start</th>
+                                        <th>Schedule End</th>
+                                        <th>Full Day</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -198,17 +204,12 @@
                              }
                          },
                       columns: [
-                             {data:'id'},
+                             { data:'driverId'},
                              { data: 'firstName', autoWidth: true },
                              { data: 'lastName', autoWidth: true },
-                             { data: 'email', autoWidth: true },
-                             { data: 'phoneNumber', autoWidth: true },
-                             { data: 'licenseNumber', autoWidth: true },
-                             { data: 'created', autoWidth: true,
-                                 render: function (data, type, row) {
-                                    return moment(data).format('YYYY-MM-DD'); // Formats the date
-                                 }
-                             },
+                             { data: 'availableFrom', autoWidth: true },
+                             { data: 'availableTo', autoWidth: true },
+                             { data: 'isFullDay', autoWidth: true },
                              {
                                  data: 'id',
                                  render: function (data, type, full, meta) {

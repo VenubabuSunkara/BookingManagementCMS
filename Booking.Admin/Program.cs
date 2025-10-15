@@ -78,6 +78,7 @@ builder.Services.AddScoped<ISendGridEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient<IGooglePlacesService, GooglePlacesService>();
 builder.Services.AddScoped<IPageConfigurationService, PageConfigurationService>();
 builder.Services.AddSingleton<ICloudStorageService, AzureBlobStorageService>();
+builder.Services.AddScoped<IDriverVehicleAvailabilityService, DriverVehicleAvailabilityService>();
 builder.Services.AddSingleton<FileReaderService>();
 builder.Services.AddSendGrid(options =>
 {

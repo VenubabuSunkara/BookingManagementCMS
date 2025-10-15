@@ -81,5 +81,26 @@ namespace Booking.Web.Controllers
                 return Json("Something went wrong {0}", ex);
             }
         }
+        //[HttpPost, ValidateAntiForgeryToken]
+        //public async Task<IActionResult> UpdateAvailability(int DriverId, int VehicleId, CancellationToken token)
+        //{
+        //    var driver = await _driverService.GetDriverAsync(DriverId, token);
+        //    var vehicle = await _vehicleService.GetVehicleAsync(VehicleId, token);
+        //    if (driver == null || vehicle == null)
+        //    {
+        //        return RedirectToAction("Index");
+        //    }
+        //    DriverScheduleViewModel model = new()
+        //    {
+        //        DriverId = DriverId,
+        //        VehicleId = VehicleId,
+        //        DriverName = driver.FullName,
+        //        VehicleName = $"{vehicle.ModelName}-{vehicle.RegistrationNumber}",
+        //        StartDate = DateTime.Now,
+        //        EndDate = DateTime.Now.AddHours(1)
+        //    };
+        //    return View("Index", model);
+        //}
+
     }
 }

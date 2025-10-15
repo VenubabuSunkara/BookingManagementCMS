@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
-    public class DriverVehicleAvailabilityServiceL(IDriverVehicleScheduleRepository scheduleRepository) : IDriverVehicleAvailabilityService
+    public class DriverVehicleAvailabilityService(IDriverVehicleScheduleRepository scheduleRepository) : IDriverVehicleAvailabilityService
     {
         private readonly IDriverVehicleScheduleRepository _scheduleRepository = scheduleRepository;
         public Task<int> CreateDriverVehicleSchedleAsync(DriverVehicleScheduleDto entity, CancellationToken token)
