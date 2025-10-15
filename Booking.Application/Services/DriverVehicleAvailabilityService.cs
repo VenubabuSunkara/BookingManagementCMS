@@ -51,7 +51,7 @@ namespace Booking.Application.Services
             };
         }
 
-        public async Task<List<DriverVehicleScheduleDto>> GetDriverVehicleScheduleById(int DriverId, int VehicleId, CancellationToken token)
+        public async Task<IEnumerable<DriverVehicleScheduleDto>> GetDriverVehicleScheduleById(int DriverId, int VehicleId, CancellationToken token)
         {
            var schedules = await _scheduleRepository.GetDriverVehicleScheduleById(DriverId, VehicleId, token);
               return [.. schedules.Select(d => new DriverVehicleScheduleDto()

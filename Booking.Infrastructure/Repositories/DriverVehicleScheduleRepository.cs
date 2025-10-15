@@ -67,7 +67,7 @@ namespace Booking.Infrastructure.Repositories
         public async Task<List<DriverVehicleAvailabilityEntity>> GetDriverVehicleScheduleById(int DriverId, int VehicleId, CancellationToken token)
         {
             return await _context.DriverVehicleAvailabilities.AsNoTracking()
-                .Where(x => x.DriverId == DriverId && x.VehicleId == VehicleId)
+                .Where(x => x.DriverId == DriverId)
                 .Select(x => new DriverVehicleAvailabilityEntity()
                 {
                     DriverId = x.DriverId,

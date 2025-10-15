@@ -32,28 +32,28 @@
                     <div class="d-flex gap-2">
                         <div class="row input-row">
                             <div class="col-4 mb-3">
-                                <select asp-for="Drivers"
+                                <select asp-for="DriverId"
                                         asp-items="Model.Drivers"
                                         class="form-control">
                                     <option value="">Choose Driver</option>
                                 </select>
-                                <span asp-validation-for="Drivers" class="text-danger"></span>
+                                <span asp-validation-for="DriverId" class="text-danger"></span>
                             </div>
                             <div class="col-4 mb-3">
-                                <select asp-for="Vehicles"
+                                <select asp-for="VehicleId"
                                         asp-items="Model.Vehicles"
                                         class="form-control">
                                     <option value="">Choose VehicleType</option>
                                 </select>
-                                <span asp-validation-for="Vehicles" class="text-danger"></span>
+                                <span asp-validation-for="VehicleId" class="text-danger"></span>
                             </div>
                             <div class="col-4 mb-3">
-                                <select asp-for="BookingStatus"
+                                <select asp-for="BookingStatusId"
                                         asp-items="Model.BookingStatus"
                                         class="form-control">
                                     <option value="All">All</option>
                                 </select>
-                                <span asp-validation-for="BookingStatus" class="text-danger"></span>
+                                <span asp-validation-for="BookingStatusId" class="text-danger"></span>
                             </div>
                         </div>
                        @*  <div class="row input-row">
@@ -205,15 +205,18 @@
                          },
                       columns: [
                              { data:'driverId'},
-                             { data: 'firstName', autoWidth: true },
-                             { data: 'lastName', autoWidth: true },
+                             { data: 'driver.firstName', autoWidth: true,
+                             render: function (data, type, full, meta) {
+                                 return `<span>${full.driver.firstName} ${full.driver.lastName}`
+                             }},
+                             { data: 'vehicle.carName', autoWidth: true },
                              { data: 'availableFrom', autoWidth: true },
                              { data: 'availableTo', autoWidth: true },
                              { data: 'isFullDay', autoWidth: true },
                              {
                                  data: 'id',
                                  render: function (data, type, full, meta) {
-                                  let action= `<a class="edit-link" title="Edit Scheduler"  href="@Url.Action("Edit", "Scheduler")?SchedulerId=${data}"><i class="fa fa-pencil-square-o"></i></a>`;
+                                  let actions= `<a class="edit-link" title="Edit Scheduler"  href="@Url.Action("Edit", "Scheduler")?SchedulerId=${data}"><i class="fa fa-pencil-square-o"></i></a>`;
                                   actions += ` | <a href="javascript:void(0)" title="Delete Scheduler" onclick="RejectSchedule(${data})"><i class="fa fa-trash-o"></i></a>`;
                                   return actions;
                                  }

@@ -4,6 +4,7 @@ using Booking.Application.Services;
 using Booking.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Runtime.CompilerServices;
 
 namespace Booking.Web.Controllers
 {
@@ -101,6 +102,47 @@ namespace Booking.Web.Controllers
         //    };
         //    return View("Index", model);
         //}
+        public async Task<IActionResult> Edit(int DriverId, CancellationToken cancellation)
+        {
+            if (!ModelState.IsValid) return View();
+            var drivers = await _driverService.GetDriversDropdownList(cancellation);
+            var vehicles = await _vehicleService.GetVehicleDropdownList(cancellation);
+            DriverScheduleViewModel model = new()
+            {
+                DriverId = DriverId,
+                Drivers = [.. drivers.Select(x => new SelectListItem()
+                {
+                    Text = x.FullName,
+                    Value = x.Id.ToString()
+                })],
+                Vehicles = [.. vehicles.Select(x => new SelectListItem()
+                {
+                    Text = $"{x.ModelName}-{x.RegistrationNumber}",
+                    Value = x.VehicleId.ToString()
+                })],
+                BookingStatus =
+                [
+                    new SelectListItem()
+                    {
+                        Value="Completed",
+                        Text="Completed"
+                    }, new SelectListItem()
+                    {
+                        Value="Canceled",
+                        Text="Canceled"
+                    },new SelectListItem()
+                    {
+                        Value="InProgress",
+                        Text="InProgress"
+                    }
+                ],
+                ScheduleDtos = await _availabilityService.GetDriverVehicleScheduleById(DriverId, 0, cancellation)
+            };
 
+            return await Task.Run(() =>
+            {
+                return View(model);
+            }, cancellation);
+        }
     }
 }
