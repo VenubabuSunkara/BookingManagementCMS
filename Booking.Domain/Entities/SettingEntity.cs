@@ -10,10 +10,10 @@ namespace Booking.Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
-        public DateTime? CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
         public int Id { get; set; }
-        public DateTime? UpdatedOn { get; set; }
-        public int? CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
+        public DateTime UpdatedOn { get; set; }
+        public string CreatedBy { get; set; } = null!;
+        public string UpdatedBy { get; set; } = null!;
     }
 }

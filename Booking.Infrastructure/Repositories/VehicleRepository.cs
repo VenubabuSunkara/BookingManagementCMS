@@ -18,7 +18,7 @@ namespace Booking.Infrastructure.Repositories
 
             if (!string.IsNullOrWhiteSpace(SearchValue))
             {
-                q = q.Where(d => d.ModelName.Contains(SearchValue) || d.VehicleNumber.Contains(SearchValue));
+                q = q.Where(d => d.Model.Contains(SearchValue) || d.VehicleNumber.Contains(SearchValue));
             }
             // simple order by FullName default
             q = q.OrderByDescending(d => d.CreatedOn);
@@ -33,17 +33,13 @@ namespace Booking.Infrastructure.Repositories
                 VehicleEntities = [.. page.Select(d => new VehicleEntity
                 {
                     Id = d.VehicleId,
-                    ModelName=d.ModelName,
+                    ModelName=d.Model,
                     VehicleNumber=d.VehicleNumber,
                     Color=d.Color,
-                    Make=d.Make,
                     AboutOnVehicle=d.AboutOnVehicle,
                     DefaultImage=d.DefaultImage,
                     CreatedOn=d.CreatedOn,
-                    BasePrice=d.BasePrice,
-                    TaxRate=d.TaxRate,
-                    FuelType=d.FuelType,
-                    IsActive=d.IsActive,
+                    BasePrice=d.Fare
                 })]
             };
             return response;
@@ -52,7 +48,7 @@ namespace Booking.Infrastructure.Repositories
         {
             var approvedCount = await _context.Vehicles
                              .Where(x => x.VehicleId == VehicleId)
-                             .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.IsActive, true)
+                             .ExecuteUpdateAsync(setters => setters.SetProperty(d => d.VehicleId, 0)
                              , cancellationToken: token);
             return approvedCount;
         }
@@ -61,7 +57,7 @@ namespace Booking.Infrastructure.Repositories
             var rejectedCount = await _context.Vehicles
                               .Where(d => d.VehicleId == VehicleId)
                               .ExecuteUpdateAsync(setters => setters
-                                  .SetProperty(d => d.IsActive, false)
+                                  .SetProperty(d => d.VehicleId, 0)
                                , cancellationToken: token);
             return rejectedCount;
         }
@@ -70,7 +66,7 @@ namespace Booking.Infrastructure.Repositories
             var approvedCount = await _context.Vehicles
                  .Where(d => VehicleIds.Contains(d.VehicleId))
                  .ExecuteUpdateAsync(setters => setters
-                     .SetProperty(d => d.IsActive, true),
+                     .SetProperty(d => d.VehicleId, 0),
                  cancellationToken: token);
             return approvedCount;
         }
@@ -79,7 +75,7 @@ namespace Booking.Infrastructure.Repositories
             var rejectedCount = await _context.Vehicles
                               .Where(d => VehicleIds.Contains(d.VehicleId))
                               .ExecuteUpdateAsync(setters => setters
-                                  .SetProperty(d => d.IsActive, false)
+                                  .SetProperty(d => d.VehicleId, 0)
                                , cancellationToken: token);
             return rejectedCount;
         }
@@ -104,21 +100,16 @@ namespace Booking.Infrastructure.Repositories
                   .Select(d => new VehicleEntity()
                   {
                       Id = d.VehicleId,
-                      ModelName = d.ModelName,
+                      ModelName = d.Model,
                       VehicleNumber = d.VehicleNumber,
                       Color = d.Color,
-                      Make = d.Make,
                       AboutOnVehicle = d.AboutOnVehicle,
                       DefaultImage = d.DefaultImage,
                       CreatedOn = d.CreatedOn,
-                      BasePrice = d.BasePrice,
-                      TaxRate = d.TaxRate,
-                      FuelType = d.FuelType,
-                      IsActive = d.IsActive,
+                      BasePrice = d.Fare,
                       CreatedBy = d.CreatedBy,
                       UpdatedBy = d.UpdatedBy,
                       UpdatedOn = d.UpdatedOn,
-                      OtherInfromation = d.OtherInformation,
                   }).FirstOrDefaultAsync(token);
         }
 
@@ -153,7 +144,7 @@ namespace Booking.Infrastructure.Repositories
                                   .Select(d => new VehicleDropdownEntity()
                                   {
                                       VehicleId = d.VehicleId,
-                                      ModelName = d.ModelName,
+                                      ModelName = d.Model,
                                       RegistrationNumber = d.VehicleNumber
                                   }).ToListAsync(token);
         }

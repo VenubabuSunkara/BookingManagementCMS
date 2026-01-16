@@ -1,0 +1,313 @@
+﻿@model Booking.Application.DTOs.CreateDriverVehicleDto
+@{
+	ViewData["Title"] = "Create New Driver";
+}
+@section Styles {
+	<!--MultiSelect-->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+	<!--Drop zon-->
+	<link rel="stylesheet" type="text/css" href="~/css/dropzone.css" />
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="row">
+				<div class="col-sm-12">
+					<!--driver detail start-->
+					<div class="card">
+						<div class="card-header">
+							<h5>Add Driver Details</h5>
+						</div>
+						<div class="card-body">
+							<form class="theme-form mega-form" method="post" asp-action="SaveDriverVehicle" asp-controller="DriverVehicle" enctype="multipart/form-data">
+								<div class="mb-3">
+									<label class="form-label-title" asp-for="DriverDto.Photo">Upload Driver Image here</label>
+									<div class="dropzone" id="singleFileUpload" data-ouput-json="DriverPhotojson" data-upload-url="@Url.Action("SaveDriverPhoto", "DriverVehicle")">
+										<div class="dz-message needsclick">
+											<i class="icon-cloud-up"></i>
+											<h6>Drop files here or click to upload.</h6>
+											<span class="note needsclick">
+												(This is just a demo dropzone. Selected files
+												are <strong>not</strong> actually
+												uploaded.)
+											</span>
+										</div>
+									</div>
+									<input type="hidden" asp-for="DriverPhotojson" />
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.UserName"> UserName</label>
+											<input class="form-control" asp-for="DriverDto.UserName" type="text" placeholder="Username" />
+											<span asp-validation-for="DriverDto.UserName" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.Password">
+												Password
+											</label>
+											<input class="form-control" asp-for="DriverDto.Password" type="password" placeholder="Password" />
+											<span asp-validation-for="DriverDto.Password" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.ConfirmPassword">
+												Confirm Password
+											</label>
+											<input class="form-control" asp-for="DriverDto.ConfirmPassword" type="password" placeholder="ConfirmPassword" />
+											<span asp-validation-for="DriverDto.ConfirmPassword" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.FirstName" id="DriverFirstName">
+												Driver First Name
+											</label>
+											<input class="form-control" asp-for="DriverDto.FirstName" type="text" placeholder="Driver First Name" />
+											<span asp-validation-for="DriverDto.FirstName" class="text-danger" id="NameValidation"></span>
+
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.LastName" id="DriverLastName">
+												Driver Last Name
+											</label>
+											<input class="form-control" asp-for="DriverDto.LastName" type="text" placeholder="Driver Last Name" />
+											<span asp-validation-for="DriverDto.LastName" class="text-danger" id="NameValidation"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label for="gender" asp-for="DriverDto.Gender" class="form-label-title">
+												Gender
+											</label>
+											<select asp-for="DriverDto.Gender"
+													class="form-control js-example-basic-single col-sm-12">
+												<option value="Male">Male</option>
+												<option value="Female">Female</option>
+												<option value="Other">Other</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-6">
+											<label class="form-label-title" asp-for="DriverDto.DateOfBirth">
+												Date of Birthdate
+											</label>
+											<div class="input-group date"
+												 id="dt-date"
+												 data-target-input="nearest">
+												<div class="input-group">
+													<input class="datepicker-here form-control digits" asp-for="DriverDto.DateOfBirth"
+														   type="text"
+														   data-language="en"
+														   data-target="#dt-date" />
+
+													<div class="input-group-text"
+														 data-target="#dt-date"
+														 data-toggle="datetimepicker">
+														<i class="fa fa-calendar"></i>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-12 col-md-6 choose">
+											<label class="form-label-title" for="licensedocument">Upload License Document </label>
+											<input class="form-control" id="licensedocument"
+												   type="file"
+												   data-bs-original-title=""
+												   title="Licence Document" />
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.PhoneNumber">
+												Contact Number
+											</label>
+											<input class="form-control" asp-for="DriverDto.PhoneNumber" type="tel" placeholder="Contact Number" />
+
+											<span asp-validation-for="DriverDto.PhoneNumber" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.Email">
+												Email Address
+											</label>
+											<input class="form-control" asp-for="DriverDto.Email" type="email" placeholder=" Email address" />
+
+											<span asp-validation-for="DriverDto.Email" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="DriverDto.LicenseNumber">
+												License Number
+											</label>
+											<input class="form-control" asp-for="DriverDto.LicenseNumber" type="text" placeholder="License Number" />
+
+											<span asp-validation-for="DriverDto.LicenseNumber" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mb-3">
+									<label class="form-label-title" asp-for="DriverDto.Address">
+										Address
+									</label>
+									<textarea asp-for="DriverDto.Address"  class="form-control descriptionOf"></textarea>
+									<span asp-validation-for="DriverDto.Address" class="text-danger"></span>
+								</div>
+
+								<div class="mb-3">
+									<label class="form-label-title" asp-for="DriverDto.AboutOn">
+										About On Driver
+									</label>
+									<textarea asp-for="DriverDto.AboutOn"  class="form-control descriptionOf"></textarea>
+
+									<span asp-validation-for="DriverDto.AboutOn" class="text-danger"></span>
+								</div>
+								<br />
+								@*  Vehicle Details *@
+								<h5>Add Vehicle Details:</h5>
+								<div class="mb-3">
+									<label class="form-label-title" asp-for="VehicleDto.DefaultImage">
+										Upload Car Image here
+									</label>
+									<div class="dropzone" id="singleFileUpload" data-ouput-json="VehicleDefaultImagejson" data-upload-url="@Url.Action("SaveVehicleImage", "DriverVehicle")">
+										<div class="dz-message needsclick">
+											<i class="icon-cloud-up"></i>
+											<h6>Drop files here or click to upload.</h6>
+											<span class="note needsclick">
+												(This is just a demo dropzone. Selected files
+												are <strong>not</strong> actually
+												uploaded.)
+											</span>
+										</div>
+									</div>
+									<input type="hidden" asp-for="VehicleDefaultImagejson" />
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.CarName">
+												Car Name
+											</label>
+											<input class="form-control" type="text" asp-for="VehicleDto.CarName" placeholder="Car Name" />
+											<span asp-validation-for="VehicleDto.CarName" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.Model">
+												Model Name
+											</label>
+											<input class="form-control" type="text" asp-for="VehicleDto.Model" placeholder="Model Name" />
+											<span asp-validation-for="VehicleDto.Model" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.Color">
+												Color
+											</label>
+											<input class="form-control" asp-for="VehicleDto.Color" type="text" placeholder="Color" />
+											<span asp-validation-for="VehicleDto.Color" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.VehicleNumber">Registration Number</label>
+											<input class="form-control" type="number" asp-for="VehicleDto.VehicleNumber" placeholder="Registration Number" />
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.InsurnceNumber">Insurance Number</label>
+											<input class="form-control" asp-for="VehicleDto.InsurnceNumber" type="number" placeholder="Insurance  Number" />
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.InsurenceValidUntil">Insurance Valid Until</label>
+											<input class="form-control" asp-for="VehicleDto.InsurenceValidUntil" type="text" placeholder="Insurance Valid Until" />
+										</div>
+									</div>
+								</div>
+
+
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.AverageMileage">Average Mileage</label>
+											<input class="form-control" type="number" asp-for="VehicleDto.AverageMileage" placeholder="Average Mileage" />
+											<span asp-validation-for="VehicleDto.AverageMileage" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.Fare">
+												Fare/km
+											</label>
+											<div class="input-group mb-3">
+												<span class="input-group-text">$ </span>
+												<input class="form-control" asp-for="VehicleDto.Fare" placeholder="20" type="text"
+													   aria-label="Amount (to the nearest dollar)" />
+												<span asp-validation-for="VehicleDto.Fare" class="text-danger"></span>
+											</div>
+
+										</div>
+										<div class="col-12 col-md-4">
+											<label class="form-label-title" asp-for="VehicleDto.Fecility">Facility</label>
+											<input class="form-control" type="text" asp-for="VehicleDto.Fecility" data-role="tagsinput" />
+											<span asp-validation-for="VehicleDto.Fecility" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-6">
+											<label class="form-label-title" asp-for="VehicleDto.PollucationCertificationNumber">Pollution Certificate Number</label>
+											<input class="form-control" asp-for="VehicleDto.PollucationCertificationNumber" type="text" placeholder="Pollution Certificate Number" />
+										</div>
+										<div class="col-12 col-md-6">
+											<label for="car-type" class="form-label-title" asp-for="VehicleDto.VehicleTypeId">Car Type</label>
+											<select id="car-type" asp-for="VehicleDto.VehicleTypeId" class="js-example-basic-single col-sm-12">
+												<option value="MI">Mini</option>
+												<option value="ME">Medium</option>
+												<option value="DU">Standard</option>
+												<option value="CY">Sadan</option>
+												<option value="TA">Luxury</option>
+												<option value="TA">Tempo Travel</option>
+												<option value="DE">Mini Bus</option>
+											</select>
+										</div>
+
+									</div>
+								</div>
+								<div class="mt-3">
+									<label class="form-label-title" asp-for="VehicleDto.AboutOnVehicle">
+										About On Vehicle
+									</label>
+									<textarea asp-for="VehicleDto.AboutOnVehicle" class="form-control descriptionOf"></textarea>
+									<span asp-validation-for="VehicleDto.AboutOnVehicle" class="text-danger"></span>
+								</div>
+
+							</form>
+						</div>
+						<div class="card-footer text-end">
+							<button type="submit" class="btn btn-primary me-3">Submit</button>
+							<button class="btn btn-outline-primary">Cancel</button>
+						</div>
+					</div>
+					<!--driver detail end-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Container-fluid Ends-->
+@section Scripts {
+	<!--Searchable dropdown-->
+	@*    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script> *@
+	<!--Dropzon start-->
+	<script src="~/js/dropzone.js" type="text/javascript"></script>
+	<script src="~/js/dropzone-script.js" type="text/javascript"></script>
+
+}

@@ -11,10 +11,11 @@ namespace Booking.Domain.Interfaces
     {
         Task<IEnumerable<TourPackageCategoryEntity>> GetTourPackageCategory(CancellationToken token);
         Task<int> CreateCategoryAsync(TourPackageCategoryEntity entity, CancellationToken token);
-        Task<TourPackageCategoryEntity> GetCategoryAsync(int CategoryId, CancellationToken token);
+        Task<TourPackageCategoryEntity?> GetCategoryAsync(int CategoryId, CancellationToken token);
         Task<int> UpdateCategoryAsync(TourPackageCategoryEntity entity, CancellationToken token);
         Task<int> DeleteCategoryAsync(int CategoryId, CancellationToken token);
         Task<IEnumerable<TourPackageCategoryEntity>> ExportAllAsync(CancellationToken token);
+        Task<bool> IsExistsName(string categoryName, CancellationToken token);
         Task ImportPackageCategoriesAsync(IEnumerable<TourPackageCategoryEntity> entities, CancellationToken token);
     }
 }

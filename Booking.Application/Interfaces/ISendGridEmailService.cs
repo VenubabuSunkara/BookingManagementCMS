@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Booking.Application.Interfaces
+{
+    public interface ISendGridEmailService
+    {
+        public record EmailMessage(string To, string Subject, string? PlainText = null, string? HtmlContent = null);
+        Task SendEmailAsync(EmailMessage message);
+    }
+}

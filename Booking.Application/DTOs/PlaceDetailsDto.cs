@@ -19,7 +19,7 @@ namespace Booking.Application.DTOs
     }
     public class GooglePlaceDetailsResponse
     {
-        public GooglePlaceDetailsResult Result { get; set; }
+        public GooglePlaceDetailsResult Result { get; set; } = null!;
     }
 
     public class GooglePlaceDetailsResult
@@ -35,7 +35,7 @@ namespace Booking.Application.DTOs
 
     public class Geometry
     {
-        public Location Location { get; set; }
+        public Location Location { get; set; }= null!;
     }
 
     public class Location

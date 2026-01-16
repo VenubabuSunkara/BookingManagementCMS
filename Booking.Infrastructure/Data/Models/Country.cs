@@ -27,11 +27,13 @@ public partial class Country
 
     public bool LimitedToStores { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
+
+    public Guid ItemGuid { get; set; }
 }

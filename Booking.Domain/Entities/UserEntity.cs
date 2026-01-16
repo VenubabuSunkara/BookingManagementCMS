@@ -23,7 +23,11 @@ namespace Booking.Domain.Entities
         public List<string> Roles { get; set; } = [];
         public string ProfilePhoto { get; set; } = string.Empty;
 
+        public string CreatedBy { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
+
         public string FullName => $"{FirstName} {LastName}";
         public string RegistrationToken { get; set; } = string.Empty;
+        public List<string> ErrorMsaages { get; set; } = [];
     }
 }

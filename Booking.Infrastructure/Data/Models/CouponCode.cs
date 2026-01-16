@@ -7,27 +7,37 @@ public partial class CouponCode
 {
     public int Id { get; set; }
 
-    public string? Code { get; set; }
+    public string Code { get; set; } = null!;
 
-    public DateOnly? ValidityFrom { get; set; }
+    public string? Description { get; set; }
 
-    public DateOnly? ValidityTo { get; set; }
+    public string DiscountType { get; set; } = null!;
 
-    public decimal? PriceRangeMin { get; set; }
+    public decimal DiscountValue { get; set; }
 
-    public decimal? PriceRangeMax { get; set; }
+    public decimal MinimumAmount { get; set; }
 
-    public string? DiscountType { get; set; }
+    public decimal MaximumDiscount { get; set; }
 
-    public string? DiscountValue { get; set; }
+    public DateTime StartDate { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime EndDate { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public bool? IsActive { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public int? UsageLimit { get; set; }
 
-    public int? UpdatedBy { get; set; }
+    public int? UsageCount { get; set; }
 
-    public string? MediaUrl { get; set; }
+    public DateTime CreatedOn { get; set; }
+
+    public DateTime UpdatedOn { get; set; }
+
+    public string CreatedBy { get; set; } = null!;
+
+    public string UpdatedBy { get; set; } = null!;
+
+    public bool? IsDeleted { get; set; }
+
+    public Guid ItemGuid { get; set; }
 }

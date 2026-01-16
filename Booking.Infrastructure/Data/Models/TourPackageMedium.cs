@@ -13,21 +13,17 @@ public partial class TourPackageMedium
 
     public string MediaUrl { get; set; } = null!;
 
-    public string? MediaType { get; set; }
+    public string MediaType { get; set; } = null!;
 
-    public string? Caption { get; set; }
+    public string Caption { get; set; } = null!;
 
-    public int? SequenceOrder { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public string? CreatedBy { get; set; }
-
-    public string? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
-
-    public int? ItemOrder { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
     public string? ThumbnailUrl { get; set; }
 

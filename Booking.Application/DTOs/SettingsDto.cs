@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Booking.Application.DTOs
+﻿namespace Booking.Application.DTOs
 {
     public class SettingsDto
     {
-        public string Name { get; set; } = string.Empty;
-        public string Value { get; set; } = string.Empty;
+        public string Name { get; set; } = null!;
+        public string Value { get; set; } = null!;
         public DateTime? CreatedOn { get; set; }
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public DateTime? UpdatedOn { get; set; }
-        public int? CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }

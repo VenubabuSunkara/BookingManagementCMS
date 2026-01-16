@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Booking.Application.DTOs.Tour.TourPackageDto>
+@if (Model.Any())
+{
+    <div class="card">
+        <div class="card-header-title card-header">
+            <h5>Tours</h5>
+        </div>
+        <div class="card-body">
+            <div class="dashboard-tours ratio3_2">
+                <div class="w-100 dashboard-slider">
+                    @foreach (var package in Model)
+                    {
+                        <div class="category-box">
+                            <div class="ratio_40 img-category">
+                                <div class="img-category-box">
+                                    <img src="@package.BannerImage"
+                                         alt="@package.PackageName"
+                                         class="img-fluid bg-img" />
+                                </div>
+                                <div class="top-bar">
+                                    <span class="offer">offer</span>
+                                    <h5><del>@package.Price</del> @package.Price</h5>
+                                </div>
+                                <div class="like-cls">
+                                    <i class="fa fa-heart">
+                                        <span class="effect"></span>
+                                    </i>
+                                </div>
+                            </div>
+                            <div class="content-category">
+                                <div class="top">
+                                    <h3 title="@package.Category.CategoryName">@package.PackageName</h3>
+                                    <div class="rating">
+                                        @for (int i = 0; i < package.Rating; i++)
+                                        {
+                                            <i class="fa fa-star"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <p>@Html.Raw(package.ShortDescription)</p>
+                                <h6>@package.NoDays days | @package.NoNights nights <span> @package.NoPasangers person</span></h6>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-header-title card-header">
+            <h5>Tours</h5>
+        </div>
+        <div class="card-body">
+            <div class="dashboard-tours ratio3_2">
+                <div class="w-100 dashboard-slider">
+                    <p>No Data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

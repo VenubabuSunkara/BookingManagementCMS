@@ -13,7 +13,6 @@
     root['Chartist'] = factory();
   }
 }(this, function () {
-
 /* Chartist.js 0.11.0
  * Copyright © 2017 Gion Kunz
  * Free to use under either the WTFPL license or the MIT license.
@@ -483,7 +482,6 @@ var Chartist = {
           multiValue.y = value.hasOwnProperty('y') ? Chartist.getNumberOrUndefined(value.y) : multiValue.y;
 
           return multiValue;
-
         } else {
           // We can return simple data
           return Chartist.getNumberOrUndefined(value);
@@ -1081,7 +1079,6 @@ var Chartist = {
     if (!window.matchMedia) {
       throw 'window.matchMedia not found! Make sure you\'re using a polyfill.';
     } else if (responsiveOptions) {
-
       for (i = 0; i < responsiveOptions.length; i++) {
         var mql = window.matchMedia(responsiveOptions[i][0]);
         mql.addListener(updateCurrentOptions);
@@ -1098,7 +1095,6 @@ var Chartist = {
       }
     };
   };
-
 
   /**
    * Splits a list of coordinates and associated values into segments. Each returned segment contains a pathCoordinates
@@ -1147,7 +1143,6 @@ var Chartist = {
           // X is not increasing, so we need to make sure we start a new segment
           hole = true;
         }
-
 
         // If it's a valid value we need to check if we're coming out of a hole and create a new empty segment
         if(hole) {
@@ -1211,7 +1206,6 @@ var Chartist = {
         var currData = valueData[i / 2];
 
         if(Chartist.getMultiValue(currData.value) !== undefined) {
-
           if(hole) {
             path.move(currX, currY, false, currData);
           } else {
@@ -1271,7 +1265,6 @@ var Chartist = {
         var currData = valueData[i / 2];
 
         if(currData.value !== undefined) {
-
           if(prevData === undefined) {
             path.move(currX, currY, false, currData);
           } else {
@@ -1603,7 +1596,6 @@ var Chartist = {
       return path;
     };
   };
-
 }(window, document, Chartist));
 ;/**
  * A very basic event module that helps to generate and catch events.
@@ -1681,7 +1673,6 @@ var Chartist = {
       emit: emit
     };
   };
-
 }(window, document, Chartist));
 ;/**
  * This module provides some basic prototype inheritance utilities.
@@ -1792,7 +1783,6 @@ var Chartist = {
     extend: extend,
     cloneDefinitions: cloneDefinitions
   };
-
 }(window, document, Chartist));
 ;/**
  * Base for all chart types. The methods in Chartist.Base are inherited to all chart types.
@@ -1985,7 +1975,6 @@ var Chartist = {
     version: Chartist.version,
     supportsForeignObject: false
   });
-
 }(window, document, Chartist));
 ;/**
  * Chartist SVG module for simple SVG DOM abstraction
@@ -2369,7 +2358,6 @@ var Chartist = {
     }
 
     Object.keys(animations).forEach(function createAnimateForAttributes(attribute) {
-
       function createAnimate(animationDefinition, guided) {
         var attributeProperties = {},
           animate,
@@ -2468,7 +2456,6 @@ var Chartist = {
       } else {
         createAnimate.bind(this)(animations[attribute], guided);
       }
-
     }.bind(this));
 
     return this;
@@ -3084,7 +3071,6 @@ var Chartist = {
   });
 
   Chartist.Axis.units = axisUnits;
-
 }(window, document, Chartist));
 ;/**
  * The auto scale axis uses standard linear scale projection of values along an axis. It uses order of magnitude to find a scale automatically and evaluates the available space in order to find the perfect amount of ticks for your chart.
@@ -3135,7 +3121,6 @@ var Chartist = {
     constructor: AutoScaleAxis,
     projectValue: projectValue
   });
-
 }(window, document, Chartist));
 ;/**
  * The fixed scale axis uses standard linear projection of values along an axis. It makes use of a divisor option to divide the range provided from the minimum and maximum value or the options high and low that will override the computed minimum and maximum.
@@ -3191,7 +3176,6 @@ var Chartist = {
     constructor: FixedScaleAxis,
     projectValue: projectValue
   });
-
 }(window, document, Chartist));
 ;/**
  * The step axis for step based charts like bar chart or step based line charts. It uses a fixed amount of ticks that will be equally distributed across the whole axis length. The projection is done using the index of the data value rather than the value itself and therefore it's only useful for distribution purpose.
@@ -3231,7 +3215,6 @@ var Chartist = {
     constructor: StepAxis,
     projectValue: projectValue
   });
-
 }(window, document, Chartist));
 ;/**
  * The Chartist line chart can be used to draw Line or Scatter charts. If used in the browser you can access the global `Chartist` namespace where you find the `Line` function as a main entry point.
@@ -3436,7 +3419,6 @@ var Chartist = {
       // Points are drawn from the pathElements returned by the interpolation function
       // Small offset for Firefox to render squares correctly
       if (seriesOptions.showPoint) {
-
         path.pathElements.forEach(function(pathElement) {
           var point = seriesElement.elem('line', {
             x1: pathElement.x,
@@ -3515,7 +3497,6 @@ var Chartist = {
             .line(firstElement.x, firstElement.y)
             .position(solidPathSegments.pathElements.length + 1)
             .line(lastElement.x, areaBaseProjected);
-
         }).forEach(function createArea(areaPath) {
           // For each of our newly created area paths, we'll now create path elements by stringifying our path objects
           // and adding the created DOM elements to the correct series group
@@ -3646,7 +3627,6 @@ var Chartist = {
     constructor: Line,
     createChart: createChart
   });
-
 }(window, document, Chartist));
 ;/**
  * The bar chart module of Chartist that can be used to draw unipolar or bipolar bar and grouped bar charts.
@@ -3788,7 +3768,6 @@ var Chartist = {
     var labelGroup = this.svg.elem('g').addClass(options.classNames.labelGroup);
 
     if(options.stackBars && data.normalized.series.length !== 0) {
-
       // If stacked bars we need to calculate the high low from stacked values from each series
       var serialSums = Chartist.serialMap(data.normalized.series, function serialSums() {
         return Array.prototype.slice.call(arguments).map(function(value) {
@@ -3802,9 +3781,7 @@ var Chartist = {
       });
 
       highLow = Chartist.getHighLow([serialSums], options, options.horizontalBars ? 'x' : 'y');
-
     } else {
-
       highLow = Chartist.getHighLow(data.normalized.series, options, options.horizontalBars ? 'x' : 'y');
     }
 
@@ -4089,7 +4066,6 @@ var Chartist = {
     constructor: Bar,
     createChart: createChart
   });
-
 }(window, document, Chartist));
 ;/**
  * The pie chart module of Chartist that can be used to draw pie, donut or gauge charts
@@ -4480,9 +4456,7 @@ var Chartist = {
     createChart: createChart,
     determineAnchorPosition: determineAnchorPosition
   });
-
 }(window, document, Chartist));
 
 return Chartist;
-
 }));

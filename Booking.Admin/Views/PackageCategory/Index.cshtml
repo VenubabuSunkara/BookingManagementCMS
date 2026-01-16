@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["Title"] = "Packages Categories";
+}
+@section Styles {
+    @await Html.PartialAsync("_DataTableStyles")
+}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>Package Categories</h5>
+                    </div>
+                    <!-- Add this hidden file input and form -->
+                    <form id="importForm" method="post" enctype="multipart/form-data" asp-controller="PackageCategory" asp-action="ImportCategory">
+                        @Html.AntiForgeryToken()
+                        <input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv" style="display: none;" />
+                    </form>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="PackageCategory" asp-action="AddCategory" class="btn btn-theme">
+                            <i data-feather="file-plus"></i>Add New Category
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-theme" onclick="document.getElementById('fileInput').click()">
+                            <i data-feather="file-plus"></i>Import
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblpackagecategories">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Category Name</th>
+                                        <th>No. Of Tours</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div id="packages-pagination" class="pagination-controls"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    @await Html.PartialAsync("_DataTableScripts")
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                // Option 1: Auto submit form when file is selected
+                document.getElementById('importForm').submit();
+
+                // OR Option 2: Use AJAX to upload
+                var formData = new FormData();
+                formData.append('file', e.target.files[0]);
+
+                fetch('@Url.Action("ImportCategory", "PackageCategory")', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Import successful!');
+                        packageCatListVM.refresh();
+                    } else {
+                        alert('Import failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during import');
+                });
+            }
+        });
+    </script>
+
+    <script type="text/javascript">
+         const token = $('input[name="__RequestVerificationToken"]').val();
+         var deleteId=0;
+         //Delere promotion post event handeler
+         function DeleteConfirm(){
+             if (deleteId) {
+                 $.ajax({
+                    type: "POST",
+                    url: "/PackageCategory/DeletePackageCategory",
+                    data: { CategoryId:deleteId },
+                     headers: {
+                                'RequestVerificationToken': token
+                            },
+                    dataType: "json",
+                    success: function(result) {
+                          $('#deleteConfirmModal').modal('hide');
+                    packageCatListVM.refresh();
+                    },
+                    error: function(req, status, error) {
+                    console.error(error);
+                    }
+                });
+             }
+        };
+        function deletePackageCategory(categoryId){
+             deleteId=categoryId;
+             $("#deleteParam").val(deleteId);
+             $('#deleteConfirmModal').modal('show');
+        }
+        var  packageCatListVM = {
+                packagecatdt: null,
+                init: function () {
+                     this.packagecatdt = $('#tblpackagecategories').DataTable({
+                     processing: false,
+                     serverSide: false,
+                     stateSave: true,
+                     pageLength: 10,
+                     lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                     layout: {
+                      topStart: {
+                        buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/PackageCategory/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                    },
+
+                     ajax: {
+                            url: '/PackageCategory/GetAllPackageCategories',
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            data: function (d) {
+                                return JSON.stringify(d); // Send as JSON string
+                            },
+                            headers: {
+                                'RequestVerificationToken': token
+                            },
+                            error: function (xhr, error, thrown) {
+                                console.error("DataTable error: ", xhr.responseText);
+                            }
+                        },
+                     columns: [
+                            { data: 'id' ,autoWidth: true, align:'center' },
+                            { data: 'categoryName', autoWidth: true,align:'center' },
+                            { data: 'noOfPackages', autoWidth: true,align:'center',
+                                render: function (data, type, full, meta) {
+                                    return `<a href="/PackageCategory/TourPackages/${full.id}">${data}</i></a>`
+                                }
+                            },
+                            {
+                                data: 'id', align:'center',autoWidth: true,
+                                render: function (data, type, row) {
+                                    return ` <form method="post" action="/PackageCategory/EditPackageCategory" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="CategoryId" value="${data}" />
+                                                <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
+                                                </button>
+                                            </form> `
+                                }
+                            },
+                               {
+                                data: 'id', align:'center',autoWidth: true,
+                                render: function (data, type, row) {
+                                    return `<a href="javascript:void(0)" onclick="deletePackageCategory(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+                                }
+                            }
+                        ],
+                          language: {
+                                emptyTable: "No entries to show"
+                            }
+                    });
+                },
+                refresh: function () {
+                    if (this.packagedtcat) {
+                        this.packagedtcat.ajax.reload();
+                    }
+                }
+            };
+            $(document).ready(function () {
+                packageCatListVM.init();
+        });
+    </script>
+}

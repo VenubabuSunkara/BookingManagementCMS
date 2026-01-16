@@ -1,0 +1,257 @@
+﻿@{
+	ViewData["Title"] = "Tour Packages";
+}
+@section Styles {
+	@await Html.PartialAsync("_DataTableStyles")
+}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="card">
+				<div class="card-header card-header--2">
+					<div>
+						<h5>Tour Packages </h5>
+					</div>
+					<form id="importForm" method="post" enctype="multipart/form-data" asp-controller="Packages" asp-action="Import">
+						@Html.AntiForgeryToken()
+						<input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv" style="display: none;" />
+					</form>
+					<div class="d-flex gap-2">
+						<a asp-controller="Packages" asp-action="AddPackage" class="btn btn-theme">
+							<i data-feather="plus-square"></i>Add New Package
+						</a>
+						<a asp-controller="Packages" asp-action="DownloadTemplate" class="btn btn-theme">
+							<i data-feather="plus-square"></i>Download Template
+						</a>
+						<button class="btn btn-theme" onclick="document.getElementById('fileInput').click()">
+							<i data-feather="file-plus"></i>Import
+						</button>
+					</div>
+				</div>
+
+				<div class="card-body">
+					<div>
+						<div class="table-desi">
+							@Html.AntiForgeryToken()
+							<table class="all-cars-table table table-striped w-100" id="tblpackages">
+								<thead>
+									<tr>
+										<th>S.No</th>
+										<th>Banner Image</th>
+										<th>Name</th>
+										<th>Short Description</th>
+										<th>Duration Days</th>
+										<th>Destination</th>
+										<th>Price</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+							</table>
+							<div id="packages-pagination" class="pagination-controls"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+	@await Html.PartialAsync("_DataTableScripts")
+	<script>
+		const token = $('input[name="__RequestVerificationToken"]').val();
+		document.getElementById('fileInput').addEventListener('change', function (e) {
+			if (e.target.files.length > 0) {
+				// Option 1: Auto submit form when file is selected
+				document.getElementById('importForm').submit();
+
+				// OR Option 2: Use AJAX to upload
+				var formData = new FormData();
+				formData.append('file', e.target.files[0]);
+
+				fetch('@Url.Action("ImportCategory", "PackageCategory")', {
+					method: 'POST',
+					body: formData
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						alert('Import successful!');
+						packageCatListVM.refresh();
+					} else {
+						alert('Import failed: ' + data.message);
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('An error occurred during import');
+				});
+			}
+		});
+	</script>
+
+	<script type="text/javascript">
+		 function editpackagecategory(categoryId){
+				  $.ajax({
+						  type: "GET",
+						  url: "/Packages/EditPackageCategory",
+						  data: { CategoryId:categoryId },
+						  dataType: "json",
+						  success: function(result) {
+							 console.log(result);
+						  },
+						  error: function(req, status, error) {
+							 console.error(error);
+						  }
+					 });
+				 }
+		function deletePackage(packageid){
+			   deleteId=packageid;
+			  $("#deleteParam").val(deleteId);
+			  $('#deleteConfirmModal').modal('show');
+		 }
+		   function DeleteConfirm(){
+				 if (deleteId) {
+					$.ajax({
+						 type: "GET",
+						 url: "/Packages/DeletePackage",
+							data: { PackageId:deleteId },
+							  headers: {
+								'RequestVerificationToken': token
+							},
+						 dataType: "json",
+						 success: function(result) {
+							 $('#deleteConfirmModal').modal('hide');
+							 packageListVM.reload();
+						 },
+						 error: function(req, status, error) {
+							console.error(error);
+						 }
+					 });
+			}
+		}
+
+		 var  packageListVM = {
+				 packagedt: null,
+				 init: function () {
+					  const token = $('input[name="__RequestVerificationToken"]').val();
+					  this.packagedt = $('#tblpackages').DataTable({
+					  processing: true,
+					  serverSide: true,
+					  stateSave: true,
+					  pageLength: 10,
+					  lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+					  layout: {
+					   topStart: {
+						 buttons: [
+									{
+									  extend: 'collection',
+									  text: 'Export All',
+									  buttons: [
+										{
+										  extend: 'excel',
+										  text: 'Excel (Server)',
+										  action: function (e, dt, node, config) {
+											 setTimeout(function(){
+												$(node).removeClass('processing');
+											 },500)
+											window.location = '/Packages/ExportAll';
+										  }
+										},
+										'copy',
+										'csv',
+										'pdf',
+										'print'
+									  ]
+									}
+								  ]
+						  },
+						  bottomEnd: {
+							  paging: {
+								  type: 'simple'
+							  }
+						  }
+					  },
+
+					  ajax: {
+							 url: '/Packages/GetAllPackages',
+							 type: 'POST',
+							 contentType: 'application/json; charset=utf-8',
+							 dataType: 'json',
+							 data: function (d) {
+								 return JSON.stringify(d); // Send as JSON string
+							 },
+							 headers: {
+								 'RequestVerificationToken': token
+							 },
+							 error: function (xhr, error, thrown) {
+								 console.error("DataTable error: ", xhr.responseText);
+							 }
+						 },
+					  columns: [
+							 { data: 'id', autoWidth: true },
+							 {
+								 data: 'bannerImage',
+								 autoWidth: true,
+								 render: function (data, type, full, meta) {
+									 return `<img src="${data}" alt="${full.Id}" class="img-thumbnail" style="height:40px;" />`;
+								 }
+							 },
+							 { data: 'packageName', autoWidth: true },
+							 { data:'shortDescription', autoWidth:true },
+							 { data: 'durationDays', autoWidth: true },
+							 { data: 'destination', autoWidth: true },
+							 { data: 'price', autoWidth: true },
+							 {
+								 data: 'id',
+								 render: function (data, type, full, meta) {
+								 return `<form method="post" action="/Packages/Preview" style="display:inline;">
+												 @Html.AntiForgeryToken()
+												 <input type="hidden" name="PackageId" value="${data}" />
+												 <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+													 <i class="fa fa-eye" aria-hidden="true" style="color: #4aa4d9"></i>
+												 </button>
+											 </form>
+										  | <form method="post" action="/Packages/AddPackageLocation" style="display:inline;">
+												 @Html.AntiForgeryToken()
+												 <input type="hidden" name="PackageId" value="${data}" />
+												 <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+													 <i class="fa fa-map-marker" aria-hidden="true" style="color: #4aa4d9"></i>
+												 </button>
+											 </form>
+										  | <form method="post" action="/Packages/AddPackageGallary" style="display:inline;">
+												 @Html.AntiForgeryToken()
+												 <input type="hidden" name="PackageId" value="${data}" />
+												 <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+													 <i class="fa fa-picture-o" aria-hidden="true" style="color: #4aa4d9"></i>
+												 </button>
+											 </form>
+										  |  <form method="post" action="/Packages/EditPackage" style="display:inline;">
+												 @Html.AntiForgeryToken()
+												 <input type="hidden" name="PackageId" value="${data}" />
+												 <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+													 <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
+												 </button>
+											 </form>
+										  |  <a href="javascript:void(0)" onclick="deletePackage(${data})"><i class="fa fa-trash-o"aria-hidden="true"></i></a>`
+								 }
+							 }
+						 ],
+						   language: {
+								 emptyTable: "No entries to show"
+							 }
+					 });
+				 },
+				 refresh: function () {
+					 if (this.packagedt) {
+						 this.packagedt.ajax.reload();
+					 }
+				 }
+			 };
+			 $(document).ready(function () {
+				 packageListVM.init();
+		 });
+	</script>
+}

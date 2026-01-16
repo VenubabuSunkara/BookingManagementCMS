@@ -12,10 +12,10 @@ namespace Booking.Domain.Entities
         public string? OtherInfromation { get; set; }
         public string? VehicleNumber { get; set; }
         public string? AboutOnVehicle { get; set; }
-        public int? CreatedBy { get; set; }
-        public int? UpdatedBy { get; set; }
-        public DateTime? CreatedOn { get; set; }
-        public DateTime? UpdatedOn { get; set; }
+        public string CreatedBy { get; set; } = null!;
+        public string UpdatedBy { get; set; } = null!;
+        public DateTime CreatedOn { get; set; }
+        public DateTime UpdatedOn { get; set; }
         public string? Color { get; set; }
         public string? Make { get; set; }
         public string? ModelName { get; set; }

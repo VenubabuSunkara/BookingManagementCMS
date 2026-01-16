@@ -1,30 +1,24 @@
-﻿using Booking.Application.Interfaces;
-using Microsoft.Extensions.Configuration;
+﻿using Booking.Application.DTOs;
+using Booking.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Application.Services
 {
-    public class SendGridEmailService(ISendGridClient client, IConfiguration config, ILogger<SendGridEmailService> logger) : IEmailService
+    public class SendGridEmailService(ISendGridClient client, IOptions<SendGridSettings> options, ILogger<SendGridEmailService> logger) : ISendGridEmailService
     {
         private readonly ISendGridClient _client = client;
-        private readonly string _fromEmail = config["SendGrid:FromEmail"]!;
-        private readonly string _fromName = config["SendGrid:FromName"]!;
+        private readonly SendGridSettings _settings = options.Value;
         private readonly ILogger<SendGridEmailService> _logger = logger;
-
-        public async Task SendEmailAsync(IEmailService.EmailMessage msg)
+        public async Task SendEmailAsync(ISendGridEmailService.EmailMessage message)
         {
             try
             {
-                var from = new EmailAddress(_fromEmail, _fromName);
-                var to = new EmailAddress(msg.To);
-                var email = MailHelper.CreateSingleEmail(from, to, msg.Subject, msg.PlainText, msg.HtmlContent);
+                var From = new EmailAddress(_settings.SenderEmail, _settings.SenderName);
+                var To = new EmailAddress(message.To);
+                var email = MailHelper.CreateSingleEmail(From, To, message.Subject, message.PlainText, message.HtmlContent);
                 await _client.SendEmailAsync(email);
             }
             catch (Exception ex)

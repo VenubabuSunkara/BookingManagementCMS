@@ -1,0 +1,157 @@
+﻿@using System.Text.Json
+@model Booking.Application.DTOs.BookingOrderTableDto
+@{
+    ViewData["Title"] = "Driver Vehicle Bookings";
+    var data = Model.BookingOrders;
+}
+<link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+<style>
+
+    table.dataTable {
+        table-layout: fixed;
+        word-wrap: break-word;
+        width: 100% !important;
+    }
+
+    .all-cars-table th, .all-cars-table td {
+        white-space: normal !important;
+        vertical-align: middle;
+    }
+
+    /* Align DataTable controls */
+    div.dataTables_wrapper div.dataTables_length {
+        float: left;
+        padding-left: 15px;
+    }
+
+    div.dataTables_wrapper div.dataTables_filter {
+        float: right;
+        padding-right: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        margin-left: 0px;
+        border: none !important;
+    }
+
+    table.dataTable thead th, table.dataTable tfoot th {
+        font-weight: bold;
+        font-size: 12px;
+    }
+
+    table.dataTable tbody td {
+        font-size: 12px;
+    }
+</style>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>Driver Vehicle Bookings</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblbookings">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Booking Number</th>
+                                        <th>Booking Date</th>
+                                        <th>Pickup Location</th>
+                                        <th>Drop Location</th>
+                                        <th>Trip Type</th>
+                                        <th>Actual Fare</th>
+                                        <th>Estimated Fare</th>
+                                        <th>Pickup Time</th>
+                                        <th>Drop Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var obj in Model.BookingOrders)
+                                    {
+                                        <tr>
+                                            <td>@obj.BookingOrderId</td>
+                                            <td>@obj.BookingNumber</td>
+                                            <td>@obj.BookingDate</td>
+                                            <td>@obj.PickupLocation</td>
+                                            <td>@obj.DropLocation</td>
+                                            <td>@obj.TripType</td>
+                                            <td>@obj.ActualFare</td>
+                                            <td>@obj.EstimatedFare</td>
+                                            <td>@obj.ScheduledPickupTime</td>
+                                            <td>@obj.ScheduledDropTime</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="pagination-box">
+                                <nav aria-label="Table navigation">
+                                    <ul id="customPaginate" class="pagination pagination-primary justify-content-center"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript">
+        var  driverListVM = {
+                Driverdt: null,
+                init: function () {
+                     this.Driverdt = $('#tblbookings').DataTable({
+                     processing: true,
+                     info: false,
+                     stateSave: true,
+                     layout: {
+                     topStart: {
+                       buttons: [
+                                  {
+                                    extend: 'collection',
+                                    text: 'Export All',
+                                    buttons: [
+                                      'excel',
+                                      'copy',
+                                      'csv',
+                                      'pdf',
+                                      'print'
+                                    ]
+                                  }
+                                ]
+                        },
+                        bottomEnd: {
+                            paging: {
+                                type: 'simple'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        $(document).ready(function () {
+                driverListVM.init();
+        });
+    </script>
+}

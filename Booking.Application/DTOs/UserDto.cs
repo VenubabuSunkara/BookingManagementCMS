@@ -18,11 +18,13 @@ namespace Booking.Application.DTOs
         public bool? IsActive { get; set; }
         public string? Address { get; set; }
         public string Password { get; set; } = string.Empty;
-
+        public string CreatedBy { get; set; } = null!;
+        public string UpdatedBy { get; set; } = null!;
         public string RoleId { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = [];
         public string ProfilePhoto { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
         public string RegistrationToken { get; set; } = string.Empty;
+        public List<string> ErrorMessges { get; set; } = [];
     }
 }

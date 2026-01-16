@@ -11,15 +11,15 @@ public partial class TourGuideAssignment
 
     public int PackageId { get; set; }
 
-    public DateOnly? AssignmentDate { get; set; }
+    public DateOnly AssignmentDate { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public Guid ItemGuid { get; set; }
 

@@ -1,0 +1,331 @@
+﻿@{
+    ViewData["Title"] = "Settings List";
+}
+@section Styles {
+    <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.4/css/buttons.dataTables.css">
+    <style>
+        #paging_simple {
+            display: none;
+        }
+    </style>
+}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header card-header--2">
+                    <div>
+                        <h5>Settings</h5>
+                    </div>
+                    <form id="Import" method="post" enctype="multipart/form-data" asp-controller="Settings" asp-action="ImportCategory">
+                        @Html.AntiForgeryToken()
+                        <input type="file" id="fileInput" name="file" accept=".xlsx,.xls,.csv" style="display: none;" />
+                    </form>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Settings" asp-action="Create" class="btn btn-theme">
+                            <i data-feather="plus-square"></i>Add New
+                        </a>
+                        <a href="javascript:void(0)" class="btn btn-theme" onclick="document.getElementById('fileInput').click()">
+                            <i data-feather="file-plus"></i>Import
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div>
+                        <div class="table-desi">
+                            @Html.AntiForgeryToken()
+                            <table class="all-cars-table table table-striped w-100" id="tblsettings">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Value</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                            <div class="pagination-box">
+                                <nav aria-label="Table navigation">
+                                    <ul id="customPaginate" class="pagination pagination-primary justify-content-center"></ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid ends-->
+<!-- Container-fluid Ends-->
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DataTables Buttons extension -->
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <!-- pdfmake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.4/js/buttons.print.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                // Option 1: Auto submit form when file is selected
+                document.getElementById('importForm').submit();
+
+                // OR Option 2: Use AJAX to upload
+                var formData = new FormData();
+                formData.append('file', e.target.files[0]);
+
+                fetch('@Url.Action("ImportCategory", "Settings")', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Import successful!');
+                        packageCatListVM.refresh();
+                    } else {
+                        alert('Import failed: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during import');
+                });
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        const token = $('input[name="__RequestVerificationToken"]').val();
+        var deleteId = null;
+         function rejectsetting(settingid){
+             deleteId=settingid;
+             $("#hdnParam").val(deleteId);
+             $('#deleteConfirmModal').modal('show');
+         }
+         function DeleteConfirm(){
+             if (deleteId) {
+                $.ajax({
+                     type: "POST",
+                     url: "/Settings/DeleteConfirmed",
+                     data: { Id:deleteId },
+                     dataType: "json",
+                     headers: {
+                       'RequestVerificationToken': token
+                     },
+                     success: function(result) {
+                        settingsListVM.refresh();
+                     },
+                     error: function(req, status, error) {
+                     console.error(error);
+                     }
+                 });
+              }
+         }
+         var  settingsListVM = {
+                 settingsdt: null,
+                 init: function () {
+                      const token = $('input[name="__RequestVerificationToken"]').val();
+                      this.settingsdt = $('#tblsettings').DataTable({
+                      processing: true,
+                      serverSide: true,
+                      info: false,
+                      stateSave: true,
+                      paging: true,
+                      pagingType: 'custom',
+                      pageLength: 10,
+                      lengthMenu: [10, 25, 50, { label: 'All', value: -1 }],
+                      layout: {
+                      topStart: {
+                        buttons: [
+                                   {
+                                     extend: 'collection',
+                                     text: 'Export All',
+                                     buttons: [
+                                       {
+                                         extend: 'excel',
+                                         text: 'Excel (Server)',
+                                         action: function (e, dt, node, config) {
+                                            setTimeout(function(){
+                                               $(node).removeClass('processing');
+                                            },500)
+                                           window.location = '/Settings/ExportAll';
+                                         }
+                                       },
+                                       'copy',
+                                       'csv',
+                                       'pdf',
+                                       'print'
+                                     ]
+                                   }
+                                 ]
+                         },
+                         bottomEnd: {
+                             paging: {
+                                 type: 'simple'
+                             }
+                         }
+                     },
+
+                      ajax: {
+                             url: '/Settings/LoadData',
+                             type: 'POST',
+                             contentType: 'application/json; charset=utf-8',
+                             dataType: 'json',
+                             data: function (d) {
+                                 return JSON.stringify(d); // Send as JSON string
+                             },
+                             headers: {
+                                 'RequestVerificationToken': token
+                             },
+                             error: function (xhr, error, thrown) {
+                                 console.error("DataTable error: ", xhr.responseText);
+                             }
+                         },
+                      columns: [
+                             {data:'id'},
+                             { data: 'name', autoWidth: true },
+                             { data: 'value', autoWidth: true },
+                             { data: 'updatedOn', autoWidth: true,
+                                 render: function (data, type, row) {
+                                    return moment(data).format('YYYY-MM-DD'); // Formats the date
+                                 }
+                             },
+                             {
+                                 data: 'id',
+                                 render: function (data, type, full, meta) {
+                                      return `
+                                            <form method="post" action="/Settings/Edit" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="${data}" />
+                                                <button type="submit" class="btn btn-link p-0" title="Edit" style="border: none; background: none;">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true" style="color: #4aa4d9"></i>
+                                                </button>
+                                            </form>
+                                          <a href="javascript:void(0)" title="Delete Setting" onclick="rejectSetting(${data})"><i class="fa fa-trash-o"></i></a>`;
+
+                                 }
+                             }
+                         ],
+                           language: {
+                                 emptyTable: "No entries to show"
+                             },
+                             drawCallback: () => this.renderPagination()
+                     });
+                 },
+                 renderPagination: function() {
+                          const info = this.settingsdt.page.info();
+                          const total = info.pages;
+                          const current = info.page + 1;
+
+                          const $ul = $('#customPaginate').empty();
+
+                          // Previous button
+                          $ul.append(
+                            `<li class="page-item ${current === 1 ? 'disabled' : ''}">
+                               <button class="page-link" >Previous</button>
+                             </li>`
+                          );
+
+                          // Page numbers
+                          for (let i = 1; i <= total; i++) {
+                            $ul.append(
+                              `<li class="page-item ${i === current ? 'active' : ''}">
+                                 <button  class="page-link" >${i}${i===current ? ' <span class="sr-only">(current)</span>' : ''}</button >
+                               </li>`
+                            );
+                          }
+
+                          // Next button
+                          $ul.append(
+                            `<li class="page-item ${current === total ? 'disabled' : ''}">
+                               <button  class="page-link" >Next</button>
+                             </li>`
+                          );
+
+                          // Click behaviors
+                          $ul.find('li.page-item').each((idx, li) => {
+                            const $li = $(li);
+                            const $a = $li.find('button');
+
+                            if ($li.hasClass('disabled') || $li.hasClass('active')) return;
+
+                            $a.on('click', (e) => {
+                              e.preventDefault();
+                              if (idx === 0) this.settingsdt.page('previous').draw(false);
+                              else if (idx === total + 1) this.settingsdt.page('next').draw(false);
+                              else this.settingsdt.page(idx - 1).draw(false);
+                            });
+                          });
+                        },
+                 refresh: function () {
+                     if (this.settingsdt) {
+                         this.settingsdt.ajax.reload();
+                     }
+                 },
+                 draw:function(){
+                     if (this.settingsdt) {
+                        this.settingsdt.on('draw', renderPagination(this.settingsdt));
+                     }
+                 }
+
+             };
+             $(document).ready(function () {
+                 settingsListVM.init();
+         });
+
+
+        function renderPagination(table) {
+           var info = table.page.info();
+           var totalPages = info.pages;
+           var currentPage = info.page + 1;
+
+           var $pag = $('#customPaginate').empty();
+
+           // Previous button
+           $pag.append(
+             `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === 1 ? '-1' : '0'}">Previous</a>
+             </li>`
+           );
+
+           // Page number buttons
+           for (var i = 1; i <= totalPages; i++) {
+             $pag.append(
+               `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                 <a class="page-link" href="javascript:void(0)">${i}${i === currentPage ? ' <span class="sr-only">(current)</span>' : ''}</a>
+               </li>`
+             );
+           }
+
+           // Next button
+           $pag.append(
+             `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+               <a class="page-link" href="javascript:void(0)" tabindex="${currentPage === totalPages ? '-1' : '0'}">Next</a>
+             </li>`
+           );
+
+           // Bind click events
+           $pag.find('li.page-item').each(function(index, item) {
+             if ($(item).hasClass('disabled') || $(item).hasClass('active')) return;
+             $(item).find('a').on('click', function() {
+                $pag.find('li.page-item').removeClass('active');
+                $(item).parent().addClass('active');
+               if (index === 0) table.page('previous').draw(false);              // Previous
+               else if (index === totalPages + 1) table.page('next').draw(false); // Next
+               else table.page(index - 1).draw(false);                           // Specific page
+             });
+           });
+         }
+
+    </script>
+}

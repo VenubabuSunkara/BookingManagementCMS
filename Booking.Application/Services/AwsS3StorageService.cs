@@ -14,7 +14,7 @@ namespace Booking.Application.Services
     public class AwsS3StorageService(IAmazonS3 s3Client, IConfiguration config) : ICloudStorageService
     {
         private readonly IAmazonS3 _s3Client = s3Client;
-        private readonly string _bucket = config["AWS:BucketName"];
+        private readonly string _bucket = config["AWS:BucketName"] ?? throw new ArgumentNullException("AWS:Bucket");
 
         public async Task DeleteAsync(string containerName, string objectName)
         {

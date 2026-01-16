@@ -7,21 +7,21 @@ public partial class VehicleMediaMapping
 {
     public int VehicleMediaMappingId { get; set; }
 
-    public int? MediaId { get; set; }
+    public int MediaId { get; set; }
 
-    public int? VehicleId { get; set; }
+    public int VehicleId { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public Guid? ItemGuid { get; set; }
+    public Guid ItemGuid { get; set; }
 
-    public virtual Medium? Media { get; set; }
+    public virtual Medium Media { get; set; } = null!;
 
-    public virtual Vehicle? Vehicle { get; set; }
+    public virtual Vehicle Vehicle { get; set; } = null!;
 }

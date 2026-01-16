@@ -1,0 +1,71 @@
+﻿@model Booking.Web.Models.PageConfigViewModel
+@{
+    if (Model?.Id is null or 0)
+    {
+        ViewData["Title"] = "Add Page Configuration";
+    }
+    else
+    {
+        ViewData["Title"] = "Update Page Configuration";
+    }
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form asp-action="SaveConfiguration" asp-controller="PageConfiguration" method="post" enctype="multipart/form-data">
+                        <div class="card">
+                            <div class="card-header">
+                                @if (Model is null)
+                                {
+                                    <h5>Add Page Configuration</h5>
+                                }
+                                else
+                                {
+                                    <h5>Update Page Configuration</h5>
+                                }
+                            </div>
+                            <div class="card-body">
+                                @Html.AntiForgeryToken()
+                                <div class="theme-form mega-form">
+                                    <input type="hidden" asp-for="Id" />
+                                    <div class="mb-3">
+                                        <div class="row mb-3">
+                                            <div class="col-12 col-md-6">
+                                                <label asp-for="Placeholder" class="form-label-title">Category Name</label>
+                                                @Html.DropDownListFor(m => m.PageName, Model.PageNames, "-- Select Role --", new { @class = "form-control" })
+                                                <span asp-validation-for="Placeholder" id="templatename-Error" class="text-danger"></span>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <label asp-for="Placeholder" class="form-label-title">Place Holders</label>
+                                                <input class="form-control" type="text" placeholder="Category name" asp-for="Placeholder" />
+                                                <span asp-validation-for="Placeholder" id="templatename-Error" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label asp-for="PageContentData" class="form-label-title">Description</label>
+                                        <textarea asp-for="PageContentData" class="form-control descriptionOf" placeholder="Category Description"></textarea>
+                                        <span asp-validation-for="PageContentData" id="templatename-Error" class="text-danger"></span>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label asp-for="IsActive" class="form-label-title">Is Active</label>
+                                        <input type="checkbox" asp-for="IsActive" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button class="btn btn-primary me-3" type="submit">Submit</button>
+                                <button class="btn btn-outline-primary" type="reset">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

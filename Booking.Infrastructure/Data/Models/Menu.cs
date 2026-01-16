@@ -11,19 +11,19 @@ public partial class Menu
 
     public string MenuName { get; set; } = null!;
 
-    public string? MenuUrl { get; set; }
+    public string MenuUrl { get; set; } = null!;
 
     public int DisplayOrder { get; set; }
 
-    public string? Icon { get; set; }
+    public string Icon { get; set; } = null!;
 
     public bool IsActive { get; set; }
 
     public DateTime CreatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
     public DateTime UpdatedOn { get; set; }
 

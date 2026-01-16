@@ -11,7 +11,7 @@ namespace Booking.Application.Interfaces
     public interface IAccountService
     {
         Task<UserDto?> Login(LoginEntity loginEntity);
-        Task<UserDto?> Register(UserEntity userEntity);
+        Task<UserDto?> Register(UserDto userDto);
         Task LogOut(string UserId);
         Task<bool> ConfirmEmailAsync(string userId, string regToken, CancellationToken cancellation);
         Task<bool> ResetPassword(ForgotPasswordDto model, CancellationToken cancellation);

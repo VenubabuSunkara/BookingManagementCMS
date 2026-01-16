@@ -15,7 +15,12 @@ namespace Booking.Application.Services
             {
                 CategoryName = entity.CategoryName,
                 Description = entity.Description,
-                NoOfPackages = entity.NoOfPackages,
+                IsActive = entity.IsActive,
+                CreatedBy = entity.CreatedBy ?? string.Empty,
+                CreatedOn = entity.CreatedOn ?? DateTime.UtcNow,
+                UpdatedBy = entity.UpdatedBy ?? string.Empty,
+                UpdatedOn = entity.UpdatedOn ?? DateTime.UtcNow
+
             }, token);
         }
 
@@ -32,7 +37,8 @@ namespace Booking.Application.Services
                 NoOfPackages = x.NoOfPackages,
                 CategoryName = x.CategoryName,
                 Description = x.Description,
-                Id = x.Id
+                Id = x.Id,
+                IsActive = x.IsActive
             });
         }
 
@@ -44,6 +50,7 @@ namespace Booking.Application.Services
                 CategoryName = category.CategoryName,
                 Description = category.Description,
                 Id = category.Id,
+                IsActive = category.IsActive,
                 NoOfPackages = category.NoOfPackages,
             };
         }
@@ -56,6 +63,7 @@ namespace Booking.Application.Services
                 NoOfPackages = x.NoOfPackages,
                 CategoryName = x.CategoryName,
                 Description = x.Description,
+                IsActive = x.IsActive,
                 Id = x.Id
             });
         }
@@ -66,6 +74,11 @@ namespace Booking.Application.Services
             {
                 CategoryName = x.CategoryName,
                 Description = x.Description,
+                IsActive = x.IsActive,
+                CreatedBy = x.CreatedBy ?? string.Empty,
+                CreatedOn = x.CreatedOn ?? DateTime.UtcNow,
+                UpdatedBy = x.UpdatedBy ?? string.Empty,
+                UpdatedOn = x.UpdatedOn ?? DateTime.UtcNow
             })], token);
         }
 
@@ -75,8 +88,12 @@ namespace Booking.Application.Services
             {
                 CategoryName = entity.CategoryName,
                 Description = entity.Description,
-                Id = entity.Id,
-                NoOfPackages = entity.NoOfPackages,
+                IsActive = entity.IsActive,
+                Id = entity.Id ?? 0,
+                CreatedBy = entity.CreatedBy ?? string.Empty,
+                CreatedOn = entity.CreatedOn ?? DateTime.UtcNow,
+                UpdatedBy = entity.UpdatedBy ?? string.Empty,
+                UpdatedOn = entity.UpdatedOn ?? DateTime.UtcNow
             }, token);
         }
     }

@@ -13,31 +13,35 @@ public partial class Vehicle
 
     public string Color { get; set; } = null!;
 
-    public string Make { get; set; } = null!;
+    public string Model { get; set; } = null!;
 
-    public string ModelName { get; set; } = null!;
+    public decimal Fare { get; set; }
 
-    public string FuelType { get; set; } = null!;
+    public string CreatedBy { get; set; } = null!;
 
-    public decimal BasePrice { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public decimal TaxRate { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public string? OtherInformation { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string DefaultImage { get; set; } = null!;
 
-    public int? UpdatedBy { get; set; }
+    public Guid ItemGuid { get; set; }
 
-    public DateTime? CreatedOn { get; set; }
+    public string? CarName { get; set; }
 
-    public DateTime? UpdatedOn { get; set; }
+    public int? AverageMileage { get; set; }
 
-    public string? DefaultImage { get; set; }
+    public string? InsurnceNumber { get; set; }
 
-    public Guid? ItemGuid { get; set; }
+    public string? InsurenceValidUntil { get; set; }
 
-    public bool? IsActive { get; set; }
+    public string? PollucationCertificationNumber { get; set; }
+
+    public string? Fecility { get; set; }
+
+    public int? VehicleTypeId { get; set; }
 
     public virtual ICollection<BookingOrder> BookingOrders { get; set; } = new List<BookingOrder>();
 
@@ -50,6 +54,4 @@ public partial class Vehicle
     public virtual ICollection<VehicleFeatureMapping> VehicleFeatureMappings { get; set; } = new List<VehicleFeatureMapping>();
 
     public virtual ICollection<VehicleMediaMapping> VehicleMediaMappings { get; set; } = new List<VehicleMediaMapping>();
-
-    public virtual ICollection<VehicleRating> VehicleRatings { get; set; } = new List<VehicleRating>();
 }

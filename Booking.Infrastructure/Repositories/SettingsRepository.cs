@@ -8,31 +8,27 @@ namespace Booking.Infrastructure.Repositories
     public class SettingsRepository(BookingCmsContext context) : ISettingRepository
     {
         private readonly BookingCmsContext _context = context;
-        public async Task<int> CreateSetting(SettingEntity setting)
+        public async Task<int> CreateSetting(SettingEntity setting, CancellationToken token)
         {
-            _context.Configurations.Add(new Data.Models.Configuration()
-            {
-                KeyName = setting.Name,
-                KeyValue = setting.Value,
-                CreatedBy = setting.CreatedBy,
-                CreatedOn = setting.CreatedOn,
-                UpdatedBy = setting.UpdatedBy,
-                UpdatedOn = setting.UpdatedOn,
-            });
-            return await _context.SaveChangesAsync();
+            await _context.Configurations.AddAsync(
+                new Data.Models.Configuration()
+                {
+                    KeyName = setting.Name,
+                    KeyValue = setting.Value,
+                    CreatedBy = setting.CreatedBy,
+                    CreatedOn = setting.CreatedOn,
+                    UpdatedBy = setting.UpdatedBy,
+                    UpdatedOn = setting.UpdatedOn,
+                }, token);
+            return await _context.SaveChangesAsync(token);
         }
 
-        public async Task DeleteSetting(int Id)
+        public async Task DeleteSetting(int Id, CancellationToken token)
         {
-            var setting = await _context.Configurations.FindAsync(Id);
-            if (setting != null)
-            {
-                _context.Configurations.Remove(setting);
-                await _context.SaveChangesAsync();
-            }
+            await _context.Configurations.Where(x => x.Id.Equals(Id)).ExecuteDeleteAsync(token);
         }
 
-        public async Task<IEnumerable<SettingEntity>> GetAllSettings()
+        public async Task<IEnumerable<SettingEntity>> GetAllSettings(CancellationToken token)
         {
             return await _context.Configurations.Select(x => new SettingEntity()
             {
@@ -47,32 +43,30 @@ namespace Booking.Infrastructure.Repositories
 
         }
 
-        public async Task<SettingEntity> GetSettingById(int Id)
+        public async Task<SettingEntity?> GetSettingById(int Id, CancellationToken token)
         {
-            var existing = await _context.Configurations.FindAsync(Id);
+            var existing = await _context.Configurations.FindAsync([Id], cancellationToken: token);
             if (existing == null) return null;
             return new SettingEntity()
             {
                 CreatedBy = existing.CreatedBy,
                 CreatedOn = existing.CreatedOn,
-                UpdatedBy = existing.UpdatedBy,
                 Id = existing.Id,
                 Value = existing.KeyValue,
                 Name = existing.KeyName,
             };
         }
 
-        public async Task UpdateSetting(SettingEntity setting)
+        public async Task UpdateSetting(SettingEntity setting, CancellationToken token)
         {
-            var existing = await _context.Configurations.FindAsync(setting.Id);
-            if (existing != null)
-            {
-                existing.KeyName = setting.Name;
-                existing.KeyValue = setting.Value;
-                existing.UpdatedOn = setting.UpdatedOn;
-                existing.UpdatedBy = setting.UpdatedBy;
-                await _context.SaveChangesAsync();
-            }
+            await _context.Configurations
+                            .Where(x => x.Id.Equals(setting.Id))
+                            .ExecuteUpdateAsync(c => c
+                                .SetProperty(s => s.KeyName, setting.Name)
+                                .SetProperty(s => s.KeyValue, setting.Value)
+                                .SetProperty(s => s.UpdatedOn, setting.UpdatedOn)
+                                .SetProperty(s => s.UpdatedBy, setting.UpdatedBy),
+                                 cancellationToken: token);
         }
     }
 }

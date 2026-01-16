@@ -1,0 +1,143 @@
+﻿@model Booking.Web.Models.PackageViewModel
+@{
+	ViewData["Title"] = "Add New Package";
+}
+@section Styles {
+	<!--MultiSelect-->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+	<!--Drop zon-->
+	<link rel="stylesheet" type="text/css" href="~/css/dropzone.css" />
+}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="card">
+						<div class="card-header">
+							<h5>Add New Package Details</h5>
+						</div>
+						<div class="card-body">
+							<form id="theme-form mega-form" class="theme-form mega-form" asp-action="SavePackage" asp-controller="Packages" method="post" enctype="multipart/form-data">
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12">
+											<label asp-for="TourPackage.BannerImage" class="form-label-title">
+												Upload Tour Banner Image here
+											</label>
+											<div class="dropzone" id="singleFileUpload" data-ouput-json="SingleMediajson" data-upload-url="@Url.Action("Single", "Packages")">
+												<div class="dz-message needsclick">
+													<i class="icon-cloud-up"></i>
+													<h6>
+														Drop files here or click to upload.
+													</h6>
+													<span class="note needsclick">
+														(This is just a demo dropzone. Selected
+														files are <strong>not</strong> actually
+														uploaded.)
+													</span>
+												</div>
+											</div>
+											<input type="hidden" asp-for="SingleMediajson" />
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-6">
+											<label asp-for="PackagecategoryId" class="form-label-title">
+												Select Package Category
+											</label>
+											@Html.DropDownListFor(m => m.PackagecategoryId, Model.PackageCategory, "-- Select category --", new { @class = "form-control", @id = "ddlPackageCategory" })
+											<span asp-validation-for="PackagecategoryId" class="text-danger"></span>
+										</div>
+										<div class="col-12 col-md-6">
+											<label asp-for="TourPackage.PackageName" class="form-label-title"></label>
+											<input asp-for="TourPackage.PackageName" class="form-control" placeholder="Package Title" />
+											<span asp-validation-for="TourPackage.PackageName" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12 col-md-6">
+											<label asp-for="TourPackage.Price" class="form-label-title">Base Price</label>
+											<input class="form-control" type="text" asp-for="TourPackage.Price" placeholder="Price" />
+											<span asp-validation-for="TourPackage.Price" class="text-danger"></span>
+
+										</div>
+										<div class="col-12 col-md-6">
+											<label asp-for="TourPackage.DurationDays" class="form-label-title">Duration Days</label>
+											<input class="form-control" asp-for="TourPackage.DurationDays" type="text" placeholder="days" />
+											<span asp-validation-for="TourPackage.DurationDays" class="text-danger"></span>
+
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12">
+											<label class="form-label-title" asp-for="TourPackage.ShortDescription">Description</label>
+											<textarea class="form-control descriptionOf" asp-for="TourPackage.ShortDescription" placeholder="package shot description"></textarea>
+											<span asp-validation-for="TourPackage.ShortDescription" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12">
+											<label class="form-label-title" asp-for="TourPackage.FullDescription">Full Description</label>
+											<textarea class="form-control descriptionOf" asp-for="TourPackage.FullDescription" placeholder="package full description"></textarea>
+											<span asp-validation-for="TourPackage.FullDescription" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12">
+											<label class="form-label-title" asp-for="TourPackage.Inclusions">Inclusions</label>
+											<textarea class="form-control descriptionOf" asp-for="TourPackage.Inclusions" placeholder="package shot description"></textarea>
+											<span asp-validation-for="TourPackage.Inclusions" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="mt-3">
+									<div class="row mb-3">
+										<div class="col-12">
+											<label class="form-label-title" asp-for="TourPackage.ThingsToNote">Notes</label>
+											<textarea class="form-control descriptionOf" asp-for="TourPackage.ThingsToNote" placeholder="package full description"></textarea>
+											<span asp-validation-for="TourPackage.ThingsToNote" class="text-danger"></span>
+										</div>
+									</div>
+								</div>
+								<div class="card-footer text-end">
+									<button type="submit" class="btn btn-primary me-3">Submit</button>
+									<button class="btn btn-outline-primary">Cancel</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Container-fluid Ends-->
+@section Scripts {
+	<!--Searchable dropdown-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js" type="text/javascript"></script>
+	<!--Dropzon start-->
+	<script src="~/js/dropzone.js" type="text/javascript"></script>
+	<script src="~/js/dropzone-script.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		  $('#ddlPackageCategory').select2({
+			placeholder: "-- Select category --",
+			allowClear: true
+		  });
+		});
+	</script>
+}

@@ -2,6 +2,7 @@
 using Booking.Application.Interfaces;
 using Booking.Domain.Entities.Tour;
 using Booking.Domain.Interfaces;
+using System.Collections.Immutable;
 
 namespace Booking.Application.Services
 {
@@ -10,19 +11,28 @@ namespace Booking.Application.Services
         private readonly IPackageMediaRepository _packageMediaRepository = packageMediaRepository;
 
 
-        public Task<int> DeletePackageMedia(int MediaId, CancellationToken token)
+        public async Task<int> DeletePackageMedia(int MediaId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return await _packageMediaRepository.DeletePackageMedia(MediaId, token);
         }
 
-        public Task<int> DeletePackageMediaByPackageId(int PackageId, CancellationToken token)
+        public async Task<int> DeletePackageMediaByPackageId(int PackageId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            return await _packageMediaRepository.DeletePackageMediaByPackageId(PackageId, token);
         }
 
-        public Task<IEnumerable<PackageMediaDto>> GetPackageMediaByPackageId(int PackageId, CancellationToken token)
+        public async Task<IEnumerable<PackageMediaDto>> GetPackageMediaByPackageId(int PackageId, CancellationToken token)
         {
-            throw new NotImplementedException();
+            var packageMedia = await GetPackageMediaByPackageId(PackageId, token);
+            return [.. packageMedia.Select(x => new PackageMediaDto()
+            {
+                MediaType = x.MediaType,
+                MediaUrl = x.MediaUrl,
+                PackageId = PackageId,
+                ThumbnailImage = x.ThumbnailImage,
+                FileName = x.FileName,
+                CreatedAt = x.CreatedAt,
+            })];
         }
 
         public async Task<int> SavePackageMedia(PackageMediaDto mediaEntity, CancellationToken token)
@@ -56,6 +66,22 @@ namespace Booking.Application.Services
                 UpdatedBy = mediaEntity.UpdatedBy,
                 UpdatedAt = mediaEntity.UpdatedAt
             }), token);
+        }
+
+        public async Task<int> UpdatePackageMedia(PackageMediaDto mediaEntity, CancellationToken token)
+        {
+            return await _packageMediaRepository.UpdatePackageMedia(new PackageMediaEntity()
+            {
+                Filename = mediaEntity.FileName,
+                MediaType = mediaEntity.MediaType,
+                MediaUrl = mediaEntity.MediaUrl,
+                IsDefault = mediaEntity.IsDefault,
+                ThumbnailImage = mediaEntity.ThumbnailImage,
+                Id = mediaEntity.Id,
+                PackageId = mediaEntity.PackageId,
+                UpdatedAt = mediaEntity.UpdatedAt,
+                UpdatedBy = mediaEntity.UpdatedBy,
+            }, token);
         }
     }
 }

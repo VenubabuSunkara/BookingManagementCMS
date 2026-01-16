@@ -1,9 +1,4 @@
 ﻿using Booking.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Booking.Domain.Interfaces
 {
@@ -11,5 +6,9 @@ namespace Booking.Domain.Interfaces
     {
         Task<DriverVehicleTableEntity> DriverVehicleList(string SearchValue, int Take, int Skip, CancellationToken token);
         Task<int> RejectDriverVehicleAsync(int DriverId, int VehicleId, CancellationToken token);
+        Task<int> CreateDriverVehicle(CreateDriverVehicleEntity entity, CancellationToken token);
+        Task<int> UpdateDriverVehicle(CreateDriverVehicleEntity entity, CancellationToken token);
+        Task<CreateDriverVehicleEntity?> GetDriverVehicleById(int DriverId, int VehicleId, CancellationToken token);
+
     }
 }

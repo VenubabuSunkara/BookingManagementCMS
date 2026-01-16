@@ -11,9 +11,9 @@ public partial class BookingOrder
 
     public int CustomerId { get; set; }
 
-    public int? DriverId { get; set; }
+    public int DriverId { get; set; }
 
-    public int? VehicleId { get; set; }
+    public int VehicleId { get; set; }
 
     public DateTime BookingDate { get; set; }
 
@@ -35,7 +35,7 @@ public partial class BookingOrder
 
     public DateTime? ScheduledDropTime { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime CreatedOn { get; set; }
 
     public decimal? DistanceInKm { get; set; }
 
@@ -49,13 +49,15 @@ public partial class BookingOrder
 
     public decimal? TaxAmount { get; set; }
 
+    public Guid ItemGuid { get; set; }
+
     public virtual ICollection<BookingDetail> BookingDetails { get; set; } = new List<BookingDetail>();
 
     public virtual Customer Customer { get; set; } = null!;
 
-    public virtual Driver? Driver { get; set; }
+    public virtual Driver Driver { get; set; } = null!;
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-    public virtual Vehicle? Vehicle { get; set; }
+    public virtual Vehicle Vehicle { get; set; } = null!;
 }

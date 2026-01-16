@@ -1,0 +1,18 @@
+﻿
+ALTER TABLE dbo.CompanyUser
+DROP CONSTRAINT FK_CompanyUser_AspNetUsers
+
+
+
+To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+Skipping foreign key 'FK_CompanyUser_AspNetUsers' on table 'dbo.CompanyUser' since it is a duplicate of 'FK_CompanyUser_ASPNetUser'.
+Skipping foreign key 'FK__CustomerA__Addre__56D3D912' on table 'dbo.CustomerAddresses' since it is a duplicate of 'FK__CustomerA__Addre__54EB90A0'.
+Skipping foreign key 'FK__RoleMenuP__MenuI__25077354' on table 'dbo.RoleMenuPermissions' since it is a duplicate of 'FK__RoleMenuP__MenuI__1D66518C'.
+Skipping foreign key 'FK__RoleMenuP__MenuI__29CC2871' on table 'dbo.RoleMenuPermissions' since it is a duplicate of 'FK__RoleMenuP__MenuI__1D66518C'.
+Skipping foreign key 'FK__RoleMenuP__Permi__27E3DFFF' on table 'dbo.RoleMenuPermissions' since it is a duplicate of 'FK__RoleMenuP__Permi__25FB978D'.
+Skipping foreign key 'FK__RoleMenuP__RoleI__26EFBBC6' on table 'dbo.RoleMenuPermissions' since it is a duplicate of 'FK__RoleMenuP__RoleI__1F4E99FE'.
+Skipping foreign key 'FK__RoleMenuP__RoleI__28D80438' on table 'dbo.RoleMenuPermissions' since it is a duplicate of 'FK__RoleMenuP__RoleI__1F4E99FE'.
+Skipping foreign key 'FK__Tour_Loca__Packa__4E0988E7' on table 'dbo.Tour_Locations' since it is a duplicate of 'FK__Tour_Loca__Packa__4D1564AE'.
+Skipping foreign key 'FK__Tour_Revi__Packa__04CFADEC' on table 'dbo.Tour_Reviews' since it is a duplicate of 'FK__Tour_Revi__Packa__02E7657A'.
+Skipping foreign key 'FK__Tour_Revi__Packa__05C3D225' on table 'dbo.Tour_Reviews' since it is a duplicate of 'FK__Tour_Revi__Packa__02E7657A'.
+Could not find type mapping for column 'dbo.Tour_Locations.GeoLocation' with data type 'geography'. Skipping column.

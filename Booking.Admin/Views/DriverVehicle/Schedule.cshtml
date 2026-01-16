@@ -1,0 +1,107 @@
+﻿@{
+    ViewData["Title"] = "My Schedule";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Add Availability</h5>
+                    <form id="availabilityForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="form-group">
+                            <label for="status">Status</label>
+                            <select class="form-control" id="status">
+                                <option value="Available">Available</option>
+                                <option value="Unavailable">Unavailable</option>
+                                <option value="OnDuty">On Duty</option>
+                                <option value="OnLeave">On>On Leave</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label>
+                            <input type="datetime-local" class="form-control" id="startTime">
+                        </div>
+                        <div class="form-group">
+                            <label for="endTime">End Time</label>
+                            <input type="datetime-local" class="form-control" id="endTime">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes</label>
+                            <textarea class="form-control" id="notes"></textarea>
+                        </div>
+                        @* <input type="hidden" asp-for="" /> *@
+                        <button type="button" class="btn btn-primary" onclick="saveAvailability()">
+                            Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div id="calendar"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.js'></script>
+
+    <script>
+         const token = $('input[name="__RequestVerificationToken"]').val();
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: '/Scheduler/GetAvailabilities',
+                selectable: true,
+                select: function(info) {
+                    document.getElementById('startTime').value = info.startStr;
+                    document.getElementById('endTime').value = info.endStr;
+                },
+                eventClick: function(info) {
+                    // Handle event click - could show edit modal
+                    alert(info.event.title + '\nNotes: ' + info.event.extendedProps.notes);
+                }
+            });
+            calendar.render();
+        });
+
+        async function saveAvailability() {
+            const data = {
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                status: document.getElementById('status').value,
+                notes: document.getElementById('notes').value
+            };
+
+            try {
+                const response = await fetch('/Scheduler/UpdateAvailability', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to save availability');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error saving availability');
+            }
+        }
+    </script>
+}

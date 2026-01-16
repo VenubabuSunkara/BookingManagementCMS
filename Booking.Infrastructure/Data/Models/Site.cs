@@ -9,17 +9,17 @@ public partial class Site
 
     public string SiteName { get; set; } = null!;
 
-    public Guid? TenantId { get; set; }
+    public Guid TenantId { get; set; }
 
-    public Guid? ItemGuid { get; set; }
+    public Guid ItemGuid { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = null!;
 
-    public DateTime? CreatedOn { get; set; }
+    public DateTime CreatedOn { get; set; }
 
-    public int? UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = null!;
 
-    public DateTime? UpdatedOn { get; set; }
+    public DateTime UpdatedOn { get; set; }
 
-    public bool? Isactive { get; set; }
+    public bool Isactive { get; set; }
 }
